@@ -1,6 +1,12 @@
 # Pandoc
 README.rst
 
+# Python
+__pycache__
+*.pyc
+*.egg-info
+/dist
+
 # Coverage
 /.nyc_output
 /coverage

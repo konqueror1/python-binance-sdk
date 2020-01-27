@@ -14,11 +14,11 @@ setup(
     packages = ['binance'],
     version = __version__,
     author = 'Kael Zhang',
-    author_email = 'i@kael.me',
+    author_email = 'i+pypi@kael.me',
     description = ('Binance Python SDK'),
     license = 'MIT',
     keywords = 'binance exchange sdk rest api bitcoin btc bnb ethereum eth neo',
-    url = 'https://github.com/kaelzhang/python-neuronjs',
+    url = 'https://github.com/kaelzhang/python-binance-sdk',
     long_description=read('README.rst'),
     classifiers=[
         'Topic :: Software Development :: Libraries :: Python Modules',

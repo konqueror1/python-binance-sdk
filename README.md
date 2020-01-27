@@ -3,7 +3,10 @@
 
 # binance-sdk
 
-Unofficial Binance python SDK
+Unofficial Binance SDK for python 3
+
+- Using `pandas.DataFrame`
+-
 
 ## License
 
