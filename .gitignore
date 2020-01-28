@@ -12,6 +12,7 @@ __pycache__
 # Coverage
 /.nyc_output
 /coverage
+/.coverage
 /coverage.lcov
 
 # Tarballs

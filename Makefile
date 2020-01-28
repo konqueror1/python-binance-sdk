@@ -7,4 +7,7 @@ install:
 report:
 	codecov
 
+publish:
+	bash publish.sh
+
 .PHONY: test
