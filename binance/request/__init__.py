@@ -4,7 +4,11 @@
 
 """
 
-# MIT License
+__version__ = '0.7.3-async'
+
+from .client import Client, AsyncClient  # noqa
+from .depthcache import DepthCacheManager  # noqa
+from .websockets import BinanceSocketManager  # noqa
 
 # Copyright (c) 2017 sammchardy
 
