@@ -1,2 +1,8 @@
 codecov
 coverage
+flake8
+pytest
+pytest-cov
+pytest-pep8
+requests-mock
+setuptools

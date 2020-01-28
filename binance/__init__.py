@@ -33,7 +33,7 @@ def _check_module(mod_name, package_name=None, version=None, version_getter=None
             sys.exit(1)
 
 _check_module('pandas')
-_check_module('python-binance', version='0.7.4')
+# _check_module('python-binance', version='0.7.4')
 
 from binance.client.client import Client
 from binance.request.exceptions import *
