@@ -1,7 +1,6 @@
 # coding=utf-8
 import json
 
-
 class BinanceAPIException(Exception):
 
     def __init__(self, response, status_code, text):

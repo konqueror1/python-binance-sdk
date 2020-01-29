@@ -90,7 +90,7 @@ class ReconnectingWebsocket:
         self._socket = None
 
 
-class BinanceSocketManager:
+class SocketManager:
 
     WEBSOCKET_DEPTH_5 = '5'
     WEBSOCKET_DEPTH_10 = '10'

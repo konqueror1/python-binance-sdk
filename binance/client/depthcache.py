@@ -6,7 +6,6 @@ import time
 
 from .websockets import BinanceSocketManager
 
-
 class DepthCache(object):
 
     def __init__(self, symbol):

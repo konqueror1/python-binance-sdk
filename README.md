@@ -3,7 +3,7 @@
 
 # binance-sdk
 
-Unofficial Binance SDK for python 3
+Unofficial Binance SDK for python 3.7+
 
 - Using `pandas.DataFrame`
 
