@@ -32,23 +32,31 @@ asyncio.run(main())
 Binance-sdk designs a handler-based APIs to handle all websocket messages, and you are able to not concern about websockets.
 
 ```py
-from binance import TickerHandlerBase, RET_OK
+from binance import TickerHandlerBase, RET_OK, SubType
 
 # Start receiving websocket data
 client.start()
 
 class TickerPrinter(TickerHandlerBase):
+    # It could either be a sync or async method
     def receive(self, res):
         code, ticker_df = super(TickerPrinter, self).receive(res)
         if code != RET_OK:
             return ret_code, ticker_df
 
+        # So something you want
         print(ticker_df)
 
 client.set_handler(TickerPrinter())
 
+# Subscribe to ticker change for symbol BTCUSDT
+client.subscribe('BTCUSDT', [SubType.TICKER])
+
 async def close_after_5_minutes():
     await asyncio.sleep(5 * 60)
+
+    # If you don't close the client,
+    #   then the current process will run forever
     client.close()
 
 asyncio.run(close_after_5_minutes())
