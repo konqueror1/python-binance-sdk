@@ -24,9 +24,10 @@ class Client(BaseClient):
 
     async def _request(self, method, uri, signed, force_params=False, **kwargs):
         kwargs = self._get_request_kwargs(method, signed, force_params, **kwargs)
-
-        async with getattr(self.session, method)(uri, **kwargs) as response:
-            return await self._handle_response(response)
+        print(method, uri, signed, kwargs)
+        async with self._init_session() as session:
+            async with getattr(session, method)(uri, **kwargs) as response:
+                return await self._handle_response(response)
 
     async def _handle_response(self, response):
         """Internal helper for handling API responses from the Binance server.

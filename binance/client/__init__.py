@@ -1,9 +1,3 @@
-"""An unofficial Python wrapper for the Binance exchange API v3
-
-.. moduleauthor:: Sam McHardy
-
-"""
-
 # MIT License
 
 # Copyright (c) 2017 sammchardy

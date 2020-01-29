@@ -82,7 +82,6 @@ class BaseClient(ABC):
 
         self.API_KEY = api_key
         self.API_SECRET = api_secret
-        self.session = self._init_session()
         self._requests_params = requests_params
 
     def _get_headers(self):
@@ -91,10 +90,6 @@ class BaseClient(ABC):
             'User-Agent': 'binance/python',
             'X-MBX-APIKEY': self.API_KEY
         }
-
-    @abstractmethod
-    def _init_session(self):
-        pass
 
     def _create_api_uri(self, path, signed=True, version=PUBLIC_API_VERSION):
         v = self.PRIVATE_API_VERSION if signed else version
