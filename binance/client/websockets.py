@@ -6,16 +6,16 @@ import websockets as ws
 
 from .client import Client
 
-
 class ReconnectingWebsocket:
 
-    STREAM_URL = 'wss://stream.binance.com:9443/'
+    STREAM_URL = 'wss://stream.binance.com/'
     MAX_RECONNECTS = 5
     MAX_RECONNECT_SECONDS = 60
     MIN_RECONNECT_WAIT = 0.1
     TIMEOUT = 10
 
     def __init__(self, loop, path, coro, prefix='ws/'):
+        print(loop, path, coro)
         self._loop = loop
         self._log = logging.getLogger(__name__)
         self._path = path
@@ -28,16 +28,20 @@ class ReconnectingWebsocket:
         self._connect()
 
     def _connect(self):
-        self._conn = asyncio.ensure_future(self._run(), loop=self._loop)
+        self._conn = asyncio.create_task(self._run())
+
+    async def start():
+        await this._conn
 
     async def _run(self):
-
         keep_waiting = True
 
         ws_url = self.STREAM_URL + self._prefix + self._path
         async with ws.connect(ws_url) as socket:
             self._socket = socket
             self._reconnects = 0
+
+            print('ws_url', ws_url)
 
             try:
                 while keep_waiting:
