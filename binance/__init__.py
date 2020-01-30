@@ -34,6 +34,7 @@ def _check_module(mod_name, package_name=None, version=None, version_getter=None
 
 _check_module('pandas')
 
-from binance.client.client import Client
+from binance.client import Client
 from binance.client.exceptions import *
-from binance.client.websockets import SocketManager
+from binance.common.constants import *
+from binance.subscribe.handler import *

@@ -4,7 +4,7 @@ import logging
 from random import random
 import websockets as ws
 
-from .client import Client
+# from .client import Client
 
 class ReconnectingWebsocket:
 
@@ -113,7 +113,7 @@ class SocketManager:
         self._user_timer = None
         self._user_listen_key = None
         self._user_callback = None
-        self._client = client
+        # self._client = client
         self._loop = loop or asyncio.get_event_loop()
         self._log = logging.getLogger(__name__)
 
@@ -466,23 +466,23 @@ class SocketManager:
         await self._start_socket(path, coro, 'stream?')
         return path
 
-    async def start_user_socket(self, coro):
-        """Start a websocket for user data
+    # async def start_user_socket(self, coro):
+    #     """Start a websocket for user data
 
-        https://www.binance.com/restapipub.html#user-wss-endpoint
+    #     https://www.binance.com/restapipub.html#user-wss-endpoint
 
-        :param coro: callback function to handle messages
-        :type coro: function
+    #     :param coro: callback function to handle messages
+    #     :type coro: function
 
-        :returns: connection key string if successful, False otherwise
+    #     :returns: connection key string if successful, False otherwise
 
-        Message Format - see Binance API docs for all types
-        """
-        # Get the user listen key
-        user_listen_key = await self._client.stream_get_listen_key()
-        # and start the socket with this specific key
-        conn_key = await self._start_user_socket(user_listen_key, coro)
-        return conn_key
+    #     Message Format - see Binance API docs for all types
+    #     """
+    #     # Get the user listen key
+    #     user_listen_key = await self._client.stream_get_listen_key()
+    #     # and start the socket with this specific key
+    #     conn_key = await self._start_user_socket(user_listen_key, coro)
+    #     return conn_key
 
     async def _start_user_socket(self, user_listen_key, callback):
         # With this function we can start a user socket with a specific key
@@ -501,26 +501,26 @@ class SocketManager:
 
         return conn_key
 
-    def _start_user_timer(self):
-        self._user_timer = self._loop.call_later(self._user_timeout, self._keepalive_user_socket)
+    # def _start_user_timer(self):
+    #     self._user_timer = self._loop.call_later(self._user_timeout, self._keepalive_user_socket)
 
-    def _keepalive_user_socket(self):
+    # def _keepalive_user_socket(self):
 
-        async def _run():
-            user_listen_key = await self._client.stream_get_listen_key()
-            self._log.debug("new key {} old key {}".format(user_listen_key, self._user_listen_key))
-            # check if they key changed and reconnect
-            if user_listen_key != self._user_listen_key:
-                # Start a new socket with the key received
-                # `_start_user_socket` automatically cleanup open sockets
-                # and starts timer to keep socket alive
-                await self._start_user_socket(user_listen_key, self._user_callback)
-            else:
-                # Restart timer only if the user listen key is not changed
-                self._start_user_timer()
+    #     async def _run():
+    #         user_listen_key = await self._client.stream_get_listen_key()
+    #         self._log.debug("new key {} old key {}".format(user_listen_key, self._user_listen_key))
+    #         # check if they key changed and reconnect
+    #         if user_listen_key != self._user_listen_key:
+    #             # Start a new socket with the key received
+    #             # `_start_user_socket` automatically cleanup open sockets
+    #             # and starts timer to keep socket alive
+    #             await self._start_user_socket(user_listen_key, self._user_callback)
+    #         else:
+    #             # Restart timer only if the user listen key is not changed
+    #             self._start_user_timer()
 
-        # this allows execution to keep going
-        asyncio.ensure_future(_run())
+    #     # this allows execution to keep going
+    #     asyncio.ensure_future(_run())
 
     async def stop_socket(self, conn_key):
         """Stop a websocket given the connection key
@@ -541,16 +541,16 @@ class SocketManager:
         if len(conn_key) >= 60 and conn_key[:60] == self._user_listen_key:
             await self._stop_user_socket()
 
-    async def _stop_user_socket(self):
-        if not self._user_listen_key:
-            return
-        # stop the timer
-        if self._user_timer:
-            self._user_timer.cancel()
-        self._user_timer = None
-        # close the stream
-        await self._client.stream_close(listenKey=self._user_listen_key)
-        self._user_listen_key = None
+    # async def _stop_user_socket(self):
+    #     if not self._user_listen_key:
+    #         return
+    #     # stop the timer
+    #     if self._user_timer:
+    #         self._user_timer.cancel()
+    #     self._user_timer = None
+    #     # close the stream
+    #     await self._client.stream_close(listenKey=self._user_listen_key)
+    #     self._user_listen_key = None
 
     async def close(self):
         """Close all connections

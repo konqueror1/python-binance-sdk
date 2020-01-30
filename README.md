@@ -61,7 +61,7 @@ async def close_after_5_minutes():
 
 asyncio.run(close_after_5_minutes())
 
-# It will print the ticker dataframe during 5 minutes
+# It will print ticker dataframes during 5 minutes
 ```
 
 ## License

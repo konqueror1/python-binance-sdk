@@ -2,7 +2,7 @@ import aiohttp
 import asyncio
 import requests
 
-from .helpers import interval_to_milliseconds, convert_ts_str
+from binance.common.helpers import interval_to_milliseconds, convert_ts_str
 from .exceptions import BinanceAPIException, BinanceRequestException, BinanceWithdrawException
 from .base import BaseClient
 
