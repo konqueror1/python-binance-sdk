@@ -91,7 +91,7 @@ class ReconnectingWebsocket:
         self._socket = None
 
 
-class SocketManager:
+class SubscriptionManager:
     WEBSOCKET_DEPTH_5 = '5'
     WEBSOCKET_DEPTH_10 = '10'
     WEBSOCKET_DEPTH_20 = '20'
