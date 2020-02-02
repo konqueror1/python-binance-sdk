@@ -56,3 +56,9 @@ KLINE_SUBTYPE_LIST = [
 
 RET_OK = 0
 RET_ERROR = -1
+
+PUBLIC_API_VERSION = 'v1'
+WITHDRAW_API_VERSION = 'v3'
+PRIVATE_API_VERSION = 'v3'
+API_HOST = 'https://api.binance.com'
+WEBSITE_HOST = 'https://www.binance.com'

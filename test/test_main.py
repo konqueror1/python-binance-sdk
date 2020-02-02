@@ -10,4 +10,4 @@ import pytest
 
 def test_client():
     """Verify basic functionality for adding a bid to the cache"""
-    client = Client()
+    client = Client('key', 'secret')

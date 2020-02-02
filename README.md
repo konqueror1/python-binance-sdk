@@ -19,9 +19,8 @@ pip install binance-sdk
 import asyncio
 from binance import Client
 
-client = Client(api_key, api_secret)
-
 async def main():
+    client = await Client.create(api_key, api_secret)
     print(await client.get_symbol_info('BTCUSDT'))
 
 asyncio.run(main())

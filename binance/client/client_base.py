@@ -20,77 +20,30 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import aiohttp
+import asyncio
 import hashlib
 import hmac
 import time
-from abc import ABC, abstractmethod
+
 from operator import itemgetter
+from binance.common.constants import \
+    API_HOST, WEBSITE_HOST, \
+    # TODO: api version always changes,
+    #   so that it should not be hardcoded globally.
+    # api versions should be api-specific
+    PUBLIC_API_VERSION, WITHDRAW_API_VERSION, PRIVATE_API_VERSION
 
-class BaseClient(ABC):
-
-    API_URL = 'https://api.binance.com/api'
-    WITHDRAW_API_URL = 'https://api.binance.com/wapi'
-    WEBSITE_URL = 'https://www.binance.com'
-    PUBLIC_API_VERSION = 'v1'
-    PRIVATE_API_VERSION = 'v3'
-    WITHDRAW_API_VERSION = 'v3'
-
-    SYMBOL_TYPE_SPOT = 'SPOT'
-
-    ORDER_STATUS_NEW = 'NEW'
-    ORDER_STATUS_PARTIALLY_FILLED = 'PARTIALLY_FILLED'
-    ORDER_STATUS_FILLED = 'FILLED'
-    ORDER_STATUS_CANCELED = 'CANCELED'
-    ORDER_STATUS_PENDING_CANCEL = 'PENDING_CANCEL'
-    ORDER_STATUS_REJECTED = 'REJECTED'
-    ORDER_STATUS_EXPIRED = 'EXPIRED'
-
-    KLINE_INTERVAL_1MINUTE = '1m'
-    KLINE_INTERVAL_3MINUTE = '3m'
-    KLINE_INTERVAL_5MINUTE = '5m'
-    KLINE_INTERVAL_15MINUTE = '15m'
-    KLINE_INTERVAL_30MINUTE = '30m'
-    KLINE_INTERVAL_1HOUR = '1h'
-    KLINE_INTERVAL_2HOUR = '2h'
-    KLINE_INTERVAL_4HOUR = '4h'
-    KLINE_INTERVAL_6HOUR = '6h'
-    KLINE_INTERVAL_8HOUR = '8h'
-    KLINE_INTERVAL_12HOUR = '12h'
-    KLINE_INTERVAL_1DAY = '1d'
-    KLINE_INTERVAL_3DAY = '3d'
-    KLINE_INTERVAL_1WEEK = '1w'
-    KLINE_INTERVAL_1MONTH = '1M'
-
-    SIDE_BUY = 'BUY'
-    SIDE_SELL = 'SELL'
-
-    ORDER_TYPE_LIMIT = 'LIMIT'
-    ORDER_TYPE_MARKET = 'MARKET'
-    ORDER_TYPE_STOP_LOSS = 'STOP_LOSS'
-    ORDER_TYPE_STOP_LOSS_LIMIT = 'STOP_LOSS_LIMIT'
-    ORDER_TYPE_TAKE_PROFIT = 'TAKE_PROFIT'
-    ORDER_TYPE_TAKE_PROFIT_LIMIT = 'TAKE_PROFIT_LIMIT'
-    ORDER_TYPE_LIMIT_MAKER = 'LIMIT_MAKER'
-
-    TIME_IN_FORCE_GTC = 'GTC'  # Good till cancelled
-    TIME_IN_FORCE_IOC = 'IOC'  # Immediate or cancel
-    TIME_IN_FORCE_FOK = 'FOK'  # Fill or kill
-
-    ORDER_RESP_TYPE_ACK = 'ACK'
-    ORDER_RESP_TYPE_RESULT = 'RESULT'
-    ORDER_RESP_TYPE_FULL = 'FULL'
-
-    # For accessing the data returned by Client.aggregate_trades().
-    AGG_ID = 'a'
-    AGG_PRICE = 'p'
-    AGG_QUANTITY = 'q'
-    AGG_FIRST_TRADE_ID = 'f'
-    AGG_LAST_TRADE_ID = 'l'
-    AGG_TIME = 'T'
-    AGG_BUYER_MAKES = 'm'
-    AGG_BEST_MATCH = 'M'
-
-    def __init__(self, api_key, api_secret, requests_params=None):
+class ClientBase(object):
+    def __init__(
+        self,
+        api_key,
+        api_secret,
+        requests_params=None,
+        # so that you can change api_host for CN network
+        api_host=API_HOST,
+        website_host=WEBSITE_HOST
+    ):
         """Binance API Client constructor
 
         :param api_key: Api Key
@@ -102,32 +55,86 @@ class BaseClient(ABC):
 
         """
 
-        self.API_KEY = api_key
-        self.API_SECRET = api_secret
+        self._api_key = api_key
+        self._api_secret = api_secret
         self._requests_params = requests_params
+        self._api_host = api_host
+        self._website_host = website_host
+
+    def _init_session(self):
+        loop = asyncio.get_event_loop()
+        session = aiohttp.ClientSession(
+            loop=loop,
+            headers=self._get_headers()
+        )
+        return session
+
+    async def _request(self, method, uri, signed, force_params=False, **kwargs):
+        kwargs = self._get_request_kwargs(method, signed, force_params, **kwargs)
+        print(method, uri, signed, kwargs)
+        async with self._init_session() as session:
+            async with getattr(session, method)(uri, **kwargs) as response:
+                return await self._handle_response(response)
+
+    async def _handle_response(self, response):
+        """Internal helper for handling API responses from the Binance server.
+        Raises the appropriate exceptions when necessary; otherwise, returns the
+        response.
+        """
+        if not str(response.status).startswith('2'):
+            raise BinanceAPIException(response, response.status, await response.text())
+        try:
+            return await response.json()
+        except ValueError:
+            txt = await response.text()
+            raise BinanceRequestException('Invalid Response: {}'.format(txt))
+
+    async def _request_api(self, method, path, signed=False, version=PUBLIC_API_VERSION, **kwargs):
+        uri = self._create_api_uri(path, signed, version)
+        return await self._request(method, uri, signed, **kwargs)
+
+    async def _request_withdraw_api(self, method, path, signed=False, **kwargs):
+        uri = self._create_withdraw_api_uri(path)
+        return await self._request(method, uri, signed, True, **kwargs)
+
+    async def _request_website(self, method, path, signed=False, **kwargs):
+        uri = self._create_website_uri(path)
+        return await self._request(method, uri, signed, **kwargs)
+
+    async def _get(self, path, signed=False, version=PUBLIC_API_VERSION, **kwargs):
+        return await self._request_api('get', path, signed, version, **kwargs)
+
+    async def _post(self, path, signed=False, version=PUBLIC_API_VERSION, **kwargs):
+        return await self._request_api('post', path, signed, version, **kwargs)
+
+    async def _put(self, path, signed=False, version=PUBLIC_API_VERSION, **kwargs):
+        return await self._request_api('put', path, signed, version, **kwargs)
+
+    async def _delete(self, path, signed=False, version=PUBLIC_API_VERSION, **kwargs):
+        return await self._request_api('delete', path, signed, version, **kwargs)
 
     def _get_headers(self):
         return {
             'Accept': 'application/json',
             'User-Agent': 'binance/python',
-            'X-MBX-APIKEY': self.API_KEY
+            'X-MBX-APIKEY': self._api_key
         }
 
     def _create_api_uri(self, path, signed=True, version=PUBLIC_API_VERSION):
-        v = self.PRIVATE_API_VERSION if signed else version
-        return self.API_URL + '/' + v + '/' + path
+        v = PRIVATE_API_VERSION if signed else version
+        return self._api_host + '/api/' + v + '/' + path
 
     def _create_withdraw_api_uri(self, path):
-        return self.WITHDRAW_API_URL + '/' + self.WITHDRAW_API_VERSION + '/' + path
+        return self._api_host + '/wapi/' + WITHDRAW_API_VERSION + '/' + path
 
     def _create_website_uri(self, path):
-        return self.WEBSITE_URL + '/' + path
+        return self._website_host + '/' + path
 
     def _generate_signature(self, data):
 
         ordered_data = self._order_params(data)
         query_string = '&'.join(["{}={}".format(d[0], d[1]) for d in ordered_data])
-        m = hmac.new(self.API_SECRET.encode('utf-8'), query_string.encode('utf-8'), hashlib.sha256)
+        m = hmac.new(self._api_secret.encode('utf-8'), query_string.encode('utf-8'), hashlib.sha256)
         return m.hexdigest()
 
     @staticmethod
