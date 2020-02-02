@@ -4,18 +4,17 @@ import requests
 from .exceptions import BinanceAPIException, BinanceRequestException, BinanceWithdrawException
 
 from binance.common.helpers import interval_to_milliseconds, convert_ts_str
-from binance.common.constants import \
-    PRIVATE_API_VERSION
+from binance.common.constants import PRIVATE_API_VERSION
 
-SYMBOL_TYPE_SPOT = 'SPOT'
+# SYMBOL_TYPE_SPOT = 'SPOT'
 
-ORDER_STATUS_NEW = 'NEW'
-ORDER_STATUS_PARTIALLY_FILLED = 'PARTIALLY_FILLED'
-ORDER_STATUS_FILLED = 'FILLED'
-ORDER_STATUS_CANCELED = 'CANCELED'
-ORDER_STATUS_PENDING_CANCEL = 'PENDING_CANCEL'
-ORDER_STATUS_REJECTED = 'REJECTED'
-ORDER_STATUS_EXPIRED = 'EXPIRED'
+# ORDER_STATUS_NEW = 'NEW'
+# ORDER_STATUS_PARTIALLY_FILLED = 'PARTIALLY_FILLED'
+# ORDER_STATUS_FILLED = 'FILLED'
+# ORDER_STATUS_CANCELED = 'CANCELED'
+# ORDER_STATUS_PENDING_CANCEL = 'PENDING_CANCEL'
+# ORDER_STATUS_REJECTED = 'REJECTED'
+# ORDER_STATUS_EXPIRED = 'EXPIRED'
 
 # KLINE_INTERVAL_1MINUTE = '1m'
 # KLINE_INTERVAL_3MINUTE = '3m'
@@ -37,7 +36,7 @@ SIDE_BUY = 'BUY'
 SIDE_SELL = 'SELL'
 
 ORDER_TYPE_LIMIT = 'LIMIT'
-# ORDER_TYPE_MARKET = 'MARKET'
+ORDER_TYPE_MARKET = 'MARKET'
 # ORDER_TYPE_STOP_LOSS = 'STOP_LOSS'
 # ORDER_TYPE_STOP_LOSS_LIMIT = 'STOP_LOSS_LIMIT'
 # ORDER_TYPE_TAKE_PROFIT = 'TAKE_PROFIT'
@@ -45,26 +44,25 @@ ORDER_TYPE_LIMIT = 'LIMIT'
 # ORDER_TYPE_LIMIT_MAKER = 'LIMIT_MAKER'
 
 TIME_IN_FORCE_GTC = 'GTC'  # Good till cancelled
-TIME_IN_FORCE_IOC = 'IOC'  # Immediate or cancel
-TIME_IN_FORCE_FOK = 'FOK'  # Fill or kill
+# TIME_IN_FORCE_IOC = 'IOC'  # Immediate or cancel
+# TIME_IN_FORCE_FOK = 'FOK'  # Fill or kill
 
-ORDER_RESP_TYPE_ACK = 'ACK'
-ORDER_RESP_TYPE_RESULT = 'RESULT'
-ORDER_RESP_TYPE_FULL = 'FULL'
+# ORDER_RESP_TYPE_ACK = 'ACK'
+# ORDER_RESP_TYPE_RESULT = 'RESULT'
+# ORDER_RESP_TYPE_FULL = 'FULL'
 
 # For accessing the data returned by Client.aggregate_trades().
 AGG_ID = 'a'
-AGG_PRICE = 'p'
-AGG_QUANTITY = 'q'
-AGG_FIRST_TRADE_ID = 'f'
-AGG_LAST_TRADE_ID = 'l'
-AGG_TIME = 'T'
-AGG_BUYER_MAKES = 'm'
-AGG_BEST_MATCH = 'M'
+# AGG_PRICE = 'p'
+# AGG_QUANTITY = 'q'
+# AGG_FIRST_TRADE_ID = 'f'
+# AGG_LAST_TRADE_ID = 'l'
+# AGG_TIME = 'T'
+# AGG_BUYER_MAKES = 'm'
+# AGG_BEST_MATCH = 'M'
 
 class ClientGetters(object):
     # Exchange Endpoints
-
     async def get_products(self):
         products = await self._request_website('get', 'exchange/public/product')
         return products
@@ -82,9 +80,6 @@ class ClientGetters(object):
         return None
 
     # General Endpoints
-
-    async def ping(self):
-        return await self._get('ping')
 
     async def get_server_time(self):
         return await self._get('time')
@@ -143,7 +138,7 @@ class ClientGetters(object):
                     start_ts = end_ts
             for t in trades:
                 yield t
-            last_id = trades[-1][self.AGG_ID]
+            last_id = trades[-1][AGG_ID]
 
         while True:
             # There is no need to wait between queries, to avoid hitting the
@@ -160,7 +155,7 @@ class ClientGetters(object):
                 return
             for t in trades:
                 yield t
-            last_id = trades[-1][self.AGG_ID]
+            last_id = trades[-1][AGG_ID]
 
     async def get_klines(self, **params):
         return await self._get('klines', data=params)
@@ -281,50 +276,50 @@ class ClientGetters(object):
         return await self._get('ticker/24hr', data=params)
 
     async def get_symbol_ticker(self, **params):
-        return await self._get('ticker/price', data=params, version=self.PRIVATE_API_VERSION)
+        return await self._get('ticker/price', data=params, version=PRIVATE_API_VERSION)
 
     async def get_orderbook_ticker(self, **params):
-        return await self._get('ticker/bookTicker', data=params, version=self.PRIVATE_API_VERSION)
+        return await self._get('ticker/bookTicker', data=params, version=PRIVATE_API_VERSION)
 
     # Account Endpoints
 
     async def create_order(self, **params):
         return await self._post('order', True, data=params)
 
-    async def order_limit(self, timeInForce=BaseClient.TIME_IN_FORCE_GTC, **params):
+    async def order_limit(self, timeInForce=TIME_IN_FORCE_GTC, **params):
         params.update({
-            'type': self.ORDER_TYPE_LIMIT,
+            'type': ORDER_TYPE_LIMIT,
             'timeInForce': timeInForce
         })
         return await self.create_order(**params)
 
-    async def order_limit_buy(self, timeInForce=BaseClient.TIME_IN_FORCE_GTC, **params):
+    async def order_limit_buy(self, timeInForce=TIME_IN_FORCE_GTC, **params):
         params.update({
-            'side': self.SIDE_BUY,
+            'side': SIDE_BUY,
         })
         return await self.order_limit(timeInForce=timeInForce, **params)
 
-    async def order_limit_sell(self, timeInForce=BaseClient.TIME_IN_FORCE_GTC, **params):
+    async def order_limit_sell(self, timeInForce=TIME_IN_FORCE_GTC, **params):
         params.update({
-            'side': self.SIDE_SELL
+            'side': SIDE_SELL
         })
         return await self.order_limit(timeInForce=timeInForce, **params)
 
     async def order_market(self, **params):
         params.update({
-            'type': self.ORDER_TYPE_MARKET
+            'type': ORDER_TYPE_MARKET
         })
         return await self.create_order(**params)
 
     async def order_market_buy(self, **params):
         params.update({
-            'side': self.SIDE_BUY
+            'side': SIDE_BUY
         })
         return await self.order_market(**params)
 
     async def order_market_sell(self, **params):
         params.update({
-            'side': self.SIDE_SELL
+            'side': SIDE_SELL
         })
         return await self.order_market(**params)
 

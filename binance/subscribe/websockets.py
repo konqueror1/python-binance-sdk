@@ -4,11 +4,9 @@ import logging
 from random import random
 import websockets as ws
 
-# from .client import Client
+from binance.common.constants import STREAM_HOST
 
 class ReconnectingWebsocket:
-
-    STREAM_URL = 'wss://stream.binance.com/'
     MAX_RECONNECTS = 5
     MAX_RECONNECT_SECONDS = 60
     MIN_RECONNECT_WAIT = 0.1
@@ -36,12 +34,11 @@ class ReconnectingWebsocket:
     async def _run(self):
         keep_waiting = True
 
-        ws_url = self.STREAM_URL + self._prefix + self._path
+        # TODO: configurable stream url
+        ws_url = STREAM_URL + '/' + self._prefix + self._path
         async with ws.connect(ws_url) as socket:
             self._socket = socket
             self._reconnects = 0
-
-            print('ws_url', ws_url)
 
             try:
                 while keep_waiting:
@@ -95,7 +92,6 @@ class ReconnectingWebsocket:
 
 
 class SocketManager:
-
     WEBSOCKET_DEPTH_5 = '5'
     WEBSOCKET_DEPTH_10 = '10'
     WEBSOCKET_DEPTH_20 = '20'

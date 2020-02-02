@@ -57,8 +57,15 @@ KLINE_SUBTYPE_LIST = [
 RET_OK = 0
 RET_ERROR = -1
 
+# TODO: api version always changes,
+#   so that it should not be hardcoded globally.
+# api versions should be api-specific
 PUBLIC_API_VERSION = 'v1'
 WITHDRAW_API_VERSION = 'v3'
 PRIVATE_API_VERSION = 'v3'
+
 API_HOST = 'https://api.binance.com'
 WEBSITE_HOST = 'https://www.binance.com'
+STREAM_HOST = 'wss://stream.binance.com'
+
+TIME_IN_FORCE_GTC = 'GTC'

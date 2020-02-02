@@ -28,11 +28,28 @@ import time
 
 from operator import itemgetter
 from binance.common.constants import \
-    API_HOST, WEBSITE_HOST, \
-    # TODO: api version always changes,
-    #   so that it should not be hardcoded globally.
-    # api versions should be api-specific
+    API_HOST, WEBSITE_HOST, STREAM_HOST, \
     PUBLIC_API_VERSION, WITHDRAW_API_VERSION, PRIVATE_API_VERSION
+
+def order_params(data):
+    """Convert params to list with signature as last element
+
+    :param data:
+    :return:
+
+    """
+    has_signature = False
+    params = []
+    for key, value in data.items():
+        if key == 'signature':
+            has_signature = True
+        else:
+            params.append((key, str(value)))
+    # sort parameters by key
+    params.sort(key=itemgetter(0))
+    if has_signature:
+        params.append(('signature', data['signature']))
+    return params
 
 class ClientBase(object):
     def __init__(
@@ -42,7 +59,8 @@ class ClientBase(object):
         requests_params=None,
         # so that you can change api_host for CN network
         api_host=API_HOST,
-        website_host=WEBSITE_HOST
+        website_host=WEBSITE_HOST,
+        stream_host=STREAM_HOST
     ):
         """Binance API Client constructor
 
@@ -60,6 +78,7 @@ class ClientBase(object):
         self._requests_params = requests_params
         self._api_host = api_host
         self._website_host = website_host
+        self._stream_host = stream_host
 
     def _init_session(self):
         loop = asyncio.get_event_loop()
@@ -131,35 +150,12 @@ class ClientBase(object):
         return self._website_host + '/' + path
 
     def _generate_signature(self, data):
-
-        ordered_data = self._order_params(data)
+        ordered_data = order_params(data)
         query_string = '&'.join(["{}={}".format(d[0], d[1]) for d in ordered_data])
         m = hmac.new(self._api_secret.encode('utf-8'), query_string.encode('utf-8'), hashlib.sha256)
         return m.hexdigest()
 
-    @staticmethod
-    def _order_params(data):
-        """Convert params to list with signature as last element
-
-        :param data:
-        :return:
-
-        """
-        has_signature = False
-        params = []
-        for key, value in data.items():
-            if key == 'signature':
-                has_signature = True
-            else:
-                params.append((key, str(value)))
-        # sort parameters by key
-        params.sort(key=itemgetter(0))
-        if has_signature:
-            params.append(('signature', data['signature']))
-        return params
-
     def _get_request_kwargs(self, method, signed, force_params=False, **kwargs):
-
         # set default requests timeout
         kwargs['timeout'] = 10
 
@@ -185,7 +181,7 @@ class ClientBase(object):
         # sort get and post params to match signature order
         if data:
             # sort post params
-            kwargs['data'] = self._order_params(kwargs['data'])
+            kwargs['data'] = order_params(kwargs['data'])
 
         # if get request assign data array to params value for requests lib
         if data and (method == 'get' or force_params):
