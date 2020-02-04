@@ -4,26 +4,27 @@ __all__ = [
 ]
 
 KLINE_TYPE_LIST = [
-    'K_1M',
-    'K_3M',
-    'K_5M',
-    'K_15M',
-    'K_30M',
+    'KLINE_1M',
+    'KLINE_3M',
+    'KLINE_5M',
+    'KLINE_15M',
+    'KLINE_30M',
 
-    'K_1H',
-    'K_2H',
-    'K_4H',
-    'K_6H',
-    'K_12H',
+    'KLINE_1H',
+    'KLINE_2H',
+    'KLINE_4H',
+    'KLINE_6H',
+    'KLINE_12H',
 
-    'K_DAY',
-    'K_WEEK',
-    'K_MONTH'
+    'KLINE_DAY',
+    'KLINE_3DAY',
+    'KLINE_WEEK',
+    'KLINE_MONTH'
 ]
 
 OTHER_TYPE_LIST = [
+    'AGG_TRADE',
     'TICKER',
-    'QUOTE',
     'ORDER_BOOK'
 ]
 
@@ -56,6 +57,7 @@ KLINE_SUBTYPE_LIST = [
 
 RET_OK = 0
 RET_ERROR = -1
+ERROR_PREFIX = '[BinanceSDK] '
 
 # TODO: api version always changes,
 #   so that it should not be hardcoded globally.

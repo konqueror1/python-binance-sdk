@@ -3,7 +3,7 @@ import requests
 
 from .exceptions import BinanceAPIException, BinanceRequestException, BinanceWithdrawException
 
-from binance.common.helpers import interval_to_milliseconds, convert_ts_str
+from binance.common.utils import interval_to_milliseconds, convert_ts_str
 from binance.common.constants import PRIVATE_API_VERSION
 
 # SYMBOL_TYPE_SPOT = 'SPOT'

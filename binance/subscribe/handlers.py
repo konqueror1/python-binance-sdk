@@ -1,7 +1,7 @@
 __all__ = [
-    'QuoteHandlerBase',
+    'AggTradeHandlerBase',
     'OrderBookHandlerBase',
-    'CurrentKlineHandlerBase',
+    'KlineHandlerBase',
     'TickerHandlerBase'
 ]
 
@@ -10,13 +10,13 @@ class HandlerBase(object):
         """receive response callback function"""
         return 0, None
 
-class QuoteHandlerBase(HandlerBase):
+class AggTradeHandlerBase(HandlerBase):
     pass
 
 class OrderBookHandlerBase(HandlerBase):
     pass
 
-class CurrentKlineHandlerBase(HandlerBase):
+class KlineHandlerBase(HandlerBase):
     pass
 
 class TickerHandlerBase(HandlerBase):

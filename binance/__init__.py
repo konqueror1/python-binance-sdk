@@ -37,4 +37,4 @@ _check_module('pandas')
 from binance.client import Client
 from binance.client.exceptions import *
 from binance.common.constants import *
-from binance.subscribe.handler import *
+from binance.subscribe.handlers import *

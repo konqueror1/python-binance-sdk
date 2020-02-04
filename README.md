@@ -3,9 +3,12 @@
 
 # binance-sdk
 
-Unofficial Binance SDK for python 3.7+
+Unofficial Binance SDK for python 3.7+, which:
 
-- Using `pandas.DataFrame`
+- Uses the new websocket stream which supports live pub/sub so that we can save websocket connections
+- Supports `pandas.DataFrame`
+- Based on python `async`/`await`
+- Manages the order book for you (handled by `OrderBookHandlerBase`), so that you need not to worry about websocket reconnection and message losses.
 
 ## Install
 
@@ -19,8 +22,9 @@ pip install binance-sdk
 import asyncio
 from binance import Client
 
+client = Client(api_key, api_secret)
+
 async def main():
-    client = await Client.create(api_key, api_secret)
     print(await client.get_symbol_info('BTCUSDT'))
 
 asyncio.run(main())
@@ -33,34 +37,57 @@ Binance-sdk designs a handler-based APIs to handle all websocket messages, and y
 ```py
 from binance import TickerHandlerBase, RET_OK, SubType
 
-# Start receiving websocket data
+# Start receiving websocket data,
+#   and this will prevent the current process from exiting
 client.start()
 
+# Implement your own TickerHandler.
 class TickerPrinter(TickerHandlerBase):
-    # It could either be a sync or async method
-    def receive(self, res):
+    # It could either be a sync or async(recommended) method
+    async def receive(self, res):
         code, ticker_df = super(TickerPrinter, self).receive(res)
         if code != RET_OK:
             return ret_code, ticker_df
 
         # So something you want
-        print(ticker_df)
+        await remoteUpdateTicker(ticker_df)
 
 client.set_handler(TickerPrinter())
 
 # Subscribe to ticker change for symbol BTCUSDT
 client.subscribe('BTCUSDT', [SubType.TICKER])
 
-async def close_after_5_minutes():
-    await asyncio.sleep(5 * 60)
+# Stop receiving websocket message and dispatching to handlers,
+#   but the websocket connections are still open.
+# We could `client.start()` to start receiving messages again
+client.stop()
 
-    # If you don't close the client,
-    #   then the current process will run forever
-    client.close()
+# Close all websocket connections
+client.close()
+```
 
-asyncio.run(close_after_5_minutes())
+### Subscribe to more symbol pairs and types
 
-# It will print ticker dataframes during 5 minutes
+```py
+client.subscribe(
+    # We could subscribe more than one symbol pairs at a time
+    [
+        # Which is equivalent to `BNBUSDT`
+        'BNB_USDT',
+        'BNBBTC'
+    ],
+    [
+        SubType.AGG_TRADE,
+        SubType.ORDER_BOOK,
+        SubType.KLINE_DAY
+    ]
+)
+```
+
+### Subscribe to user streams
+
+```py
+client.subscribe_user()
 ```
 
 ## License

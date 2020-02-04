@@ -2,9 +2,9 @@
 
 import dateparser
 import pytz
-
 from datetime import datetime
 
+from .constants import ERROR_PREFIX
 
 def date_to_milliseconds(date_str):
     """Convert UTC date to milliseconds
@@ -26,7 +26,6 @@ def date_to_milliseconds(date_str):
 
     # return the difference in time
     return int((d - epoch).total_seconds() * 1000.0)
-
 
 def interval_to_milliseconds(interval):
     """Convert a Binance interval string to milliseconds
@@ -51,10 +50,21 @@ def interval_to_milliseconds(interval):
     except (ValueError, KeyError):
         return None
 
-
 def convert_ts_str(ts_str):
     if ts_str is None:
         return ts_str
     if type(ts_str) == int:
         return ts_str
     return date_to_milliseconds(ts_str)
+
+def make_list(l):
+    ret = []
+    if not l:
+        return ret
+
+    tmp = lst if isinstance(lst, list) else [lst]
+    [ret.append(x) for x in tmp if x not in ret]
+    return ret
+
+def err_msg(str, *args):
+    return ERROR_PREFIX + str % args

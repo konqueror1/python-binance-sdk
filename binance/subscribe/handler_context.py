@@ -2,8 +2,8 @@ from .handlers import *
 from binance.common.constants import RET_OK, RET_ERROR
 
 __all__ = [
-    'TradeHandlerContext',
-    'KlineHandlerContext'
+    'StreamHandlerContext',
+    'UserStreamHandlerContext'
 ]
 
 class HandlerContextBase(object):
@@ -12,8 +12,7 @@ class HandlerContextBase(object):
 
     def set_handler(self, handler):
         """
-        set the callback processing object to be used by the receiving thread after receiving the data.User should set
-        their own callback object setting in order to achieve event driven.
+        set the callback processing object to be used to handle websocket messages
         :param handler:the object in callback handler base
         :return: RET_ERROR or RET_OK
         """
@@ -30,14 +29,13 @@ class HandlerContextBase(object):
         """receive response callback function"""
         pass
 
-class TradeHandlerContext(HandlerContextBase):
+class StreamHandlerContext(HandlerContextBase):
     HANDLER_MAP = {
         'aggTrade': AggTradeHandlerBase,
         'depthUpdate': DepthHandlerBase,
         '24hrMiniTicker': TickerHandlerBase
-    }
-
-class KlineHandlerContext(HandlerContextBase):
-    HANDLER_MAP = {
         'kline': KlineHandlerBase
     }
+
+class UserStreamHandlerContext(HandlerContextBase):
+    pass
