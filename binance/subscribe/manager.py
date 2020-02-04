@@ -29,16 +29,22 @@ class SubscriptionManager(object):
         self._receiving = True
 
         if self._hanging:
-            return
+            return self
 
         self._hanging = True
         self._hang()
 
+        return self
+
     def stop(self):
         self._receiving = False
 
+        return self
+
     def close(self):
         self._hanging = False
+
+        return self
 
     # subscribe to the stream for symbols
     def subscribe(self, symbols, subtype_list):
@@ -46,22 +52,28 @@ class SubscriptionManager(object):
             symbols, subtype_list)
 
         if code != RET_OK:
-            return code, msg
+            # todo
+            raise
 
-        return RET_OK, None
+        return self
 
     def unsubscribe(self, symbols, sub_type_list):
-        pass
+        return self
 
     # subscribe to user streams
     def subscribe_user(sef):
-        pass
+        return self
 
     def unsubscribe_user(self):
-        pass
+        return self
 
-    def set_handler(self, handler):
-        self._handler_ctx.set_handler(handler)
+    def handler(self, *handlers):
+        handlers = make_list(handlers)
+
+        for handler in handlers:
+            self._handler_ctx.set_handler(handler)
+
+        return self
 
     def _hang_loop(self):
         while self._hang_signal:

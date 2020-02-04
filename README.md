@@ -5,7 +5,7 @@
 
 Unofficial Binance SDK for python 3.7+, which:
 
-- Uses the new websocket stream which supports live pub/sub so that we can save websocket connections
+- Uses Binance's new websocket stream which supports live pub/sub so that we could save websocket connections
 - Supports `pandas.DataFrame`
 - Based on python `async`/`await`
 - Manages the order book for you (handled by `OrderBookHandlerBase`), so that you need not to worry about websocket reconnection and message losses.
@@ -52,10 +52,10 @@ class TickerPrinter(TickerHandlerBase):
         # So something you want
         await remoteUpdateTicker(ticker_df)
 
-client.set_handler(TickerPrinter())
+client.handler(TickerPrinter())
 
 # Subscribe to ticker change for symbol BTCUSDT
-client.subscribe('BTCUSDT', [SubType.TICKER])
+client.subscribe('BTCUSDT', SubType.TICKER)
 
 # Stop receiving websocket message and dispatching to handlers,
 #   but the websocket connections are still open.
@@ -76,12 +76,31 @@ client.subscribe(
         'BNB_USDT',
         'BNBBTC'
     ],
+    # We could also subscribe multiple types
+    #   for both `BNBUSDT` and 'BNBBTC'
     [
         SubType.AGG_TRADE,
         SubType.ORDER_BOOK,
         SubType.KLINE_DAY
     ]
 )
+```
+
+And since we subscribe to **THREE** new types of messages, we need to set the handlers each of which should  `isinstance()` of one of
+- `AggTradeHandlerBase`
+- `OrderBookHandlerBase`
+- `KlineHandlerBase`
+- `TickerHandlerBase`
+
+```py
+client.handler(MyTradeHandler(), MyOrderBookHandler(), MyKlineHandler())
+```
+
+### Subscribe to ticker changes for all symbols
+
+```py
+client.subscribe('*', SubType.TICKER)
+# But PAY ATTENTION that `*` only works for `SubType.TICKER`
 ```
 
 ### Subscribe to user streams

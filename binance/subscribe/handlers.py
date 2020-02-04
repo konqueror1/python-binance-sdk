@@ -21,3 +21,6 @@ class KlineHandlerBase(HandlerBase):
 
 class TickerHandlerBase(HandlerBase):
     pass
+
+class UserHandlerBase(object):
+    pass
