@@ -1,2 +1,0 @@
-class SocketManager(object):
-    pass

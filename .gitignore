@@ -57,10 +57,9 @@ thumbs.db
 .idea
 node_modules
 *-notrack/
-no-track/
-no-track.*
-no_track/
+no_track
 no_track.*
+*.no_track.*
 build/
 combo/
 reference/

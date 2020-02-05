@@ -2,6 +2,8 @@
 
 import dateparser
 import pytz
+import json
+
 from datetime import datetime
 
 from .constants import ERROR_PREFIX
@@ -62,9 +64,16 @@ def make_list(l):
     if not l:
         return ret
 
-    tmp = lst if isinstance(lst, list) else [lst]
+    tmp = l if isinstance(l, list) else [l]
     [ret.append(x) for x in tmp if x not in ret]
     return ret
 
 def err_msg(str, *args):
     return ERROR_PREFIX + str % args
+
+def json_stringify(obj):
+    return json.dumps(obj, separators=(',', ':'))
+
+def normalize_symbol(symbol):
+    return symbol.replace('_', '').lower()
+

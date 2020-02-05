@@ -1,9 +1,11 @@
 __all__ = [
-    'SubType', 'KlineType',
+    'SubType',
     'RET_OK', 'RET_ERROR'
 ]
 
-KLINE_TYPE_LIST = [
+KLINE_TYPE_PREFIX = 'kline_'
+
+SUBTYPE_PROP_LIST = [
     'KLINE_1M',
     'KLINE_3M',
     'KLINE_5M',
@@ -14,46 +16,57 @@ KLINE_TYPE_LIST = [
     'KLINE_2H',
     'KLINE_4H',
     'KLINE_6H',
+    'KLINE_8H',
     'KLINE_12H',
 
     'KLINE_DAY',
     'KLINE_3DAY',
-    'KLINE_WEEK',
-    'KLINE_MONTH'
-]
 
-OTHER_TYPE_LIST = [
+    'KLINE_WEEK',
+    'KLINE_MONTH',
+
     'AGG_TRADE',
+    'MINI_TICKER',
     'TICKER',
     'ORDER_BOOK'
 ]
 
-SUBTYPE_MAP = {}
-subtype_counter = 0
+SUBTYPE_VALUE_LIST = [KLINE_TYPE_PREFIX + x for x in [
+    '1m',
+    '3m',
+    '5m',
+    '15m',
+    '30m',
 
-KTYPE_MAP = {}
-ktype_counter = 0
+    '1h',
+    '2h',
+    '4h',
+    '6h',
+    '8h',
+    '12h',
+
+    '1d',
+    '3d',
+
+    '1w',
+    '1M'
+]] + [
+    'aggTrade',
+    'miniTicker',
+    'ticker',
+    'depth'
+]
+
+SUBTYPE_MAP = {}
 
 class SubType(object):
     pass
 
-class KlineType(object):
-    pass
+for i in range(len(SUBTYPE_PROP_LIST)):
+    k, v = SUBTYPE_PROP_LIST[i], SUBTYPE_VALUE_LIST[i]
 
-for t in KLINE_TYPE_LIST:
-    setattr(SubType, t, t)
-    SUBTYPE_MAP[t] = ++ subtype_counter
-
-    setattr(KlineType, t, t)
-    KTYPE_MAP[t] = ++ ktype_counter
-
-for t in OTHER_TYPE_LIST:
-    setattr(SubType, t, t)
-    SUBTYPE_MAP[t] = ++ subtype_counter
-
-KLINE_SUBTYPE_LIST = [
-    getattr(SubType, t) for i in KLINE_TYPE_LIST
-]
+    setattr(SubType, k, v)
+    SUBTYPE_MAP[v] = k
 
 RET_OK = 0
 RET_ERROR = -1
@@ -68,6 +81,18 @@ PRIVATE_API_VERSION = 'v3'
 
 API_HOST = 'https://api.binance.com'
 WEBSITE_HOST = 'https://www.binance.com'
+
+# Binance now supports default 443 port for websockets
 STREAM_HOST = 'wss://stream.binance.com'
 
 TIME_IN_FORCE_GTC = 'GTC'
+
+ATOM_RETRY_DELAY = 0.1
+MAX_RETRIES_BEFORE_RESET = 10
+
+def DEFAULT_RETRY_POLICY(retries: int):
+    delay = retries * ATOM_RETRY_DELAY
+    reset = retries >= MAX_RETRIES_BEFORE_RESET
+    return False, delay, reset
+
+DEFAULT_STREAM_TIMEOUT = 5

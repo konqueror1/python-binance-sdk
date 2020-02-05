@@ -2,7 +2,8 @@ __all__ = [
     'AggTradeHandlerBase',
     'OrderBookHandlerBase',
     'KlineHandlerBase',
-    'TickerHandlerBase'
+    'TickerHandlerBase',
+    'MiniTickerHandlerBase'
 ]
 
 class HandlerBase(object):
@@ -22,5 +23,8 @@ class KlineHandlerBase(HandlerBase):
 class TickerHandlerBase(HandlerBase):
     pass
 
-class UserHandlerBase(object):
+class MiniTickerHandlerBase(HandlerBase):
     pass
+
+# class UserHandlerBase(object):
+#     pass

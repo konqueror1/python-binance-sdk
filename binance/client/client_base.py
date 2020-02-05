@@ -51,7 +51,7 @@ def order_params(data):
     return params
 
 class ClientBase(object):
-    def _init_session(self):
+    def _init_api_session(self):
         loop = asyncio.get_event_loop()
         session = aiohttp.ClientSession(
             loop=loop,
@@ -62,7 +62,7 @@ class ClientBase(object):
     async def _request(self, method, uri, signed, force_params=False, **kwargs):
         kwargs = self._get_request_kwargs(method, signed, force_params, **kwargs)
         print(method, uri, signed, kwargs)
-        async with self._init_session() as session:
+        async with self._init_api_session() as session:
             async with getattr(session, method)(uri, **kwargs) as response:
                 return await self._handle_response(response)
 
@@ -106,7 +106,7 @@ class ClientBase(object):
     def _get_headers(self):
         return {
             'Accept': 'application/json',
-            'User-Agent': 'binance/python',
+            'User-Agent': 'binance-sdk',
             'X-MBX-APIKEY': self._api_key
         }
 

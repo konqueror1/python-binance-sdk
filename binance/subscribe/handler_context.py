@@ -1,10 +1,10 @@
+import asyncio
+
 from .handlers import *
 from binance.common.constants import RET_OK, RET_ERROR
 
-__all__ = [
-    'StreamHandlerContext',
-    'UserStreamHandlerContext'
-]
+KEY_PAYLOAD = 'data'
+KEY_TYPE = 'e'
 
 class HandlerContextBase(object):
     def __init__(self):
@@ -17,7 +17,7 @@ class HandlerContextBase(object):
         :return: RET_ERROR or RET_OK
         """
         set_flag = False
-        for stream_type in self._handler_table:
+        for stream_type in self.HANDLER_MAP:
             if isinstance(handler, self.HANDLER_MAP[stream_type]):
                 self._handler_table[stream_type] = handler
                 return RET_OK
@@ -25,17 +25,36 @@ class HandlerContextBase(object):
         if set_flag is False:
             return RET_ERROR
 
-    async def receive(self, response):
+    async def receive(self, msg):
         """receive response callback function"""
-        pass
+        if KEY_PAYLOAD not in msg:
+            return
 
-class StreamHandlerContext(HandlerContextBase):
+        payload = msg[KEY_PAYLOAD]
+
+        if KEY_TYPE not in payload:
+            return
+
+        payload_type = payload[KEY_TYPE]
+
+        if payload_type not in self._handler_table:
+            return
+
+        handler = self._handler_table[payload_type]
+
+        if asyncio.iscoroutinefunction(handler.receive):
+            await handler.receive(payload)
+        else:
+            handler.receive(payload)
+
+class HandlerContext(HandlerContextBase):
     HANDLER_MAP = {
         'aggTrade': AggTradeHandlerBase,
-        'depthUpdate': DepthHandlerBase,
-        '24hrMiniTicker': TickerHandlerBase
+        'depthUpdate': OrderBookHandlerBase,
+        '24hrMiniTicker': MiniTickerHandlerBase,
+        '24hrTicker': TickerHandlerBase,
         'kline': KlineHandlerBase
     }
 
-class UserStreamHandlerContext(HandlerContextBase):
-    pass
+# class UserStreamHandlerContext(HandlerContextBase):
+#     pass
