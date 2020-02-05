@@ -40,8 +40,7 @@ from binance import Client, TickerHandlerBase, RET_OK, SubType
 client = Client()
 
 async def main():
-    # Start receiving websocket data,
-#   and this will prevent the current process from exiting
+    # Start receiving websocket data
     client.start()
 
     # Implement your own TickerHandler.
