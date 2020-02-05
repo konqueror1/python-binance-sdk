@@ -59,14 +59,6 @@ async def main():
     # Subscribe to ticker change for symbol BTCUSDT
     await client.subscribe('BTCUSDT', SubType.TICKER)
 
-    # Stop receiving websocket message and dispatching to handlers,
-    #   but the websocket connections are still open.
-    # We could `client.start()` to start receiving messages again
-    client.stop()
-
-    # Close all websocket connections
-    client.close()
-
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())
 
