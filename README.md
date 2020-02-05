@@ -71,7 +71,7 @@ async def main():
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())
 
-# Run the loop forever so continuously receiving messages
+# Run the loop forever to keep receiving messages
 loop.run_forever()
 ```
 
