@@ -1,5 +1,7 @@
 # coding=utf-8
 
+# TODO: move to binance.common.exceptions
+
 import json
 
 class BinanceAPIException(Exception):

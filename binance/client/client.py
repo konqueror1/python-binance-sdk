@@ -35,6 +35,9 @@ class Client(ClientBase, ClientGetters, SubscriptionManager):
 
         self._api_key = None
         self._api_secret = None
+        self.key(api_key)
+        self.secret(api_secret)
+
         self._requests_params = requests_params
         self._api_host = api_host
         self._website_host = website_host

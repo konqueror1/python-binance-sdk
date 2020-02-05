@@ -29,6 +29,8 @@ import time
 from operator import itemgetter
 from binance.common.constants import \
     PUBLIC_API_VERSION, WITHDRAW_API_VERSION, PRIVATE_API_VERSION
+from binance.common.exceptions import \
+    BinanceAPIKeyNotDefinedException, BinanceAPISecretNotDefinedException
 
 def order_params(data):
     """Convert params to list with signature as last element
@@ -60,8 +62,14 @@ class ClientBase(object):
         return session
 
     async def _request(self, method, uri, signed, force_params=False, **kwargs):
+        if not self._api_key:
+            raise BinanceAPIKeyNotDefinedException(uri)
+
+        if signed and not self._api_secret:
+            raise BinanceAPISecretNotDefinedException(uri)
+
         kwargs = self._get_request_kwargs(method, signed, force_params, **kwargs)
-        print(method, uri, signed, kwargs)
+
         async with self._init_api_session() as session:
             async with getattr(session, method)(uri, **kwargs) as response:
                 return await self._handle_response(response)

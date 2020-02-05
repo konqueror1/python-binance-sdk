@@ -144,6 +144,6 @@ class StreamBase(object):
 
         msg[KEY_ID] = message_id
         self._message_futures[message_id] = future
-        print('send', socket, json_stringify(msg))
+
         await socket.send(json_stringify(msg))
         return await future
