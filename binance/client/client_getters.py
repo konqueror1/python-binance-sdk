@@ -1,9 +1,8 @@
 import asyncio
 
-from .exceptions import BinanceAPIException, BinanceRequestException, BinanceWithdrawException
-
 from binance.common.utils import interval_to_milliseconds, convert_ts_str
 from binance.common.constants import PRIVATE_API_VERSION
+from binance.common.exceptions import WithdrawException
 
 SIDE_BUY = 'BUY'
 SIDE_SELL = 'SELL'
@@ -317,7 +316,7 @@ class ClientGetters(object):
     async def get_account_status(self, **params):
         res = await self._request_withdraw_api('get', 'accountStatus.html', True, data=params)
         if not res['success']:
-            raise BinanceWithdrawException(res['msg'])
+            raise WithdrawException(res['msg'])
         return res
 
     # Withdraw Endpoints
@@ -328,7 +327,7 @@ class ClientGetters(object):
             params['name'] = params['asset']
         res = await self._request_withdraw_api('post', 'withdraw.html', True, data=params)
         if not res['success']:
-            raise BinanceWithdrawException(res['msg'])
+            raise WithdrawException(res['msg'])
         return res
 
     async def get_deposit_history(self, **params):

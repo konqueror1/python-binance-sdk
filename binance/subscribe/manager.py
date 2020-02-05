@@ -1,6 +1,3 @@
-from threading import Thread
-from time import sleep
-
 from binance.common.utils import make_list, err_msg
 from binance.common.constants import \
     RET_ERROR, RET_OK, \
@@ -34,13 +31,6 @@ def check_subscribe_params(symbols, subtype_list):
 class SubscriptionManager(object):
     def start(self):
         self._receiving = True
-
-        # if self._hanging:
-        #     return self
-
-        # self._hanging = True
-        # self._hang()
-
         return self
 
     def stop(self):
@@ -49,7 +39,6 @@ class SubscriptionManager(object):
         return self
 
     def close(self):
-        # self._hanging = False
         if self._data_stream:
             self._data_stream.cancel()
             self._data_stream = None
@@ -99,13 +88,3 @@ class SubscriptionManager(object):
             self._handler_ctx.set_handler(handler)
 
         return self
-
-    # def _hang_loop(self):
-    #     while self._hang_signal:
-    #         sleep(1)
-    #     self._hanging = False
-
-    # def _hang(self):
-    #     with self._hang_lock:
-    #         thread = Tread(target=self._hang_loop)
-    #         thread.start()

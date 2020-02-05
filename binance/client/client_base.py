@@ -30,7 +30,8 @@ from operator import itemgetter
 from binance.common.constants import \
     PUBLIC_API_VERSION, WITHDRAW_API_VERSION, PRIVATE_API_VERSION
 from binance.common.exceptions import \
-    BinanceAPIKeyNotDefinedException, BinanceAPISecretNotDefinedException
+    APIKeyNotDefinedException, APISecretNotDefinedException, \
+    StatusException, InvalidResponseException
 
 def order_params(data):
     """Convert params to list with signature as last element
@@ -63,10 +64,10 @@ class ClientBase(object):
 
     async def _request(self, method, uri, signed, force_params=False, **kwargs):
         if not self._api_key:
-            raise BinanceAPIKeyNotDefinedException(uri)
+            raise APIKeyNotDefinedException(uri)
 
         if signed and not self._api_secret:
-            raise BinanceAPISecretNotDefinedException(uri)
+            raise APISecretNotDefinedException(uri)
 
         kwargs = self._get_request_kwargs(method, signed, force_params, **kwargs)
 
@@ -80,12 +81,11 @@ class ClientBase(object):
         response.
         """
         if not str(response.status).startswith('2'):
-            raise BinanceAPIException(response, response.status, await response.text())
+            raise StatusException(response, await response.text())
         try:
             return await response.json()
         except ValueError:
-            txt = await response.text()
-            raise BinanceRequestException('Invalid Response: {}'.format(txt))
+            raise InvalidResponseException(response, await response.text())
 
     async def _request_api(self, method, path, signed=False, version=PUBLIC_API_VERSION, **kwargs):
         uri = self._create_api_uri(path, signed, version)

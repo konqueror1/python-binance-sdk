@@ -54,6 +54,7 @@ async def main():
             # So something you want
             await remoteUpdateTicker(ticker_df)
 
+    # Register the handler for `SubType.TICKER`
     client.handler(TickerPrinter())
 
     # Subscribe to ticker change for symbol BTCUSDT
@@ -69,7 +70,7 @@ loop.run_forever()
 ### Subscribe to more symbol pairs and types
 
 ```py
-client.subscribe(
+result = await client.subscribe(
     # We could subscribe more than one symbol pairs at a time
     [
         # Which is equivalent to `BNBUSDT`
@@ -86,11 +87,12 @@ client.subscribe(
 )
 ```
 
-And since we subscribe to **THREE** new types of messages, we need to set the handlers each of which should  `isinstance()` of one of
+And since we subscribe to **THREE** new types of messages, we need to set the handlers each of which should `isinstance()` of one of
 - `binance.AggTradeHandlerBase`
 - `binance.OrderBookHandlerBase`
 - `binance.KlineHandlerBase`
 - `binance.TickerHandlerBase`
+- `binance.MiniTickerHandlerBase`
 
 ```py
 client.handler(MyTradeHandler(), MyOrderBookHandler(), MyKlineHandler())

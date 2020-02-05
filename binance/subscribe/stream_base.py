@@ -4,7 +4,7 @@ import websockets as ws
 
 from binance.common.utils import json_stringify
 from binance.common.exceptions import \
-    BinanceSocketAbandonedException
+    StreamAbandonedException
 
 KEY_ID = 'id'
 KEY_RESULT = 'result'
@@ -135,7 +135,7 @@ class StreamBase(object):
             if self._open_future:
                 socket = await self._open_future
             else:
-                raise BinanceSocketAbandonedException(self._url)
+                raise StreamAbandonedException(self._url)
 
         future = asyncio.Future()
 
