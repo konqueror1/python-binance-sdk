@@ -40,7 +40,7 @@ class SubscriptionManager(object):
 
     def close(self):
         if self._data_stream:
-            self._data_stream.cancel()
+            self._data_stream.close()
             self._data_stream = None
 
         return self

@@ -1,6 +1,7 @@
 import asyncio
 import json
 import websockets as ws
+from abc import ABC, abstractmethod
 
 from binance.common.utils import json_stringify
 from binance.common.exceptions import \
@@ -12,7 +13,7 @@ KEY_RESULT = 'result'
 # TODO: handle error code
 KEY_CODE = 'code'
 
-class StreamBase(object):
+class StreamBase(ABC):
     def __init__(self,
         on_message,
         host,
@@ -118,15 +119,24 @@ class StreamBase(object):
         if delay:
             await asyncio.sleep(delay)
 
+        await self._before_reconnect()
         await self._connect()
+
+    @abstractmethod
+    async def _before_reconnect(self):
+        pass
 
     async def _ping(self):
         if self._socket:
             await self._socket.ping()
 
-    def cancel(self):
+    def close(self):
         self._conn.cancel()
         self._socket = None
+
+    @abstractmethod
+    def _after_close(self):
+        pass
 
     async def send(self, msg):
         socket = self._socket
