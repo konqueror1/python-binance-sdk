@@ -9,16 +9,31 @@ class DataStream(StreamBase):
 
         self._subscribed = set()
 
-    async def subscribe(self, symbols, subtype_list):
+    async _mutate_subscribed(self, symbols, subtype_list, subscribe=True):
         params = []
 
         for s in symbols:
             for t in subtype_list:
                 target = normalize_symbol(s) + '@' + t
                 params.append(target)
-                self._subscribed.add(target)
 
+                if subscribe:
+                    self._subscribed.add(target)
+                else:
+                    self._subscribed.discard(target)
+
+        return params
+
+    async def subscribe(self, symbols, subtype_list):
+        params = self._mutate_subscribed(symbols, subtype_list)
         return await self._subscribe(params)
+
+    async def unsubscribe(self, symbols, subtype_list):
+        params = self._mutate_subscribed(symbols, subtype_list, False)
+        return await self.send({
+            'method': 'UNSUBSCRIBE',
+            'params': params
+        })
 
     async def _before_reconnect(self):
         await self._subscribe(list(self._subscribed))
