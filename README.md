@@ -35,7 +35,7 @@ asyncio.run(main())
 Binance-sdk designs a handler-based APIs to handle all websocket messages, and you are able to not concern about websockets.
 
 ```py
-from binance import Client, TickerHandlerBase, RET_OK, SubType
+from binance import Client, TickerHandlerBase, SubType
 
 client = Client()
 
@@ -47,12 +47,11 @@ async def main():
     class TickerPrinter(TickerHandlerBase):
         # It could either be a sync or async(recommended) method
         async def receive(self, res):
-            code, ticker_df = super(TickerPrinter, self).receive(res)
-            if code != RET_OK:
-                return ret_code, ticker_df
+            ticker_df = super(TickerPrinter, self).receive(res)
 
-            # So something you want
-            await remoteUpdateTicker(ticker_df)
+            # Just print the dataFrame,
+            #   or you could await some coroutine here
+            print(ticker_df)
 
     # Register the handler for `SubType.TICKER`
     client.handler(TickerPrinter())
