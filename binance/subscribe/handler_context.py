@@ -25,6 +25,7 @@ class HandlerContextBase(object):
         if set_flag is False:
             return RET_ERROR
 
+    # TODO: more flexible filter
     async def receive(self, msg):
         """receive response callback function"""
         if KEY_PAYLOAD not in msg:
@@ -49,6 +50,7 @@ class HandlerContextBase(object):
 
 class HandlerContext(HandlerContextBase):
     HANDLER_MAP = {
+        'trade': TradeHandlerBase,
         'aggTrade': AggTradeHandlerBase,
         'depthUpdate': OrderBookHandlerBase,
         '24hrMiniTicker': MiniTickerHandlerBase,

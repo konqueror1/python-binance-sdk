@@ -25,6 +25,7 @@ SUBTYPE_PROP_LIST = [
     'KLINE_WEEK',
     'KLINE_MONTH',
 
+    'TRADE',
     'AGG_TRADE',
     'MINI_TICKER',
     'TICKER',
@@ -51,6 +52,7 @@ SUBTYPE_VALUE_LIST = [KLINE_TYPE_PREFIX + x for x in [
     '1w',
     '1M'
 ]] + [
+    'trade',
     'aggTrade',
     'miniTicker',
     'ticker',
