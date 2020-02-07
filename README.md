@@ -5,7 +5,7 @@
 
 Unofficial Binance SDK for python 3.7+, which:
 
-- Uses Binance's new websocket stream which supports live pub/sub so that we could save websocket connections
+- Uses Binance's new websocket stream which supports live pub/sub so that we only need **ONE** websocket connection.
 - Has optional `pandas.DataFrame` support. If `pandas` is installed, columns of all stream data frames are renamed for readability.
 - Based on python `async`/`await`
 - Manages the order book for you (handled by `OrderBookHandlerBase`), so that you need not to worry about websocket reconnection and message losses.
@@ -40,7 +40,7 @@ asyncio.run(main())
 
 ## Handling messages
 
-Binance-sdk designs a handler-based APIs to handle all websocket messages, and you are able to not concern about websockets.
+Binance-sdk provides handler-based APIs to handle all websocket messages, and you are able to not worry about websockets.
 
 ```py
 from binance import Client, TickerHandlerBase, SubType
