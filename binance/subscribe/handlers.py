@@ -1,4 +1,4 @@
-import pandas as pd
+import importlib
 
 __all__ = [
     'TradeHandlerBase',
@@ -10,10 +10,20 @@ __all__ = [
 ]
 
 class HandlerBase(object):
-    def receive(self, res, index=[0]):
+    def _receive(self, res, index=[0]):
         return pd.DataFrame(
             res, columns=self.COLUMNS, index=index
         ).rename(columns=self.COLUMNS_MAP)
+
+try:
+    pd = importlib.import_module('pandas')
+    HandlerBase.receive = lambda self, res: self._receive(res)
+
+except ModuleNotFoundError:
+    # If pandas is not installed
+    HandlerBase.receive = lambda self, res: res
+except Exception as e:
+    raise e
 
 BASE_TRADE_COLUMNS_MAP = {
     'E': 'event_time',
@@ -68,8 +78,8 @@ class OrderBookHandlerBase(HandlerBase):
     COLUMNS_MAP = ORDER_BOOK_COLUMNS_MAP
     COLUMNS = ORDER_BOOK_COLUMNS
 
-    def receive(self, res):
-        info = super(OrderBookHandlerBase, self).receive(res)
+    def _receive(self, res):
+        info = super(OrderBookHandlerBase, self)._receive(res)
 
         bids = create_depth_df(res['b'])
         asks = create_depth_df(res['a'])
@@ -102,11 +112,11 @@ class KlineHandlerBase(HandlerBase):
     COLUMNS_MAP = KLINE_COLUMNS_MAP
     COLUMNS = KLINE_COLUMNS
 
-    def receive(self, res):
+    def _receive(self, res):
         k = res['k']
         k['E'] = res['E']
 
-        return super(KlineHandlerBase, self).receive(k)
+        return super(KlineHandlerBase, self)._receive(k)
 
 MINI_TICKER_COLUMNS_MAP = {
     'E': 'event_time',

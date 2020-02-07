@@ -6,14 +6,22 @@
 Unofficial Binance SDK for python 3.7+, which:
 
 - Uses Binance's new websocket stream which supports live pub/sub so that we could save websocket connections
-- Supports `pandas.DataFrame`
+- Has optional `pandas.DataFrame` support. With `pandas.DataFrame`, columns of all stream data frame are renamed for readability.
 - Based on python `async`/`await`
 - Manages the order book for you (handled by `OrderBookHandlerBase`), so that you need not to worry about websocket reconnection and message losses.
 
 ## Install
 
 ```sh
+# Without pandas support
 pip install binance-sdk
+```
+
+or
+
+```sh
+# With pandas support
+pip install binance-sdk[pandas]
 ```
 
 ## Usage
@@ -47,11 +55,13 @@ async def main():
     class TickerPrinter(TickerHandlerBase):
         # It could either be a sync or async(recommended) method
         async def receive(self, res):
-            ticker_df = super(TickerPrinter, self).receive(res)
+            # If binance-sdk is installed with pandas support, then
+            #   `ticker` will be a dataFrame with columns renamed
+            # Or `ticker` is a raw dict
+            ticker = super(TickerPrinter, self).receive(res)
 
-            # Just print the dataFrame,
-            #   or you could await some coroutine here
-            print(ticker_df)
+            # Just print the ticker
+            print(ticker)
 
     # Register the handler for `SubType.TICKER`
     client.handler(TickerPrinter())
@@ -87,6 +97,7 @@ result = await client.subscribe(
 ```
 
 And since we subscribe to **THREE** new types of messages, we need to set the handlers each of which should `isinstance()` of one of
+- `binance.TradeHandlerBase`
 - `binance.AggTradeHandlerBase`
 - `binance.OrderBookHandlerBase`
 - `binance.KlineHandlerBase`

@@ -16,6 +16,9 @@ setup(
     author = 'Kael Zhang',
     author_email = 'i+pypi@kael.me',
     description = ('Binance Python SDK'),
+    extras_require = {
+        'pandas': ['pandas']
+    },
     license = 'MIT',
     keywords = 'binance exchange sdk rest api bitcoin btc bnb ethereum eth neo',
     url = 'https://github.com/kaelzhang/python-binance-sdk',
