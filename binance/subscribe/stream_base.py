@@ -104,7 +104,7 @@ class StreamBase(ABC):
     async def _reconnect(self):
         self._before_connect()
 
-        self.cancel()
+        self.close()
         retries = self._retries
         self._retries += 1
         abandon, delay, reset = self._retry_policy(retries)

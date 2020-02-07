@@ -69,3 +69,9 @@ class InvalidResponseException(Exception):
         return err_msg('invalid response for "%s": %s',
             self.response.url, self.response_text)
 
+class InvalidSubParamsException(Exception):
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return err_msg('invalid subscribe params: %s', self.message)

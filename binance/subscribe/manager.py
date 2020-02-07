@@ -2,6 +2,7 @@ from binance.common.utils import make_list, err_msg
 from binance.common.constants import \
     RET_ERROR, RET_OK, \
     SUBTYPE_MAP
+from binance.common.exceptions import InvalidSubParamsException
 
 from .streams import DataStream
 
@@ -61,20 +62,29 @@ class SubscriptionManager(object):
         return self._data_stream
 
     # subscribe to the stream for symbols
-    async def subscribe(self, symbols, subtype_list):
+    async def _subscribe(self, symbols, subtype_list, subscribe=True):
         code, msg, symbols, subtype_list = check_subscribe_params(
             symbols, subtype_list)
 
         if code != RET_OK:
-            # todo
-            raise
+            raise InvalidSubParamsException(msg)
 
         stream = self._get_data_stream()
 
-        return await stream.subscribe(symbols, subtype_list)
+        if subscribe:
+            return await stream.subscribe(symbols, subtype_list)
+        else:
+            return await stream.unsubscribe(symbols, subtype_list)
 
-    def unsubscribe(self, symbols, sub_type_list):
-        return self
+
+    async def subscribe(self, symbols, subtype_list):
+        return await self._subscribe(symbols, subtype_list)
+
+    async def unsubscribe(self, symbols, subtype_list):
+        return await self._subscribe(symbols, subtype_list, False)
+
+    async def list_subscriptions(self):
+        return await self._get_data_stream().list_subscriptions()
 
     # subscribe to user streams
     def subscribe_user(sef):

@@ -9,7 +9,7 @@ class DataStream(StreamBase):
 
         self._subscribed = set()
 
-    async _mutate_subscribed(self, symbols, subtype_list, subscribe=True):
+    def _mutate_subscribed(self, symbols, subtype_list, subscribe=True):
         params = []
 
         for s in symbols:
