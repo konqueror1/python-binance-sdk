@@ -1,5 +1,7 @@
 import importlib
 
+from binance.common.constants import STREAM_TYPE_MAP, STREAM_OHLC_MAP
+
 __all__ = [
     'TradeHandlerBase',
     'AggTradeHandlerBase',
@@ -26,6 +28,7 @@ except Exception as e:
     raise e
 
 BASE_TRADE_COLUMNS_MAP = {
+    **STREAM_TYPE_MAP,
     'E': 'event_time',
     's': 'symbol',
     'p': 'price',
@@ -61,6 +64,7 @@ class AggTradeHandlerBase(HandlerBase):
     COLUMNS = AGG_TRADE_COLUMNS
 
 ORDER_BOOK_COLUMNS_MAP = {
+    **STREAM_TYPE_MAP,
     'E': 'event_time',
     's': 'symbol',
     'U': 'first_update_id',
@@ -87,6 +91,7 @@ class OrderBookHandlerBase(HandlerBase):
         return info, [bids, asks]
 
 KLINE_COLUMNS_MAP = {
+    **STREAM_TYPE_MAP,
     'E': 'event_time',
     't': 'open_time',
     'T': 'close_time',
@@ -94,10 +99,7 @@ KLINE_COLUMNS_MAP = {
     'i': 'interval',
     'f': 'first_trade_id',
     'L': 'last_trade_id',
-    'o': 'open',
-    'h': 'high',
-    'l': 'low',
-    'c': 'close',
+    **STREAM_OHLC_MAP,
     'x': 'is_closed',
     'v': 'volume',
     'q': 'quote_volume',
@@ -119,12 +121,10 @@ class KlineHandlerBase(HandlerBase):
         return super(KlineHandlerBase, self)._receive(k)
 
 MINI_TICKER_COLUMNS_MAP = {
+    **STREAM_TYPE_MAP,
     'E': 'event_time',
     's': 'symbol',
-    'o': 'open',
-    'h': 'high',
-    'l': 'low',
-    'c': 'close',
+    **STREAM_OHLC_MAP,
     'v': 'volume',
     'q': 'quote_volume',
 }

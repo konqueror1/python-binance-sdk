@@ -87,11 +87,14 @@ class SubscriptionManager(object):
         return await self._get_data_stream().list_subscriptions()
 
     # subscribe to user streams
-    def subscribe_user(sef):
+    async def subscribe_user(sef):
         return self
 
     def unsubscribe_user(self):
         return self
+
+    # def keep_alive(self):
+    #     pass
 
     def handler(self, *handlers):
         for handler in handlers:
