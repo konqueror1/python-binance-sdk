@@ -1,7 +1,9 @@
 import asyncio
 
 from .handlers import *
-from binance.common.constants import SubType, KLINE_SUBTYPE_LIST
+from binance.common.constants import SubType, KLINE_SUBTYPE_LIST, \
+    KEY_PAYLOAD, KEY_TYPE
+
 from binance.common.utils import normalize_symbol
 from binance.common.exceptions import InvalidSubTypeParamException
 

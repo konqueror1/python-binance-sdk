@@ -3,9 +3,6 @@ import asyncio
 from .processors import PROCESSORS, ProcessorBase
 from binance.common.constants import RET_OK, RET_ERROR
 
-KEY_PAYLOAD = 'data'
-KEY_TYPE = 'e'
-
 class HandlerContext(object):
     PROCESSORS = PROCESSORS
 

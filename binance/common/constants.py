@@ -113,3 +113,6 @@ STREAM_OHLC_MAP = {
     'l': 'low',
     'c': 'close'
 }
+
+KEY_PAYLOAD = 'data'
+KEY_TYPE = 'e'
