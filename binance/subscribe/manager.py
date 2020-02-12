@@ -62,6 +62,7 @@ class SubscriptionManager(object):
         return self._data_stream
 
     # subscribe to the stream for symbols
+    # TODO: move to context
     async def _subscribe(self, symbols, subtype_list, subscribe=True):
         code, msg, symbols, subtype_list = check_subscribe_params(
             symbols, subtype_list)

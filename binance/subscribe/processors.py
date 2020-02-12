@@ -2,6 +2,8 @@ import asyncio
 
 from .handlers import *
 from binance.common.constants import SubType, KLINE_SUBTYPE_LIST
+from binance.common.utils import normalize_symbol
+from binance.common.exceptions import InvalidSubTypeParamException
 
 class ProcessorBase(object):
     # The handler class
@@ -17,13 +19,23 @@ class ProcessorBase(object):
         self._handlers = set()
         self.PAYLOAD_TYPE = self.PAYLOAD_TYPE or self.SUB_TYPE
 
-    def key(self, t, symbol):
-        return symbol + '@' + t
+    def subscribe_param(self, t, *args):
+        if len(args) == 0:
+            raise InvalidSubTypeParamException(
+                t, 'symbol', 'string expected but not specified')
 
-    def isHandlerType(self, handler):
+        symbol = args[0]
+
+        if type(symbol) is not str:
+            raise InvalidSubTypeParamException(
+                t, 'symbol', 'string expected but got `%s`' % symbol)
+
+        return normalize_symbol(symbol) + '@' + t
+
+    def is_handler_type(self, handler):
         return isinstance(handler, self.HANDLER)
 
-    def isMessageType(self, msg):
+    def is_message_type(self, msg):
         payload = data.get(KEY_PAYLOAD)
         if payload == None:
             return False, None
@@ -31,7 +43,7 @@ class ProcessorBase(object):
         if payload.get(KEY_TYPE) == self.PAYLOAD_TYPE:
             return True, payload
 
-    def isSubType(self, t):
+    def is_subtype(self, t):
         return t == self.SUB_TYPE
 
     def add_handler(self, handler):
@@ -53,7 +65,7 @@ class KlineProcessor(ProcessorBase):
     HANDLER = KlineHandlerBase
     PAYLOAD_TYPE = 'kline'
 
-    def isSubType(self, t):
+    def is_subtype(self, t):
         return t in KLINE_SUBTYPE_LIST
 
 class TradeProcessor(ProcessorBase):

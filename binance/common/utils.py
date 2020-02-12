@@ -68,8 +68,8 @@ def make_list(l):
     [ret.append(x) for x in tmp if x not in ret]
     return ret
 
-def err_msg(str, *args):
-    return ERROR_PREFIX + str % args
+def err_msg(string, *args):
+    return ERROR_PREFIX + string % args
 
 def json_stringify(obj):
     return json.dumps(obj, separators=(',', ':'))

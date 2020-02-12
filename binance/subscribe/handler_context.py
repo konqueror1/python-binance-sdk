@@ -1,6 +1,6 @@
 import asyncio
 
-from .processors import PROCESSORS
+from .processors import PROCESSORS, ProcessorBase
 from binance.common.constants import RET_OK, RET_ERROR
 
 KEY_PAYLOAD = 'data'
@@ -21,21 +21,31 @@ class HandlerContext(object):
         """
         set_flag = False
         for processor in self._processors:
-            if processor.isHandlerType(handler):
+            if processor.is_handler_type(handler):
                 processor.add_handler(handler)
                 return RET_OK
 
         if set_flag is False:
             return RET_ERROR
 
-    # client.subscribe(SubType.Ticker, )
-    def subscribe_params(self, *args):
+    # client.subscribe(subtype_needs_no_param_or_has_default_param)
+    # client.subscribe(subtype, param)
+    # client.subscribe(subtypes, params)
+    # client.subscribe((subtype, param), *subtype_param_pairs)
+    async def subscribe_params(self, *args):
         subs = args if type(args[0]) is tuple else (args)
+
+        for subtype_param in subs:
+            pass
+
+    def register_processor(self, processor):
+        if isinstance(processor, ProcessorBase):
+            self._processors.append(processor)
 
     async def receive(self, msg):
         """receive response callback function"""
         for processor in self._processors:
-            is_payload, payload = processor.isMessageType(msg)
+            is_payload, payload = processor.is_message_type(msg)
             if is_payload:
                 return await processor.dispatch(payload)
 

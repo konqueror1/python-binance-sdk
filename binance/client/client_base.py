@@ -99,6 +99,7 @@ class ClientBase(object):
         uri = self._create_website_uri(path)
         return await self._request(method, uri, signed, **kwargs)
 
+    # TODO: make _get public, the same as post, put, delete
     async def _get(self, path, signed=False, version=PUBLIC_API_VERSION, **kwargs):
         return await self._request_api('get', path, signed, version, **kwargs)
 
