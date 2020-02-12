@@ -38,3 +38,4 @@ from binance.client import Client
 from binance.common.constants import *
 from binance.common.exceptions import *
 from binance.subscribe.handlers import *
+from binance.subscribe.processors import ProcessorBase

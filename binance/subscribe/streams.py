@@ -1,7 +1,7 @@
 from .stream_base import StreamBase
 from binance.common.utils import normalize_symbol
 
-class DataStream(StreamBase):
+class Stream(StreamBase):
     def __init__(self,
         on_message, host, retry_policy, timeout):
         super(DataStream, self).__init__(
@@ -23,6 +23,9 @@ class DataStream(StreamBase):
                     self._subscribed.discard(target)
 
         return params
+
+    async def subscribe(self, symbols):
+
 
     async def subscribe(self, symbols, subtype_list):
         params = self._mutate_subscribed(symbols, subtype_list)

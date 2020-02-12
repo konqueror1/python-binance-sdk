@@ -29,10 +29,11 @@ SUBTYPE_PROP_LIST = [
     'AGG_TRADE',
     'MINI_TICKER',
     'TICKER',
-    'ORDER_BOOK'
+    'ORDER_BOOK',
+    'ALL_MARKET_MINI_TICKERS'
 ]
 
-SUBTYPE_VALUE_LIST = [KLINE_TYPE_PREFIX + x for x in [
+KLINE_SUBTYPE_LIST = [KLINE_TYPE_PREFIX + x for x in [
     '1m',
     '3m',
     '5m',
@@ -51,12 +52,15 @@ SUBTYPE_VALUE_LIST = [KLINE_TYPE_PREFIX + x for x in [
 
     '1w',
     '1M'
-]] + [
+]]
+
+SUBTYPE_VALUE_LIST = KLINE_SUBTYPE_LIST + [
     'trade',
     'aggTrade',
     'miniTicker',
     'ticker',
-    'depth'
+    'depth',
+    'allMarketMiniTickers'
 ]
 
 SUBTYPE_MAP = {}
