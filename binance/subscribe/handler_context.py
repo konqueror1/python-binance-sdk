@@ -1,7 +1,7 @@
 import asyncio
 
 from .processors import PROCESSORS, ProcessorBase
-from binance.common.constants import RET_OK, RET_ERROR
+from binance.common.constants import RET_OK, RET_ERROR, ATOM
 from binance.common.exceptions import InvalidSubParamsException, \
     UnsupportedSubTypeException
 
@@ -48,7 +48,6 @@ class HandlerContext(object):
     # )
     async def subscribe_params(self, subscribe, *args):
         subs = args if type(args[0]) is tuple else (args,)
-        atom = {}
         tasks = []
 
         for subtype_param in subs:
@@ -56,7 +55,7 @@ class HandlerContext(object):
             # ('allMarketMiniTickers')
             if len(subtype_param) == 1:
                 subtypes = make_list(subtype_param[0])
-                params = [atom]
+                params = [ATOM]
             # ('trade', 'BNBUSDT')
             # (['trade'], ['BNBUSDT'])
             elif len(subtype_param) == 2:
@@ -67,7 +66,7 @@ class HandlerContext(object):
 
             for subtype in subtypes:
                 for param in params:
-                    a = (subtype, param) if param != atom else (subtype)
+                    a = (subtype, param) if param != ATOM else (subtype)
                     tasks.append(self._subscribe_param(subscribe, *a))
 
         return await asyncio.gather(*tasks)
@@ -96,8 +95,9 @@ class HandlerContext(object):
         """receive response callback function"""
         for processor in self._processors:
             is_payload, payload = processor.is_message_type(msg)
+
             if is_payload:
-                return await processor.dispatch(payload)
+                await processor.dispatch(payload)
 
 # class UserStreamHandlerContext(HandlerContextBase):
 #     pass

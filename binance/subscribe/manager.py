@@ -48,7 +48,11 @@ class SubscriptionManager(object):
 
     async def _receive(self, msg):
         if self._receiving:
-            await self._handler_ctx.receive(msg)
+            try:
+                await self._handler_ctx.receive(msg)
+            except Exception as e:
+                print(e)
+
 
     def _get_data_stream(self):
         if not self._data_stream:

@@ -2,7 +2,7 @@ import asyncio
 
 from .handlers import *
 from binance.common.constants import SubType, KLINE_SUBTYPE_LIST, \
-    KEY_PAYLOAD, KEY_TYPE
+    KEY_PAYLOAD, KEY_TYPE, ATOM
 
 from binance.common.utils import normalize_symbol
 from binance.common.exceptions import InvalidSubTypeParamException
@@ -12,7 +12,7 @@ class ProcessorBase(object):
     HANDLER = None
 
     # The payload['e'] of message
-    PAYLOAD_TYPE = {}
+    PAYLOAD_TYPE = ATOM
 
     # subtype used by client.subscribe
     SUB_TYPE = None
@@ -20,7 +20,8 @@ class ProcessorBase(object):
     def __init__(self):
         self._handlers = set()
         # self._client = client
-        self.PAYLOAD_TYPE = self.PAYLOAD_TYPE or self.SUB_TYPE
+        self.PAYLOAD_TYPE = self.PAYLOAD_TYPE \
+            if self.PAYLOAD_TYPE != ATOM else self.SUB_TYPE
 
     def subscribe_param(self, t, *args):
         if len(args) == 0:
@@ -39,12 +40,12 @@ class ProcessorBase(object):
         return isinstance(handler, self.HANDLER)
 
     def is_message_type(self, msg):
-        payload = data.get(KEY_PAYLOAD)
-        if payload == None:
-            return False, None
+        payload = msg.get(KEY_PAYLOAD)
 
-        if payload.get(KEY_TYPE) == self.PAYLOAD_TYPE:
+        if payload != None and payload.get(KEY_TYPE) == self.PAYLOAD_TYPE:
             return True, payload
+
+        return False, None
 
     def is_subtype(self, t):
         return t == self.SUB_TYPE
@@ -82,14 +83,17 @@ class AggTradeProcessor(ProcessorBase):
 class OrderBookProcessor(ProcessorBase):
     HANDLER = OrderBookHandlerBase
     SUB_TYPE = SubType.ORDER_BOOK
+    PAYLOAD_TYPE = 'depthUpdate'
 
 class MiniTickerProcessor(ProcessorBase):
     HANDLER = MiniTickerHandlerBase
     SUB_TYPE = SubType.MINI_TICKER
+    PAYLOAD_TYPE = '24hrMiniTicker'
 
 class TickerProcessor(ProcessorBase):
     HANDLER = TickerHandlerBase
     SUB_TYPE = SubType.TICKER
+    PAYLOAD_TYPE = '24hrTicker'
 
 # class AllMarketMiniTickerProcessor(object):
 #     HANDLER = AllMarketMiniTickerHandlerBase

@@ -116,3 +116,5 @@ STREAM_OHLC_MAP = {
 
 KEY_PAYLOAD = 'data'
 KEY_TYPE = 'e'
+
+ATOM = {}
