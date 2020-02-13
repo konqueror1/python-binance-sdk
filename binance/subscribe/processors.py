@@ -19,6 +19,7 @@ class ProcessorBase(object):
 
     def __init__(self):
         self._handlers = set()
+        # self._client = client
         self.PAYLOAD_TYPE = self.PAYLOAD_TYPE or self.SUB_TYPE
 
     def subscribe_param(self, t, *args):
@@ -74,19 +75,19 @@ class TradeProcessor(ProcessorBase):
     HANDLER = TradeHandlerBase
     SUB_TYPE = SubType.TRADE
 
-class AggTradeProcessor(object):
+class AggTradeProcessor(ProcessorBase):
     HANDLER = AggTradeHandlerBase
     SUB_TYPE = SubType.AGG_TRADE
 
-class OrderBookProcessor(object):
+class OrderBookProcessor(ProcessorBase):
     HANDLER = OrderBookHandlerBase
     SUB_TYPE = SubType.ORDER_BOOK
 
-class MiniTickerProcessor(object):
+class MiniTickerProcessor(ProcessorBase):
     HANDLER = MiniTickerHandlerBase
     SUB_TYPE = SubType.MINI_TICKER
 
-class TickerProcessor(object):
+class TickerProcessor(ProcessorBase):
     HANDLER = TickerHandlerBase
     SUB_TYPE = SubType.TICKER
 

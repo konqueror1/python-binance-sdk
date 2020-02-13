@@ -4,51 +4,38 @@ from binance.common.utils import normalize_symbol
 class Stream(StreamBase):
     def __init__(self,
         on_message, host, retry_policy, timeout):
-        super(DataStream, self).__init__(
+        super(Stream, self).__init__(
             on_message, host, retry_policy, timeout)
 
         self._subscribed = set()
 
-    def _mutate_subscribed(self, symbols, subtype_list, subscribe=True):
-        params = []
+    async def subscribe(self, params):
+        ret = await self.send({
+            'method': 'SUBSCRIBE',
+            'params': params
+        })
 
-        for s in symbols:
-            for t in subtype_list:
-                target = normalize_symbol(s) + '@' + t
-                params.append(target)
+        for param in params:
+            self._subscribed.add(param)
 
-                if subscribe:
-                    self._subscribed.add(target)
-                else:
-                    self._subscribed.discard(target)
+        return ret
 
-        return params
-
-    async def subscribe(self, symbols):
-
-
-    async def subscribe(self, symbols, subtype_list):
-        params = self._mutate_subscribed(symbols, subtype_list)
-        return await self._subscribe(params)
-
-    async def unsubscribe(self, symbols, subtype_list):
-        params = self._mutate_subscribed(symbols, subtype_list, False)
-        return await self.send({
+    async def unsubscribe(self, params):
+        ret = await self.send({
             'method': 'UNSUBSCRIBE',
             'params': params
         })
 
+        for param in params:
+            self._subscribed.discard(param)
+
+        return ret
+
     async def _before_reconnect(self):
-        await self._subscribe(list(self._subscribed))
+        await self.subscribe(list(self._subscribed))
 
     def _after_close(self):
         self._subscribed.clear()
-
-    def _subscribe(self, params):
-        return self.send({
-            'method': 'SUBSCRIBE',
-            'params': params
-        })
 
     async def list_subscriptions(self):
         return await self.send({

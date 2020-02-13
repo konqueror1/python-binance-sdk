@@ -1,5 +1,3 @@
-from threading import Lock
-
 from .client_base import ClientBase
 from .client_getters import ClientGetters
 from binance.subscribe.manager import SubscriptionManager

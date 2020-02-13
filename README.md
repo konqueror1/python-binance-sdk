@@ -24,7 +24,7 @@ or
 pip install binance-sdk[pandas]
 ```
 
-## Usage
+## Basic Usage
 
 ```py
 import asyncio
@@ -67,7 +67,7 @@ async def main():
     client.handler(TickerPrinter())
 
     # Subscribe to ticker change for symbol BTCUSDT
-    await client.subscribe('BTCUSDT', SubType.TICKER)
+    await client.subscribe(SubType.TICKER, 'BTCUSDT')
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())
@@ -80,18 +80,18 @@ loop.run_forever()
 
 ```py
 result = await client.subscribe(
-    # We could subscribe more than one symbol pairs at a time
-    [
-        # Which is equivalent to `BNBUSDT`
-        'BNB_USDT',
-        'BNBBTC'
-    ],
     # We could also subscribe multiple types
     #   for both `BNBUSDT` and 'BNBBTC'
     [
         SubType.AGG_TRADE,
         SubType.ORDER_BOOK,
         SubType.KLINE_DAY
+    ],
+    # We could subscribe more than one symbol pairs at a time
+    [
+        # Which is equivalent to `BNBUSDT`
+        'BNB_USDT',
+        'BNBBTC'
     ]
 )
 ```

@@ -76,6 +76,13 @@ class InvalidSubParamsException(Exception):
     def __str__(self):
         return err_msg('invalid subscribe params: %s', self.message)
 
+class UnsupportedSubTypeException(Exception):
+    def __init__(self, subtype):
+        self.subtype = subtype
+
+    def __str__(self):
+        return err_msg('subtype "%s" is not supported', self.subtype)
+
 class InvalidSubTypeParamException(Exception):
     def __init__(self, subtype, param_name, reason):
         self.subtype = subtype
