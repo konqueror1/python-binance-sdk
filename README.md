@@ -56,7 +56,7 @@ async def main():
         # It could either be a sync or async(recommended) method
         async def receive(self, res):
             # If binance-sdk is installed with pandas support, then
-            #   `ticker` will be a dataFrame with columns renamed
+            #   `ticker` will be a `DataFrame` with columns renamed
             # Or `ticker` is a raw dict
             ticker = super(TickerPrinter, self).receive(res)
 
@@ -74,6 +74,13 @@ loop.run_until_complete(main())
 
 # Run the loop forever to keep receiving messages
 loop.run_forever()
+
+# It prints a pandas.DataFrame for each message
+
+#    type        event_time     symbol   open            high            low            ...
+# 0  24hrTicker  1581597461196  BTCUSDT  10328.26000000  10491.00000000  10080.00000000 ...
+
+# ...
 ```
 
 ### Subscribe to more symbol pairs and types
