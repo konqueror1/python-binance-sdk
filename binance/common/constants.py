@@ -34,7 +34,7 @@ SUBTYPE_PROP_LIST = [
     'ALL_MARKET_MINI_TICKERS',
     'ALL_MARKET_TICKERS',
 
-    'USER'
+    # 'USER'
 ]
 
 KLINE_SUBTYPE_LIST = [KLINE_TYPE_PREFIX + x for x in [
@@ -68,7 +68,7 @@ SUBTYPE_VALUE_LIST = KLINE_SUBTYPE_LIST + [
     'allMarketMiniTickers',
     'allMarketTickers',
 
-    'user'
+    # 'user'
 ]
 
 SUBTYPE_MAP = {}

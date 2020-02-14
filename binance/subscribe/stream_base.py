@@ -73,9 +73,9 @@ class StreamBase(ABC):
             msg = await asyncio.wait_for(
                 self._socket.recv(), timeout=self._timeout)
         except asyncio.TimeoutError:
-            await self.ping()
+            await self._socket.ping()
         except asyncio.CancelledError:
-            await self.ping()
+            await self._socket.ping()
         else:
             try:
                 parsed = json.loads(msg)
@@ -122,13 +122,13 @@ class StreamBase(ABC):
     async def _before_reconnect(self):
         pass
 
-    def close(self):
-        self._conn.cancel()
-        self._socket = None
-
     @abstractmethod
     def _after_close(self):
         pass
+
+    def close(self):
+        self._conn.cancel()
+        self._socket = None
 
     async def send(self, msg):
         socket = self._socket
