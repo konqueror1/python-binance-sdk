@@ -108,8 +108,10 @@ And since we subscribe to **THREE** new types of messages, we need to set the ha
 - `binance.AggTradeHandlerBase`
 - `binance.OrderBookHandlerBase`
 - `binance.KlineHandlerBase`
-- `binance.TickerHandlerBase`
 - `binance.MiniTickerHandlerBase`
+- `binance.TickerHandlerBase`
+- `binance.AllMarketMiniTickersHandlerBase`
+- `binance.AllMarketTickersHandlerBase`
 
 ```py
 client.handler(MyTradeHandler(), MyOrderBookHandler(), MyKlineHandler())

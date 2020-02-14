@@ -10,9 +10,9 @@ from binance.common.utils import make_list, run
 class HandlerContext(object):
     PROCESSORS = PROCESSORS
 
-    def __init__(self):
+    def __init__(self, client):
         self._handler_table = {}
-        self._processors = [Factory() for Factory in self.PROCESSORS]
+        self._processors = [Factory(client) for Factory in self.PROCESSORS]
         self._processor_cache = {}
 
     def set_handler(self, handler):
@@ -73,7 +73,7 @@ class HandlerContext(object):
 
     async def _subscribe_param(self, subscribe, *args):
         processor = self._get_processor(args[0])
-        return await run(processor.subscribe_param, *args)
+        return await run(processor.subscribe_param, subscribe, *args)
 
     def _get_processor(self, subtype):
         processor = self._processor_cache.get(subtype)

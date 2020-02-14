@@ -5,6 +5,7 @@ from binance.common.constants import \
 from binance.common.exceptions import InvalidSubParamsException
 
 from .streams import Stream
+from .handler_context import HandlerContext
 
 # def get_subtype_list_str():
 #     return '\n'.join([
@@ -44,6 +45,8 @@ class SubscriptionManager(object):
             self._data_stream.close()
             self._data_stream = None
 
+        self._handler_ctx = None
+
         return self
 
     async def _receive(self, msg):
@@ -53,6 +56,11 @@ class SubscriptionManager(object):
             except Exception as e:
                 print(e)
 
+    def _get_handler_ctx(self):
+        if not self._handler_ctx:
+            self._handler_ctx = HandlerContext(self)
+
+        return self._handler_ctx
 
     def _get_data_stream(self):
         if not self._data_stream:
@@ -67,8 +75,10 @@ class SubscriptionManager(object):
 
     # subscribe to the stream for symbols
     async def _subscribe(self, subscribe, args):
+        params = await self._get_handler_ctx().subscribe_params(
+            subscribe, *args)
+
         stream = self._get_data_stream()
-        params = await self._handler_ctx.subscribe_params(subscribe, *args)
 
         if subscribe:
             return await stream.subscribe(params)
@@ -84,18 +94,10 @@ class SubscriptionManager(object):
     async def list_subscriptions(self):
         return await self._get_data_stream().list_subscriptions()
 
-    # subscribe to user streams
-    async def subscribe_user(sef):
-        return self
-
-    def unsubscribe_user(self):
-        return self
-
-    # def keep_alive(self):
-    #     pass
-
     def handler(self, *handlers):
+        ctx = self._get_handler_ctx()
+
         for handler in handlers:
-            self._handler_ctx.set_handler(handler)
+            ctx.set_handler(handler)
 
         return self

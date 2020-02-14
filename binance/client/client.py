@@ -1,7 +1,6 @@
 from .client_base import ClientBase
 from .client_getters import ClientGetters
 from binance.subscribe.manager import SubscriptionManager
-from binance.subscribe.handler_context import HandlerContext
 
 from binance.common.constants import \
     API_HOST, WEBSITE_HOST, STREAM_HOST, \
@@ -48,7 +47,7 @@ class Client(ClientBase, ClientGetters, SubscriptionManager):
 
         self._receiving = False
 
-        self._handler_ctx = HandlerContext()
+        self._handler_ctx = None
 
         self._data_stream = None
 

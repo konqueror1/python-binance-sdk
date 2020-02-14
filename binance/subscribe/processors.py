@@ -17,13 +17,14 @@ class ProcessorBase(object):
     # subtype used by client.subscribe
     SUB_TYPE = None
 
-    def __init__(self):
+    def __init__(self, client):
+        self._client = client
+
         self._handlers = set()
-        # self._client = client
         self.PAYLOAD_TYPE = self.PAYLOAD_TYPE \
             if self.PAYLOAD_TYPE != ATOM else self.SUB_TYPE
 
-    def subscribe_param(self, t, *args):
+    def subscribe_param(self, subscribe, t, *args):
         if len(args) == 0:
             raise InvalidSubTypeParamException(
                 t, 'symbol', 'string expected but not specified')
@@ -109,7 +110,7 @@ class AllMarketMiniTickersProcessor(ProcessorBase):
 
         return True, msg.get(KEY_PAYLOAD)
 
-    def subscribe_param(self, t, *args):
+    def subscribe_param(self, subscribe, t, *args):
         if len(args) == 0:
             interval = 1000
         else:
@@ -122,6 +123,50 @@ class AllMarketTickersProcessor(AllMarketMiniTickersProcessor):
     SUB_TYPE = SubType.ALL_MARKET_TICKERS
     STREAM_TYPE_PREFIX = '!ticker@arr'
 
+class UserProcessor(ProcessorBase):
+    HANDLER = UserHandlerBase
+    SUB_TYPE = SubType.USER
+
+    KEEP_ALIVE_INTERVAL = 60 * 30
+
+    def __init__(self, *args):
+        super(UserProcessor, self).__init__(self, *args)
+
+        self._listen_key = None
+        self._keep_alive_task = None
+
+    async def subscribe_param(self, subscribe, t):
+        if subscribe == False:
+            key = self._listen_key
+            self._listen_key = None
+            return key
+
+        key = await self._client.get_user_listen_key()
+
+        self._listen_key = key
+        self._start_keep_alive()
+
+        return key
+
+    async def _keep_alive(self):
+        while True:
+            await asyncio.sleep(self.KEEP_ALIVE_INTERVAL)
+            if self._listen_key:
+                await self._client.keepalive_listen_key(self._listen_key)
+
+    def _start_keep_alive(self):
+        self._stop_keep_alive()
+        self._keep_alive_task = asyncio.create_task(self._keep_alive())
+
+    def _stop_keep_alive(self):
+        if self._keep_alive_task:
+            self._keep_alive_task.cancel()
+            self._keep_alive_task = None
+
+    async def close_stream(self):
+        self._stop_keep_alive()
+        await self._client.close_listen_key(self._listen_key)
+
 PROCESSORS = [
     KlineProcessor,
     TradeProcessor,
@@ -130,5 +175,6 @@ PROCESSORS = [
     MiniTickerProcessor,
     TickerProcessor,
     AllMarketMiniTickersProcessor,
-    AllMarketTickersProcessor
+    AllMarketTickersProcessor,
+    UserProcessor
 ]

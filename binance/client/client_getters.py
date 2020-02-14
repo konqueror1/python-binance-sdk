@@ -344,17 +344,17 @@ class ClientGetters(object):
 
     # User Stream Endpoints
 
-    async def stream_get_listen_key(self):
+    async def get_user_listen_key(self):
         res = await self._post('userDataStream', False, data={})
         return res['listenKey']
 
-    async def stream_keepalive(self, listenKey):
+    async def keepalive_listen_key(self, listenKey):
         params = {
             'listenKey': listenKey
         }
         return await self._put('userDataStream', False, data=params)
 
-    async def stream_close(self, listenKey):
+    async def close_listen_key(self, listenKey):
         params = {
             'listenKey': listenKey
         }
