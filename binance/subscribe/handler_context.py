@@ -66,7 +66,7 @@ class HandlerContext(object):
 
             for subtype in subtypes:
                 for param in params:
-                    a = (subtype, param) if param != ATOM else (subtype)
+                    a = (subtype, param) if param != ATOM else (subtype,)
                     tasks.append(self._subscribe_param(subscribe, *a))
 
         return await asyncio.gather(*tasks)

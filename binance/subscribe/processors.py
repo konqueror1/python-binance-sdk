@@ -2,7 +2,7 @@ import asyncio
 
 from .handlers import *
 from binance.common.constants import SubType, KLINE_SUBTYPE_LIST, \
-    KEY_PAYLOAD, KEY_TYPE, ATOM
+    KEY_PAYLOAD, KEY_PAYLOAD_TYPE, KEY_STREAM_TYPE, ATOM
 
 from binance.common.utils import normalize_symbol
 from binance.common.exceptions import InvalidSubTypeParamException
@@ -42,7 +42,8 @@ class ProcessorBase(object):
     def is_message_type(self, msg):
         payload = msg.get(KEY_PAYLOAD)
 
-        if payload != None and payload.get(KEY_TYPE) == self.PAYLOAD_TYPE:
+        if payload != None and \
+            getattr(payload, KEY_PAYLOAD_TYPE, None) == self.PAYLOAD_TYPE:
             return True, payload
 
         return False, None
@@ -95,11 +96,26 @@ class TickerProcessor(ProcessorBase):
     SUB_TYPE = SubType.TICKER
     PAYLOAD_TYPE = '24hrTicker'
 
-# class AllMarketMiniTickerProcessor(object):
-#     HANDLER = AllMarketMiniTickerHandlerBase
-#     SubType = SubType.ALL_MARKET_MINI_TICKERS
+class AllMarketMiniTickersProcessor(ProcessorBase):
+    HANDLER = AllMarketMiniTickersHandlerBase
+    SUB_TYPE = SubType.ALL_MARKET_MINI_TICKERS
+    STREAM_TYPE_PREFIX = '!miniTicker@arr'
 
-#     def key(self, t, ):
+    def is_message_type(self, msg):
+        stream_type = msg.get(KEY_STREAM_TYPE)
+        if stream_type == None or \
+            stream_type.startswith(self.STREAM_TYPE_PREFIX) == False:
+            return False, None
+
+        return True, msg.get(KEY_PAYLOAD)
+
+    def subscribe_param(self, t, *args):
+        if len(args) == 0:
+            interval = 3000
+        else:
+            interval = args[0]
+
+        return self.STREAM_TYPE_PREFIX + '@%sms' % interval
 
 PROCESSORS = [
     KlineProcessor,
@@ -107,5 +123,6 @@ PROCESSORS = [
     AggTradeProcessor,
     OrderBookProcessor,
     MiniTickerProcessor,
-    TickerProcessor
+    TickerProcessor,
+    AllMarketMiniTickersProcessor
 ]

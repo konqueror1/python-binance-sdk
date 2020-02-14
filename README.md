@@ -80,7 +80,7 @@ loop.run_forever()
 #    type        event_time     symbol   open            high            low            ...
 # 0  24hrTicker  1581597461196  BTCUSDT  10328.26000000  10491.00000000  10080.00000000 ...
 
-# ...
+# ...(to be continued)
 ```
 
 ### Subscribe to more symbol pairs and types
@@ -118,7 +118,15 @@ client.handler(MyTradeHandler(), MyOrderBookHandler(), MyKlineHandler())
 ### Subscribe to user streams
 
 ```py
-client.subscribe_user()
+# Before subscribe to user stream, you need to provide `api_secret` (and also `api_key`)
+client.secret(api_secret)
+
+# Or, you should provide `api_secret` when initialize the client
+# ```
+# client = Client(api_key, api_secret)
+# ```
+
+await client.subscribe(SubType.USER)
 ```
 
 ## License

@@ -30,7 +30,10 @@ SUBTYPE_PROP_LIST = [
     'MINI_TICKER',
     'TICKER',
     'ORDER_BOOK',
-    'ALL_MARKET_MINI_TICKERS'
+
+    'ALL_MARKET_MINI_TICKERS',
+
+    'USER'
 ]
 
 KLINE_SUBTYPE_LIST = [KLINE_TYPE_PREFIX + x for x in [
@@ -60,7 +63,10 @@ SUBTYPE_VALUE_LIST = KLINE_SUBTYPE_LIST + [
     'miniTicker',
     'ticker',
     'depth',
-    'allMarketMiniTickers'
+
+    'allMarketMiniTickers',
+
+    'user'
 ]
 
 SUBTYPE_MAP = {}
@@ -115,6 +121,7 @@ STREAM_OHLC_MAP = {
 }
 
 KEY_PAYLOAD = 'data'
-KEY_TYPE = 'e'
+KEY_PAYLOAD_TYPE = 'e'
+KEY_STREAM_TYPE = 'stream'
 
 ATOM = {}
