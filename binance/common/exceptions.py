@@ -5,8 +5,8 @@ import json
 from .utils import err_msg
 
 class StreamAbandonedException(Exception):
-    def __init__(self, url):
-        self.url = url
+    def __init__(self, uri):
+        self.uri = uri
 
     def __str__(self):
         return err_msg(

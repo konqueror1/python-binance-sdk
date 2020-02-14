@@ -123,49 +123,49 @@ class AllMarketTickersProcessor(AllMarketMiniTickersProcessor):
     SUB_TYPE = SubType.ALL_MARKET_TICKERS
     STREAM_TYPE_PREFIX = '!ticker@arr'
 
-class UserProcessor(ProcessorBase):
-    HANDLER = UserHandlerBase
-    SUB_TYPE = SubType.USER
+# class UserProcessor(ProcessorBase):
+#     HANDLER = UserHandlerBase
+#     SUB_TYPE = SubType.USER
 
-    KEEP_ALIVE_INTERVAL = 60 * 30
+#     KEEP_ALIVE_INTERVAL = 60 * 30
 
-    def __init__(self, *args):
-        super(UserProcessor, self).__init__(self, *args)
+#     def __init__(self, *args):
+#         super(UserProcessor, self).__init__(self, *args)
 
-        self._listen_key = None
-        self._keep_alive_task = None
+#         self._listen_key = None
+#         self._keep_alive_task = None
 
-    async def subscribe_param(self, subscribe, t):
-        if subscribe == False:
-            key = self._listen_key
-            self._listen_key = None
-            return key
+#     async def subscribe_param(self, subscribe, t):
+#         if subscribe == False:
+#             key = self._listen_key
+#             self._listen_key = None
+#             return key
 
-        key = await self._client.get_user_listen_key()
+#         key = await self._client.get_user_listen_key()
 
-        self._listen_key = key
-        self._start_keep_alive()
+#         self._listen_key = key
+#         self._start_keep_alive()
 
-        return key
+#         return key
 
-    async def _keep_alive(self):
-        while True:
-            await asyncio.sleep(self.KEEP_ALIVE_INTERVAL)
-            if self._listen_key:
-                await self._client.keepalive_listen_key(self._listen_key)
+#     async def _keep_alive(self):
+#         while True:
+#             await asyncio.sleep(self.KEEP_ALIVE_INTERVAL)
+#             if self._listen_key:
+#                 await self._client.keepalive_listen_key(self._listen_key)
 
-    def _start_keep_alive(self):
-        self._stop_keep_alive()
-        self._keep_alive_task = asyncio.create_task(self._keep_alive())
+#     def _start_keep_alive(self):
+#         self._stop_keep_alive()
+#         self._keep_alive_task = asyncio.create_task(self._keep_alive())
 
-    def _stop_keep_alive(self):
-        if self._keep_alive_task:
-            self._keep_alive_task.cancel()
-            self._keep_alive_task = None
+#     def _stop_keep_alive(self):
+#         if self._keep_alive_task:
+#             self._keep_alive_task.cancel()
+#             self._keep_alive_task = None
 
-    async def close_stream(self):
-        self._stop_keep_alive()
-        await self._client.close_listen_key(self._listen_key)
+#     async def close_stream(self):
+#         self._stop_keep_alive()
+#         await self._client.close_listen_key(self._listen_key)
 
 PROCESSORS = [
     KlineProcessor,
@@ -176,5 +176,5 @@ PROCESSORS = [
     TickerProcessor,
     AllMarketMiniTickersProcessor,
     AllMarketTickersProcessor,
-    UserProcessor
+    # UserProcessor
 ]

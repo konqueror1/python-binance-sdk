@@ -39,3 +39,4 @@ from binance.common.constants import *
 from binance.common.exceptions import *
 from binance.subscribe.handlers import *
 from binance.subscribe.processors import ProcessorBase
+from binance.subscribe.stream import Stream

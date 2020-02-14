@@ -4,7 +4,7 @@ from binance.common.constants import \
     SUBTYPE_MAP
 from binance.common.exceptions import InvalidSubParamsException
 
-from .streams import Stream
+from .stream import Stream
 from .handler_context import HandlerContext
 
 # def get_subtype_list_str():
@@ -65,8 +65,8 @@ class SubscriptionManager(object):
     def _get_data_stream(self):
         if not self._data_stream:
             self._data_stream = Stream(
+                self._stream_host + '/stream',
                 self._receive,
-                self._stream_host,
                 self._stream_retry_policy,
                 self._stream_timeout
             ).connect()

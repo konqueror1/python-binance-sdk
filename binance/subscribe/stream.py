@@ -3,9 +3,9 @@ from binance.common.utils import normalize_symbol
 
 class Stream(StreamBase):
     def __init__(self,
-        on_message, host, retry_policy, timeout):
+        uri, on_message, retry_policy, timeout):
         super(Stream, self).__init__(
-            on_message, host, retry_policy, timeout)
+            uri, on_message, retry_policy, timeout)
 
         self._subscribed = set()
 
@@ -32,7 +32,8 @@ class Stream(StreamBase):
         return ret
 
     async def _before_reconnect(self):
-        await self.subscribe(list(self._subscribed))
+        if len(self._subscribed) > 0:
+            await self.subscribe(list(self._subscribed))
 
     def _after_close(self):
         self._subscribed.clear()

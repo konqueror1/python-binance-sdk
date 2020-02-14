@@ -10,7 +10,12 @@ __all__ = [
     'MiniTickerHandlerBase',
     'TickerHandlerBase',
     'AllMarketMiniTickersHandlerBase',
-    'AllMarketTickersHandlerBase'
+    'AllMarketTickersHandlerBase',
+    'AccountInfoHandlerBase',
+    'AccountPositionHandlerBase',
+    'BalanceUpdateHandlerBase',
+    'OrderUpdateHandlerBase',
+    'OrderListStatusHandlerBase'
 ]
 
 class HandlerBase(object):
@@ -174,3 +179,18 @@ class AllMarketTickersHandlerBase(HandlerBase):
     def _receive(self, res):
         return super(AllMarketTickersHandlerBase, self)._receive(
             res, None)
+
+class AccountInfoHandlerBase(HandlerBase):
+    pass
+
+class AccountPositionHandlerBase(HandlerBase):
+    pass
+
+class BalanceUpdateHandlerBase(HandlerBase):
+    pass
+
+class OrderUpdateHandlerBase(HandlerBase):
+    pass
+
+class OrderListStatusHandlerBase(HandlerBase):
+    pass

@@ -11,17 +11,16 @@ KEY_ID = 'id'
 KEY_RESULT = 'result'
 
 # TODO: handle error code
-KEY_CODE = 'code'
+# KEY_CODE = 'code'
 
 class StreamBase(ABC):
     def __init__(self,
+        uri,
         on_message,
-        host,
         retry_policy,
         timeout
     ):
         self._on_message = on_message
-        self._stream_host = host
         self._retry_policy = retry_policy
         self._timeout = timeout
 
@@ -35,10 +34,7 @@ class StreamBase(ABC):
 
         self._open_future = None
 
-        self._url = self._get_stream_url()
-
-    def _get_stream_url(self):
-        return self._stream_host + '/stream'
+        self._uri = uri
 
     def connect(self):
         self._before_connect()
@@ -89,7 +85,7 @@ class StreamBase(ABC):
                 await self._handle_message(parsed)
 
     async def _connect(self):
-        async with ws.connect(self._url) as socket:
+        async with ws.connect(self._uri) as socket:
             self._set_socket(socket)
             self._retries = 0
 
@@ -126,10 +122,6 @@ class StreamBase(ABC):
     async def _before_reconnect(self):
         pass
 
-    async def _ping(self):
-        if self._socket:
-            await self._socket.ping()
-
     def close(self):
         self._conn.cancel()
         self._socket = None
@@ -145,7 +137,7 @@ class StreamBase(ABC):
             if self._open_future:
                 socket = await self._open_future
             else:
-                raise StreamAbandonedException(self._url)
+                raise StreamAbandonedException(self._uri)
 
         future = asyncio.Future()
 
