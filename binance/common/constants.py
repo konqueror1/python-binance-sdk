@@ -32,6 +32,7 @@ SUBTYPE_PROP_LIST = [
     'ORDER_BOOK',
 
     'ALL_MARKET_MINI_TICKERS',
+    'ALL_MARKET_TICKERS',
 
     'USER'
 ]
@@ -65,6 +66,7 @@ SUBTYPE_VALUE_LIST = KLINE_SUBTYPE_LIST + [
     'depth',
 
     'allMarketMiniTickers',
+    'allMarketTickers',
 
     'user'
 ]

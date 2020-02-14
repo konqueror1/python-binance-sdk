@@ -7,9 +7,10 @@ __all__ = [
     'AggTradeHandlerBase',
     'OrderBookHandlerBase',
     'KlineHandlerBase',
-    'TickerHandlerBase',
     'MiniTickerHandlerBase',
-    'AllMarketMiniTickersHandlerBase'
+    'TickerHandlerBase',
+    'AllMarketMiniTickersHandlerBase',
+    'AllMarketTickersHandlerBase'
 ]
 
 class HandlerBase(object):
@@ -162,6 +163,14 @@ class AllMarketMiniTickersHandlerBase(HandlerBase):
     COLUMNS_MAP = MINI_TICKER_COLUMNS_MAP
     COLUMNS = MINI_TICKER_COLUMNS
 
-    def _receive(self, res, index=[0]):
+    def _receive(self, res):
         return super(AllMarketMiniTickersHandlerBase, self)._receive(
+            res, None)
+
+class AllMarketTickersHandlerBase(HandlerBase):
+    COLUMNS_MAP = TICKER_COLUMNS_MAP
+    COLUMNS = TICKER_COLUMNS
+
+    def _receive(self, res):
+        return super(AllMarketTickersHandlerBase, self)._receive(
             res, None)

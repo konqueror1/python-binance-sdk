@@ -111,11 +111,16 @@ class AllMarketMiniTickersProcessor(ProcessorBase):
 
     def subscribe_param(self, t, *args):
         if len(args) == 0:
-            interval = 3000
+            interval = 1000
         else:
             interval = args[0]
 
         return self.STREAM_TYPE_PREFIX + '@%sms' % interval
+
+class AllMarketTickersProcessor(AllMarketMiniTickersProcessor):
+    HANDLER = AllMarketTickersHandlerBase
+    SUB_TYPE = SubType.ALL_MARKET_TICKERS
+    STREAM_TYPE_PREFIX = '!ticker@arr'
 
 PROCESSORS = [
     KlineProcessor,
@@ -124,5 +129,6 @@ PROCESSORS = [
     OrderBookProcessor,
     MiniTickerProcessor,
     TickerProcessor,
-    AllMarketMiniTickersProcessor
+    AllMarketMiniTickersProcessor,
+    AllMarketTickersProcessor
 ]
