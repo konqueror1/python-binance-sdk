@@ -1,8 +1,10 @@
 import importlib
+import traceback
 
 from binance.common.constants import STREAM_TYPE_MAP, STREAM_OHLC_MAP
 
 __all__ = [
+    'HandlerExceptionHandlerBase',
     'TradeHandlerBase',
     'AggTradeHandlerBase',
     'OrderBookHandlerBase',
@@ -19,6 +21,9 @@ __all__ = [
 ]
 
 class HandlerBase(object):
+    def __init__(self):
+        self._client = None
+
     def _receive(self, res, index=[0]):
         return pd.DataFrame(
             res, columns=self.COLUMNS, index=index
@@ -33,6 +38,11 @@ except ModuleNotFoundError:
     HandlerBase.receive = lambda self, res: res
 except Exception as e:
     raise e
+
+class HandlerExceptionHandlerBase(HandlerBase):
+    def receive(self, e):
+        traceback.print_exc()
+        return e
 
 BASE_TRADE_COLUMNS_MAP = {
     **STREAM_TYPE_MAP,

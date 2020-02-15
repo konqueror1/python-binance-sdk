@@ -42,6 +42,7 @@ def order_params(data):
     """
     has_signature = False
     params = []
+
     for key, value in data.items():
         if key == 'signature':
             has_signature = True
@@ -49,8 +50,10 @@ def order_params(data):
             params.append((key, str(value)))
     # sort parameters by key
     params.sort(key=itemgetter(0))
+
     if has_signature:
         params.append(('signature', data['signature']))
+
     return params
 
 class ClientBase(object):
@@ -132,7 +135,12 @@ class ClientBase(object):
     def _generate_signature(self, data):
         ordered_data = order_params(data)
         query_string = '&'.join(["{}={}".format(d[0], d[1]) for d in ordered_data])
-        m = hmac.new(self._api_secret.encode('utf-8'), query_string.encode('utf-8'), hashlib.sha256)
+
+        m = hmac.new(
+            self._api_secret.encode('utf-8'),
+            query_string.encode('utf-8'),
+            hashlib.sha256)
+
         return m.hexdigest()
 
     def _get_request_kwargs(self, method, signed, force_params=False, **kwargs):

@@ -55,6 +55,9 @@ class ProcessorBase(object):
     def add_handler(self, handler):
         self._handlers.add(handler)
 
+        # set the client to handler
+        handler._client = self._client
+
     async def dispatch(self, payload):
         coro = []
 
@@ -66,6 +69,9 @@ class ProcessorBase(object):
 
         if len(coro) > 0:
             await asyncio.gather(*coro)
+
+class ExceptionProcessor(ProcessorBase):
+    HANDLER = HandlerExceptionHandlerBase
 
 class KlineProcessor(ProcessorBase):
     HANDLER = KlineHandlerBase

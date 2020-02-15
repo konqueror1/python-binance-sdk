@@ -92,3 +92,10 @@ class InvalidSubTypeParamException(Exception):
     def __str__(self):
         return err_msg('invalid param `%s` for subtype "%s", %s',
             self.param_name, self.subtype, self.reason)
+
+class InvalidHandlerException(Exception):
+    def __init__(self, handler):
+        self.handler = handler
+
+    def __str__(self):
+        return err_msg('invalid handler `%s`', self.handler)
