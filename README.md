@@ -128,8 +128,11 @@ client.secret(api_secret)
 # client = Client(api_key, api_secret)
 # ```
 
+# binance-sdk will handle user listen key internally without your concern
 await client.subscribe(SubType.USER)
 ```
+
+## APIs
 
 ## License
 
