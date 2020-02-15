@@ -163,6 +163,18 @@ Define or change api key, especially when we have not define api key in `Client`
 
 Define or change api secret.
 
+### await client.get(uri, signed=False, **kwargs)
+### await client.post(uri, signed=False, **kwargs)
+### await client.put(uri, signed=False, **kwargs)
+### await client.delete(uri, signed=False, **kwargs)
+
+- **uri** `str` the request url
+- **signed** `bool=False` whether the client should sign the requests by using `api_secret`. If `signed` is `True`, `api_secret` must be provided, or there will be an `APISecretNotDefinedException` error
+
+Send a GET/POST/PUT/delete http request.
+
+Before using those methods, `api_key` must be defined, or there will be an `APIKeyNotDefinedException` error
+
 ### await client.subscribe(subtype, *subtype_params) -> None
 ### await client.subscribe(*subscriptions) -> None
 
