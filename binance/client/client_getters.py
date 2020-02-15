@@ -2,7 +2,6 @@ import asyncio
 
 from binance.common.utils import interval_to_milliseconds, convert_ts_str
 from binance.common.constants import PRIVATE_API_VERSION
-from binance.common.exceptions import WithdrawException
 
 SIDE_BUY = 'BUY'
 SIDE_SELL = 'SELL'
@@ -314,10 +313,7 @@ class ClientGetters(object):
         return await self._request_withdraw_api('get', 'systemStatus.html')
 
     async def get_account_status(self, **params):
-        res = await self._request_withdraw_api('get', 'accountStatus.html', True, data=params)
-        if not res['success']:
-            raise WithdrawException(res['msg'])
-        return res
+        return await self._request_withdraw_api('get', 'accountStatus.html', True, data=params)
 
     # Withdraw Endpoints
 
@@ -325,10 +321,7 @@ class ClientGetters(object):
         # force a name for the withdrawal if one not set
         if 'asset' in params and 'name' not in params:
             params['name'] = params['asset']
-        res = await self._request_withdraw_api('post', 'withdraw.html', True, data=params)
-        if not res['success']:
-            raise WithdrawException(res['msg'])
-        return res
+        return await self._request_withdraw_api('post', 'withdraw.html', True, data=params)
 
     async def get_deposit_history(self, **params):
         return await self._request_withdraw_api('get', 'depositHistory.html', True, data=params)

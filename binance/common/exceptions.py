@@ -10,7 +10,7 @@ class StreamAbandonedException(Exception):
 
     def __str__(self):
         return err_msg(
-            'websocket "%s" is abandoned after too many retries', self.url)
+            'websocket "%s" is abandoned after too many retries according to the `retry_policy`', self.url)
 
 class APIKeyNotDefinedException(Exception):
     def __init__(self, url):
@@ -49,16 +49,6 @@ class StatusException(Exception):
     def __str__(self):  # pragma: no cover
         return err_msg('response error for "%s", status %s, code %s: %s',
             self.response.url, self.status, self.code, self.message)
-
-class WithdrawException(Exception):
-    def __init__(self, message):
-        if message == u'参数异常':
-            message = 'Withdraw to this address through the website first'
-        self.message = message
-
-    def __str__(self):
-        return err_msg('failed to withdraw: %s', self.message)
-
 
 class InvalidResponseException(Exception):
     def __init__(self, response, text):
