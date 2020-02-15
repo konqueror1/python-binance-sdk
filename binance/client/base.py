@@ -128,7 +128,7 @@ class ClientBase(object):
         except ValueError:
             raise InvalidResponseException(response, await response.text())
 
-    async def request(self, method, uri, signed, force_params=False, **kwargs):
+    async def _request(self, method, uri, signed, force_params=False, **kwargs):
         if not self._api_key:
             raise APIKeyNotDefinedException(uri)
 
@@ -143,13 +143,13 @@ class ClientBase(object):
                 return await self._handle_response(response)
 
     async def get(self, uri, signed=False, **kwargs):
-        return await self.request('get', uri, signed, **kwargs)
+        return await self._request('get', uri, signed, **kwargs)
 
     async def post(self, uri, signed=False, **kwargs):
-        return await self.request('post', uri, signed, **kwargs)
+        return await self._request('post', uri, signed, **kwargs)
 
     async def put(self, uri, signed=False, **kwargs):
-        return await self.request('put', uri, signed, **kwargs)
+        return await self._request('put', uri, signed, **kwargs)
 
     async def delete(self, uri, signed=False, **kwargs):
-        return await self.request('delete', uri, signed, **kwargs)
+        return await self._request('delete', uri, signed, **kwargs)
