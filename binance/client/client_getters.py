@@ -1,4 +1,5 @@
 import asyncio
+import time
 
 from binance.common.utils import interval_to_milliseconds, convert_ts_str
 from binance.common.constants import PRIVATE_API_VERSION

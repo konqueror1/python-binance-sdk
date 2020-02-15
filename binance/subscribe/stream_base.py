@@ -4,8 +4,7 @@ import websockets as ws
 from abc import ABC, abstractmethod
 
 from binance.common.utils import json_stringify
-from binance.common.exceptions import \
-    StreamAbandonedException
+from binance.common.exceptions import StreamAbandonedException
 
 KEY_ID = 'id'
 KEY_RESULT = 'result'
