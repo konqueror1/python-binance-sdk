@@ -1,12 +1,16 @@
-from .client_base import ClientBase
-from .client_getters import ClientGetters
+from .base import ClientBase
+from binance.getters import *
 from binance.subscribe.manager import SubscriptionManager
 
 from binance.common.constants import \
     API_HOST, WEBSITE_HOST, STREAM_HOST, \
     DEFAULT_RETRY_POLICY, DEFAULT_STREAM_TIMEOUT
 
-class Client(ClientBase, ClientGetters, SubscriptionManager):
+class Client(
+    ClientBase,
+    SpotGetters,
+    SubscriptionManager
+):
     def __init__(
         self,
         api_key=None,

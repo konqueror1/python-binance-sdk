@@ -2,7 +2,8 @@ import asyncio
 import time
 
 from binance.common.utils import interval_to_milliseconds, convert_ts_str
-from binance.common.constants import PRIVATE_API_VERSION
+from binance.common.constants import \
+    PUBLIC_API_VERSION, WITHDRAW_API_VERSION, PRIVATE_API_VERSION
 
 SIDE_BUY = 'BUY'
 SIDE_SELL = 'SELL'
@@ -17,14 +18,25 @@ TIME_IN_FORCE_GTC = 'GTC'  # Good till cancelled
 # For accessing the data returned by Client.aggregate_trades().
 AGG_ID = 'a'
 
-class ClientGetters(object):
+class SpotGetters(object):
+    def _api_uri(self, path, version=PUBLIC_API_VERSION):
+        return self._api_host + '/api/' + version + '/' + path
+
+    def _private_api_uri(self, path, version=PRIVATE_API_VERSION):
+        return self._api_url(path, version)
+
+    def _withdraw_api_uri(self, path, version=WITHDRAW_API_VERSION):
+        return self._api_host + '/wapi/' + version + '/' + path
+
+    def _website_uri(self, path):
+        return self._website_host + '/' + path
+
     # Exchange Endpoints
     async def get_products(self):
-        products = await self._request_website('get', 'exchange/public/product')
-        return products
+        return await self.get(self._website_uri('exchange/public/product'))
 
     async def get_exchange_info(self):
-        return await self._get('exchangeInfo')
+        return await self.get(self._api_uri('exchangeInfo'))
 
     async def get_symbol_info(self, symbol):
         res = await self.get_exchange_info()
@@ -38,27 +50,27 @@ class ClientGetters(object):
     # General Endpoints
 
     async def get_server_time(self):
-        return await self._get('time')
+        return await self.get(self._api_uri('time'))
 
     # Market Data Endpoints
 
     async def get_all_tickers(self):
-        return await self._get('ticker/allPrices')
+        return await self.get(self._api_uri('ticker/allPrices'))
 
     async def get_orderbook_tickers(self):
-        return await self._get('ticker/allBookTickers')
+        return await self.get(self._api_uri('ticker/allBookTickers'))
 
     async def get_order_book(self, **params):
-        return await self._get('depth', data=params)
+        return await self.get(self._api_uri('depth'), data=params)
 
     async def get_recent_trades(self, **params):
-        return await self._get('trades', data=params)
+        return await self.get(self._api_uri('trades'), data=params)
 
     async def get_historical_trades(self, **params):
-        return await self._get('historicalTrades', data=params)
+        return await self.get(self._api_uri('historicalTrades'), data=params)
 
     async def get_aggregate_trades(self, **params):
-        return await self._get('aggTrades', data=params)
+        return await self.get(self._api_uri('aggTrades'), data=params)
 
     async def aggregate_trade_iter(self, symbol, start_str=None, last_id=None):
         if start_str is not None and last_id is not None:
@@ -114,7 +126,7 @@ class ClientGetters(object):
             last_id = trades[-1][AGG_ID]
 
     async def get_klines(self, **params):
-        return await self._get('klines', data=params)
+        return await self.get(self._api_uri('klines'), data=params)
 
     async def _get_earliest_valid_timestamp(self, symbol, interval):
         kline = await self.get_klines(
@@ -229,18 +241,21 @@ class ClientGetters(object):
                 await asyncio.sleep(1)
 
     async def get_ticker(self, **params):
-        return await self._get('ticker/24hr', data=params)
+        return await self.get(self._api_uri('ticker/24hr'), data=params)
 
     async def get_symbol_ticker(self, **params):
-        return await self._get('ticker/price', data=params, version=PRIVATE_API_VERSION)
+        return await self.get(
+            self._private_api_uri('ticker/price'), data=params)
 
     async def get_orderbook_ticker(self, **params):
-        return await self._get('ticker/bookTicker', data=params, version=PRIVATE_API_VERSION)
+        return await self.get(
+            self._private_api_uri('ticker/bookTicker'), data=params)
 
     # Account Endpoints
 
     async def create_order(self, **params):
-        return await self._post('order', True, data=params)
+        return await self.post(
+            self._private_api_uri('order'), True, data=params)
 
     async def order_limit(self, timeInForce=TIME_IN_FORCE_GTC, **params):
         params.update({
@@ -280,23 +295,28 @@ class ClientGetters(object):
         return await self.order_market(**params)
 
     async def create_test_order(self, **params):
-        return await self._post('order/test', True, data=params)
+        return await self.post(
+            self._private_api_uri('order/test'), True, data=params)
 
     async def get_order(self, **params):
-        return await self._get('order', True, data=params)
+        return await self.get(self._private_api_uri('order'), True, data=params)
 
     async def get_all_orders(self, **params):
-        return await self._get('allOrders', True, data=params)
+        return await self.get(
+            self._private_api_uri('allOrders'), True, data=params)
 
     async def cancel_order(self, **params):
-        return await self._delete('order', True, data=params)
+        return await self.delete(
+            self._private_api_uri('order'), True, data=params)
 
     async def get_open_orders(self, **params):
-        return await self._get('openOrders', True, data=params)
+        return await self.get(
+            self._private_api_uri('openOrders'), True, data=params)
 
     # User Stream Endpoints
     async def get_account(self, **params):
-        return await self._get('account', True, data=params)
+        return await self.get(
+            self._private_api_uri('account'), True, data=params)
 
     async def get_asset_balance(self, asset, **params):
         res = await self.get_account(**params)
@@ -308,13 +328,15 @@ class ClientGetters(object):
         return None
 
     async def get_my_trades(self, **params):
-        return await self._get('myTrades', True, data=params)
+        return await self.get(
+            self._private_api_uri('myTrades'), True, data=params)
 
     async def get_system_status(self):
-        return await self._request_withdraw_api('get', 'systemStatus.html')
+        return await self.get(self._withdraw_api_uri('systemStatus.html'))
 
     async def get_account_status(self, **params):
-        return await self._request_withdraw_api('get', 'accountStatus.html', True, data=params)
+        return await self.get(
+            self._withdraw_api_uri('accountStatus.html'), True, data=params)
 
     # Withdraw Endpoints
 
@@ -322,34 +344,41 @@ class ClientGetters(object):
         # force a name for the withdrawal if one not set
         if 'asset' in params and 'name' not in params:
             params['name'] = params['asset']
-        return await self._request_withdraw_api('post', 'withdraw.html', True, data=params)
+        return await self.post(
+            self._withdraw_api_uri('withdraw.html'), True, data=params)
 
     async def get_deposit_history(self, **params):
-        return await self._request_withdraw_api('get', 'depositHistory.html', True, data=params)
+        return await self.get(
+            self._withdraw_api_uri('depositHistory.html'), True, data=params)
 
     async def get_withdraw_history(self, **params):
-        return await self._request_withdraw_api('get', 'withdrawHistory.html', True, data=params)
+        return await self.get(
+            self._withdraw_api_uri('withdrawHistory.html'), True, data=params)
 
     async def get_deposit_address(self, **params):
-        return await self._request_withdraw_api('get', 'depositAddress.html', True, data=params)
+        return await self.get(
+            self._withdraw_api_uri('depositAddress.html'), True, data=params)
 
     async def get_withdraw_fee(self, **params):
-        return await self._request_withdraw_api('get', 'withdrawFee.html', True, data=params)
+        return await self.get(
+            self._withdraw_api_uri('withdrawFee.html'), True, data=params)
 
     # User Stream Endpoints
 
     async def get_user_listen_key(self):
-        res = await self._post('userDataStream', False, data={})
+        res = await self.post(self._api_uri('userDataStream'), False, data={})
         return res['listenKey']
 
     async def keepalive_listen_key(self, listenKey):
         params = {
             'listenKey': listenKey
         }
-        return await self._put('userDataStream', False, data=params)
+        return await self.put(
+            self._api_uri('userDataStream'), False, data=params)
 
     async def close_listen_key(self, listenKey):
         params = {
             'listenKey': listenKey
         }
-        return await self._delete('userDataStream', False, data=params)
+        return await self.delete(
+            self._api_uri('userDataStream'), False, data=params)

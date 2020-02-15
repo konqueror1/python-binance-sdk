@@ -25,10 +25,8 @@ import asyncio
 import hashlib
 import hmac
 import time
-
 from operator import itemgetter
-from binance.common.constants import \
-    PUBLIC_API_VERSION, WITHDRAW_API_VERSION, PRIVATE_API_VERSION
+
 from binance.common.exceptions import \
     APIKeyNotDefinedException, APISecretNotDefinedException, \
     StatusException, InvalidResponseException
@@ -71,20 +69,6 @@ class ClientBase(object):
             'User-Agent': 'binance-sdk',
             'X-MBX-APIKEY': self._api_key
         }
-
-    async def request(self, method, uri, signed, force_params=False, **kwargs):
-        if not self._api_key:
-            raise APIKeyNotDefinedException(uri)
-
-        if signed and not self._api_secret:
-            raise APISecretNotDefinedException(uri)
-
-        kwargs = self._get_request_kwargs(
-            method, signed, force_params, **kwargs)
-
-        async with self._init_api_session() as session:
-            async with getattr(session, method)(uri, **kwargs) as response:
-                return await self._handle_response(response)
 
     def _get_request_kwargs(self, method, signed, force_params=False, **kwargs):
         # set default requests timeout
@@ -144,38 +128,28 @@ class ClientBase(object):
         except ValueError:
             raise InvalidResponseException(response, await response.text())
 
+    async def request(self, method, uri, signed, force_params=False, **kwargs):
+        if not self._api_key:
+            raise APIKeyNotDefinedException(uri)
+
+        if signed and not self._api_secret:
+            raise APISecretNotDefinedException(uri)
+
+        kwargs = self._get_request_kwargs(
+            method, signed, force_params, **kwargs)
+
+        async with self._init_api_session() as session:
+            async with getattr(session, method)(uri, **kwargs) as response:
+                return await self._handle_response(response)
+
     async def get(self, uri, signed=False, **kwargs):
-        return await self._request('get', uri, signed, **kwargs)
+        return await self.request('get', uri, signed, **kwargs)
 
     async def post(self, uri, signed=False, **kwargs):
-        return await self._request('post', uri, signed, **kwargs)
+        return await self.request('post', uri, signed, **kwargs)
 
     async def put(self, uri, signed=False, **kwargs):
-        return await self._request('put', uri, signed, **kwargs)
+        return await self.request('put', uri, signed, **kwargs)
 
     async def delete(self, uri, signed=False, **kwargs):
-        return await self._request('delete', uri, signed, **kwargs)
-
-    #
-
-    # async def _request_api(self, method, path, signed=False, version=PUBLIC_API_VERSION, **kwargs):
-    #     uri = self._create_api_uri(path, signed, version)
-    #     return await self._request(method, uri, signed, **kwargs)
-
-    # async def _request_withdraw_api(self, method, path, signed=False, **kwargs):
-    #     uri = self._create_withdraw_api_uri(path)
-    #     return await self._request(method, uri, signed, True, **kwargs)
-
-    # async def _request_website(self, method, path, signed=False, **kwargs):
-    #     uri = self._create_website_uri(path)
-    #     return await self._request(method, uri, signed, **kwargs)
-
-    # def _create_api_uri(self, path, signed=True, version=PUBLIC_API_VERSION):
-    #     v = PRIVATE_API_VERSION if signed else version
-    #     return self._api_host + '/api/' + v + '/' + path
-
-    # def _create_withdraw_api_uri(self, path):
-    #     return self._api_host + '/wapi/' + WITHDRAW_API_VERSION + '/' + path
-
-    # def _create_website_uri(self, path):
-    #     return self._website_host + '/' + path
+        return await self.request('delete', uri, signed, **kwargs)
