@@ -71,7 +71,7 @@ class ProcessorBase(object):
             await asyncio.gather(*coro)
 
 class ExceptionProcessor(ProcessorBase):
-    HANDLER = HandlerExceptionHandlerBase
+    HANDLER = HandlerExceptionHandler
 
 class KlineProcessor(ProcessorBase):
     HANDLER = KlineHandlerBase

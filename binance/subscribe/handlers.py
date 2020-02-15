@@ -4,7 +4,7 @@ import traceback
 from binance.common.constants import STREAM_TYPE_MAP, STREAM_OHLC_MAP
 
 __all__ = [
-    'HandlerExceptionHandlerBase',
+    'HandlerExceptionHandler',
     'TradeHandlerBase',
     'AggTradeHandlerBase',
     'OrderBookHandlerBase',
@@ -39,7 +39,7 @@ except ModuleNotFoundError:
 except Exception as e:
     raise e
 
-class HandlerExceptionHandlerBase(HandlerBase):
+class HandlerExceptionHandler(HandlerBase):
     def receive(self, e):
         traceback.print_exc()
         return e
