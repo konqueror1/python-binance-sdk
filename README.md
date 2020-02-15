@@ -134,7 +134,34 @@ await client.subscribe(SubType.USER)
 
 # APIs
 
-## Client
+## Client()
+
+All arguments of the constructor `Client` are keyworded arguments and all optional.
+
+- **api_key** `str=None` binance api key
+- **api_secret** `str=None` binance api secret
+- **requests_params** `dict=None` global requests params
+- **stream_retry_policy** `Callable[[int], (bool, int, bool)]` retry policy for websocket stream
+- **stream_timeout** `int=5` seconds util the stream reach an timeout error
+
+```py
+# retries is the counter number of
+#   how many times the stream retried to reconnect
+abandon, delay, reset = stream_retry_policy(retries)
+
+# If abandon is `True`, then the client will give up to reconnect
+# Otherwise:
+# - The client will delay `delay` seconds to reconnect
+# - If reset is `True`, the client will reset the retry counter to `0`
+```
+
+### client.key(api_key) -> self
+
+Define or change api key, especially when we have not define api key in `Client` constructor, as well as `client.secret()`
+
+### client.secret(api_secret) -> self
+
+Define or change api secret.
 
 ### await client.subscribe(subtype, *subtype_params) -> None
 ### await client.subscribe(*subscriptions) -> None
@@ -167,19 +194,19 @@ Possible exceptions:
 - `InvalidSubTypeParamException`
 - `StreamAbandonedException`
 
-### client.start() -> None
+### client.start() -> self
 
 Start receiving streams
 
-### client.stop() -> None
+### client.stop() -> self
 
 Stop receiving streams
 
-### client.close() -> None
+### client.close() -> self
 
 Close stream connection, clear all stream subscriptions and clear all handlers.
 
-### client.handler(*handlers)
+### client.handler(*handlers) -> self
 
 - **handlers** `List[HandlerExceptionHandler|TradeHandlerBase|...]`
 
