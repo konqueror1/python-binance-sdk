@@ -1,4 +1,5 @@
 import asyncio
+import inspect
 
 from binance.common.exceptions import \
     InvalidSubParamsException, InvalidSubTypeParamException
@@ -60,10 +61,9 @@ class ProcessorBase(object):
         coro = []
 
         for handler in self._handlers:
-            if asyncio.iscoroutinefunction(handler.receive):
-                coro.append(handler.receive(payload))
-            else:
-                handler.receive(payload)
+            ret = handler.receiveDispatch(payload)
+            if inspect.iscoroutine(ret):
+                coro.append(ret)
 
         if len(coro) > 0:
             await asyncio.gather(*coro)

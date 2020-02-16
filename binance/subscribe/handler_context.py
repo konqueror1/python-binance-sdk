@@ -5,7 +5,7 @@ from binance.common.constants import RET_OK, RET_ERROR, ATOM
 from binance.common.exceptions import InvalidSubParamsException, \
     UnsupportedSubTypeException
 
-from binance.common.utils import make_list, run
+from binance.common.utils import make_list, wrap_coroutine
 
 class HandlerContext(object):
     PROCESSORS = PROCESSORS
@@ -71,7 +71,7 @@ class HandlerContext(object):
 
     async def _subscribe_param(self, subscribe, *args):
         processor = self._get_processor(args[0])
-        return await run(processor.subscribe_param, subscribe, *args)
+        return await wrap_coroutine(processor.subscribe_param(subscribe, *args))
 
     def _get_processor(self, subtype):
         processor = self._processor_cache.get(subtype)

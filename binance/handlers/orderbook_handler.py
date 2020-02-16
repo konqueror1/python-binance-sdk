@@ -17,14 +17,20 @@ def create_depth_df(l):
         {'price': x[0], 'quantity': x[1]} for x in l
     ])
 
+class OrderBook(object):
+    pass
+
 class OrderBookHandlerBase(HandlerBase):
     COLUMNS_MAP = ORDER_BOOK_COLUMNS_MAP
     COLUMNS = ORDER_BOOK_COLUMNS
 
     def _receive(self, res):
-        info = super(OrderBookHandlerBase, self)._receive(res)
+        info = super()._receive(res)
 
         bids = create_depth_df(res['b'])
         asks = create_depth_df(res['a'])
 
         return info, [bids, asks]
+
+    async def receiveDispatch(self, payload):
+        return super().receiveDispatch(payload)

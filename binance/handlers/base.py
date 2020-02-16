@@ -11,6 +11,10 @@ class HandlerBase(object):
             res, columns=self.COLUMNS, index=index
         ).rename(columns=self.COLUMNS_MAP)
 
+    # The real method to receive payload which dispatched from processor
+    def receiveDispatch(self, payload):
+        return self.receive(payload)
+
 try:
     pd = importlib.import_module('pandas')
     HandlerBase.receive = lambda self, res: self._receive(res)

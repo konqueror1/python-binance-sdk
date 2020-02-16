@@ -3,7 +3,7 @@
 import dateparser
 import pytz
 import json
-import asyncio
+import inspect
 
 from datetime import datetime
 
@@ -78,8 +78,8 @@ def json_stringify(obj):
 def normalize_symbol(symbol):
     return symbol.replace('_', '').lower()
 
-async def run(method, *args):
-    if asyncio.iscoroutinefunction(method):
-        return await method(*args)
+async def wrap_coroutine(ret):
+    if inspect.iscoroutine(ret):
+        return await ret
     else:
-        return method(*args)
+        return ret

@@ -8,7 +8,7 @@ Unofficial Binance SDK for python 3.7+, which:
 - [x] Uses Binance's new websocket stream which supports live pub/sub so that we only need **ONE** websocket connection.
 - [x] Has optional `pandas.DataFrame` support. If `pandas` is installed, columns of all stream data frames are renamed for readability.
 - [x] Based on python `async`/`await`
-- [ ] Manages the order book for you (handled by `OrderBookHandlerBase`), so that you need not to worry about websocket reconnection and message losses.
+- [x] Manages the order book for you (handled by `OrderBookHandlerBase`), so that you need not to worry about websocket reconnection and message losses. For details, see the section [`OrderBook`](#orderbook)
 
 ## Install
 
@@ -58,7 +58,7 @@ async def main():
             # If binance-sdk is installed with pandas support, then
             #   `ticker` will be a `DataFrame` with columns renamed
             # Or `ticker` is a raw dict
-            ticker = super(TickerPrinter, self).receive(res)
+            ticker = super().receive(res)
 
             # Just print the ticker
             print(ticker)
@@ -238,7 +238,7 @@ class MyTradeHandler(TradeHandlerBase):
         # If pandas is installed, then `payload` is a `pandas.DataFrame`,
         #   otherwise is a dict.
         # If you don't want the `pandas.DataFrame`, use `msg` directly
-        payload = super(MyTradeHandler, self).receive(msg)
+        payload = super().receive(msg)
         await saveTrade(payload)
 
 client.handler(MyTradeHandler())
@@ -273,6 +273,31 @@ In this section, we will note the parameters for each `subtypes`
 ### `Subtype` with no param
 
 - `SubType.USER`
+
+## OrderBook
+
+By default, binance-sdk maintains the orderbook for you. Specifically, `OrderBookHandlerBase` does the job.
+
+When we inherit `OrderBookHandlerBase`, method `def receive(self, payload)` of the subclass receives the raw payload of orderbook messages.
+
+And there is another method `def receiveManaged(self, payload)` receives the updates of managed orderbook.
+
+We could also get the `OrderBook` object by the property getter `orderbook`.
+
+```py
+class MyOrderBookHandler(OrderBookHandlerBase):
+    def receive(self, msg):
+        # The `msg` here
+        print(msg)
+
+    def receiveManaged(self, msg):
+        print(msg)
+
+handler = MyOrderBookHandler()
+
+# Get the reference of OrderBook object
+orderbook = handler.orderbook
+```
 
 ## License
 
