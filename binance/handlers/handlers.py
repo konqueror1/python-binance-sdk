@@ -1,43 +1,19 @@
-import importlib
 import traceback
 
 from binance.common.constants import STREAM_TYPE_MAP, STREAM_OHLC_MAP
+
+from .base import HandlerBase
 
 __all__ = [
     'HandlerExceptionHandler',
     'TradeHandlerBase',
     'AggTradeHandlerBase',
-    'OrderBookHandlerBase',
     'KlineHandlerBase',
     'MiniTickerHandlerBase',
     'TickerHandlerBase',
     'AllMarketMiniTickersHandlerBase',
-    'AllMarketTickersHandlerBase',
-    # 'AccountInfoHandlerBase',
-    # 'AccountPositionHandlerBase',
-    # 'BalanceUpdateHandlerBase',
-    # 'OrderUpdateHandlerBase',
-    # 'OrderListStatusHandlerBase'
+    'AllMarketTickersHandlerBase'
 ]
-
-class HandlerBase(object):
-    def __init__(self):
-        self._client = None
-
-    def _receive(self, res, index=[0]):
-        return pd.DataFrame(
-            res, columns=self.COLUMNS, index=index
-        ).rename(columns=self.COLUMNS_MAP)
-
-try:
-    pd = importlib.import_module('pandas')
-    HandlerBase.receive = lambda self, res: self._receive(res)
-
-except ModuleNotFoundError:
-    # If pandas is not installed
-    HandlerBase.receive = lambda self, res: res
-except Exception as e:
-    raise e
 
 class HandlerExceptionHandler(HandlerBase):
     def receive(self, e):
@@ -79,33 +55,6 @@ AGG_TRADE_COLUMNS = AGG_TRADE_COLUMNS_MAP
 class AggTradeHandlerBase(HandlerBase):
     COLUMNS_MAP = AGG_TRADE_COLUMNS_MAP
     COLUMNS = AGG_TRADE_COLUMNS
-
-ORDER_BOOK_COLUMNS_MAP = {
-    **STREAM_TYPE_MAP,
-    'E': 'event_time',
-    's': 'symbol',
-    'U': 'first_update_id',
-    'u': 'last_update_id'
-}
-
-ORDER_BOOK_COLUMNS = ORDER_BOOK_COLUMNS_MAP.keys()
-
-def create_depth_df(l):
-    return pd.DataFrame([
-        {'price': x[0], 'quantity': x[1]} for x in l
-    ])
-
-class OrderBookHandlerBase(HandlerBase):
-    COLUMNS_MAP = ORDER_BOOK_COLUMNS_MAP
-    COLUMNS = ORDER_BOOK_COLUMNS
-
-    def _receive(self, res):
-        info = super(OrderBookHandlerBase, self)._receive(res)
-
-        bids = create_depth_df(res['b'])
-        asks = create_depth_df(res['a'])
-
-        return info, [bids, asks]
 
 KLINE_COLUMNS_MAP = {
     **STREAM_TYPE_MAP,
@@ -189,18 +138,3 @@ class AllMarketTickersHandlerBase(HandlerBase):
     def _receive(self, res):
         return super(AllMarketTickersHandlerBase, self)._receive(
             res, None)
-
-class AccountInfoHandlerBase(HandlerBase):
-    pass
-
-class AccountPositionHandlerBase(HandlerBase):
-    pass
-
-class BalanceUpdateHandlerBase(HandlerBase):
-    pass
-
-class OrderUpdateHandlerBase(HandlerBase):
-    pass
-
-class OrderListStatusHandlerBase(HandlerBase):
-    pass

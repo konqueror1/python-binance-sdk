@@ -25,9 +25,9 @@ class Client(
     ):
         """Binance API Client constructor
 
-        :param api_key: Api Key
+        :param api_key: API Key
         :type api_key: str.
-        :param api_secret: Api Secret
+        :param api_secret: API Secret
         :type api_secret: str.
         :param requests_params: optional - Dictionary of requests params to use for all calls
         :type requests_params: dict.
@@ -46,13 +46,8 @@ class Client(
         self._stream_retry_policy = stream_retry_policy
         self._stream_timeout = stream_timeout
 
-        # self._hanging = False
-        # self._hang_lock = Lock()
-
         self._receiving = False
-
         self._handler_ctx = None
-
         self._data_stream = None
 
     def key(self, key):

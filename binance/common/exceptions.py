@@ -4,6 +4,18 @@ import json
 
 from .utils import err_msg
 
+__all__ = [
+    'StreamAbandonedException',
+    'APIKeyNotDefinedException',
+    'APISecretNotDefinedException',
+    'StatusException',
+    'InvalidResponseException',
+    'InvalidSubParamsException',
+    'UnsupportedSubTypeException',
+    'InvalidSubTypeParamException',
+    'InvalidHandlerException'
+]
+
 class StreamAbandonedException(Exception):
     def __init__(self, uri):
         self.uri = uri

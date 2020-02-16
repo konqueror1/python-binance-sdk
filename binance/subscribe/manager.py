@@ -66,6 +66,12 @@ class SubscriptionManager(object):
         return await self._get_data_stream().list_subscriptions()
 
     def handler(self, *handlers):
+        """
+        set the callback processing object to be used to handle websocket messages
+        :param handler:the object in callback handler base
+        :return: RET_ERROR or RET_OK
+        """
+
         ctx = self._get_handler_ctx()
 
         for handler in handlers:

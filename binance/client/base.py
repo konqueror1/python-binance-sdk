@@ -117,10 +117,6 @@ class ClientBase(object):
         return m.hexdigest()
 
     async def _handle_response(self, response):
-        """Internal helper for handling API responses from the Binance server.
-        Raises the appropriate exceptions when necessary; otherwise, returns the
-        response.
-        """
         if not str(response.status).startswith('2'):
             raise StatusException(response, await response.text())
         try:

@@ -1,6 +1,6 @@
 import asyncio
 
-from .processors import PROCESSORS, ProcessorBase, ExceptionProcessor
+from binance.processors import PROCESSORS, ExceptionProcessor
 from binance.common.constants import RET_OK, RET_ERROR, ATOM
 from binance.common.exceptions import InvalidSubParamsException, \
     UnsupportedSubTypeException
@@ -17,12 +17,6 @@ class HandlerContext(object):
         self._exception_processor = ExceptionProcessor(client)
 
     def set_handler(self, handler):
-        """
-        set the callback processing object to be used to handle websocket messages
-        :param handler:the object in callback handler base
-        :return: RET_ERROR or RET_OK
-        """
-
         if self._exception_processor.is_handler_type(handler):
             self._exception_processor.add_handler(handler)
             return RET_OK
@@ -98,7 +92,6 @@ class HandlerContext(object):
     #     # TODO: invalid processor
 
     async def _receive(self, msg):
-        """receive response callback function"""
         for processor in self._processors:
             is_payload, payload = processor.is_message_type(msg)
 
@@ -110,6 +103,3 @@ class HandlerContext(object):
             await self._receive(msg)
         except Exception as e:
             await self._exception_processor.dispatch(e)
-
-# class UserStreamHandlerContext(HandlerContextBase):
-#     pass
