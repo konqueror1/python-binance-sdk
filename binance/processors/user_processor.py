@@ -11,7 +11,7 @@ class UserProcessor(ProcessorBase):
     KEEP_ALIVE_INTERVAL = 60 * 30
 
     def __init__(self, *args):
-        super(UserProcessor, self).__init__(*args)
+        super().__init__(*args)
 
         self._listen_key = None
         self._keep_alive_task = None

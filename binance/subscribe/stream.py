@@ -4,8 +4,7 @@ from binance.common.utils import normalize_symbol
 class Stream(StreamBase):
     def __init__(self,
         uri, on_message, retry_policy, timeout):
-        super(Stream, self).__init__(
-            uri, on_message, retry_policy, timeout)
+        super().__init__(uri, on_message, retry_policy, timeout)
 
         self._subscribed = set()
 
