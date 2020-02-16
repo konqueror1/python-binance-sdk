@@ -1,8 +1,6 @@
-import pandas as pd
-
 from binance.common.constants import STREAM_TYPE_MAP
 
-from .base import HandlerBase
+from .base import HandlerBase, pd
 
 ORDER_BOOK_COLUMNS_MAP = {
     **STREAM_TYPE_MAP,

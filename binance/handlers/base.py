@@ -1,5 +1,6 @@
 import importlib
-import pandas as pd
+
+pd = None
 
 class HandlerBase(object):
     def __init__(self):
