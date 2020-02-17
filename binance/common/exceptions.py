@@ -6,7 +6,6 @@ from .utils import err_msg
 
 __all__ = [
     'StreamAbandonedException',
-    'APIKeyNotDefinedException',
     'APISecretNotDefinedException',
     'StatusException',
     'InvalidResponseException',
@@ -23,14 +22,6 @@ class StreamAbandonedException(Exception):
     def __str__(self):
         return err_msg(
             'websocket "%s" is abandoned after too many retries according to the `retry_policy`', self.url)
-
-class APIKeyNotDefinedException(Exception):
-    def __init__(self, url):
-        self.url = url
-
-    def __str__(self):
-        return err_msg(
-            'api_key is required for requesting "%s"', self.url)
 
 class APISecretNotDefinedException(Exception):
     def __init__(self, url):

@@ -13,7 +13,7 @@ class Client(
 ):
     def __init__(
         self,
-        api_key=None,
+        api_key,
         api_secret=None,
         requests_params=None,
         # so that you can change api_host for CN network
@@ -34,9 +34,9 @@ class Client(
 
         """
 
-        self._api_key = None
+        self._api_key = api_key
+
         self._api_secret = None
-        self.key(api_key)
         self.secret(api_secret)
 
         self._requests_params = requests_params
@@ -49,11 +49,6 @@ class Client(
         self._receiving = False
         self._handler_ctx = None
         self._data_stream = None
-
-    def key(self, key):
-        if key:
-            self._api_key = key
-        return self
 
     def secret(self, secret):
         if secret:

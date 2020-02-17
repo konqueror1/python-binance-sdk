@@ -155,17 +155,11 @@ abandon, delay, reset = stream_retry_policy(retries)
 # - If reset is `True`, the client will reset the retry counter to `0`
 ```
 
-### client.key(api_key) -> self
-
-Define or change api key, especially when we have not define api key in `Client` constructor, as well as `client.secret()`
-
-`api_key` is not always required for using binance-sdk.
-
-If we only want to subscribe to streams except `SubType.USER`, and don't want to make HTTPs requests, then `api_key` is unnecessary.
-
 ### client.secret(api_secret) -> self
 
-Define or change api secret.
+Define or change api secret, especially when we have not define api secret in `Client` constructor.
+
+`api_secret` is not always required for using binance-sdk.
 
 ### await client.get(uri, signed=False, **kwargs)
 ### await client.post(uri, signed=False, **kwargs)
@@ -176,8 +170,6 @@ Define or change api secret.
 - **signed** `bool=False` whether the client should sign the requests by using `api_secret`. If `signed` is `True`, `api_secret` must be provided, or there will be an `APISecretNotDefinedException` error
 
 Send a GET/POST/PUT/DELETE HTTPs request.
-
-Before using those methods, `api_key` must be defined, or there will be an `APIKeyNotDefinedException` error
 
 ### await client.subscribe(subtype, *subtype_params) -> None
 ### await client.subscribe(*subscriptions) -> None

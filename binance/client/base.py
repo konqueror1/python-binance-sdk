@@ -125,9 +125,6 @@ class ClientBase(object):
             raise InvalidResponseException(response, await response.text())
 
     async def _request(self, method, uri, signed, force_params=False, **kwargs):
-        if not self._api_key:
-            raise APIKeyNotDefinedException(uri)
-
         if signed and not self._api_secret:
             raise APISecretNotDefinedException(uri)
 
