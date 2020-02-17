@@ -136,7 +136,7 @@ await client.subscribe(SubType.USER)
 
 ## Client(api_key, **kwargs)
 
-All arguments of the constructor `Client` are keyworded arguments and all optional.
+Create a binance client
 
 - **api_key** `str=None` binance api key
 - **kwargs**
@@ -295,7 +295,7 @@ orderbook = handler.orderbook('BTCUSDT')
   - **client** `Client=None` the instance of `binance.Client`
   - **retry_policy** `Callable[[int], (bool, int, bool)]` retry policy for depth snapshot which has the same mechanism as `Client::stream_retry_policy`
 
-`OrderBook` is another public class that we could import from binance-sdk.
+`OrderBook` is another public class that we could import from binance-sdk and you could also construct your own `OrderBook` instance.
 
 ```py
 async def main():
@@ -303,11 +303,28 @@ async def main():
     orderbook = OrderBook('BTCUSDT', client=client)
 ```
 
-#### property `orderbook.updated`
+#### property `orderbook.ready`
 
 There is a property getter in `orderbook` to detect whether the asks and bids are updated in the orderbook.
 
-If there is a network malfunction of the stream which causing the gap between two depth update messages, `orderbook` will fetch a new snapshot from the server, and during that time and before we merge the snapshot, `orderbook.updated` is `False`.
+If there is a network malfunction of the stream which causing the gap between two depth update messages, `orderbook` will fetch a new snapshot from the server, and during that time and before we merge the snapshot, `orderbook.ready` is `False`.
+
+#### Listen to the updates of `orderbook`
+
+```py
+async def start_listening_updates(orderbook):
+    while True:
+        await orderbook.updated()
+        # do something
+
+def start():
+    return asyncio.create_task(start_listening_updates(orderbook))
+
+task = start()
+
+# If we want to stop listening
+task.cancel()
+```
 
 ## License
 

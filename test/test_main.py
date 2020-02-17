@@ -1,11 +1,5 @@
 from binance import Client
-# import pytest
-
-# # TEST_SYMBOL = "BNBBTC"
-
-# # @pytest.fixture
-# # def fresh_cache():
-# #     return DepthCache(TEST_SYMBOL)
+import pytest
 
 def test_init_client():
     """create a client with key and secret"""
@@ -14,3 +8,7 @@ def test_init_client():
 def test_init_client_key():
     """create a client only with key"""
     client = Client('key')
+
+def test_no_api_key():
+    with pytest.raises(Exception):
+        client = Client()

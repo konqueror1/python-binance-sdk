@@ -6,6 +6,7 @@ from binance import Client, \
 
 client = Client('api_key', 'api_secret')
 
+@pytest.mark.asyncio
 async def test_invalid_json():
     """Test Invalid response Exception"""
 
@@ -14,7 +15,7 @@ async def test_invalid_json():
             m.get('https://www.binance.com/exchange/public/product', text='<head></html>')
             await client.get_products()
 
-
+@pytest.mark.asyncio
 async def test_api_exception():
     """Test Status Exception"""
     with pytest.raises(StatusException):
@@ -23,6 +24,7 @@ async def test_api_exception():
             m.get('https://api.binance.com/api/v1/time', json=json_obj, status_code=400)
             await client.get_server_time()
 
+@pytest.mark.asyncio
 async def test_api_exception_invalid_json():
     """
     Test Status Exception, StatusException comes before InvalidResponseException

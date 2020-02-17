@@ -2,6 +2,7 @@ import asyncio
 
 from binance.common.sequenced_list import SequencedList
 from binance.common.constants import DEFAULT_DEPTH_LIMIT, DEFAULT_RETRY_POLICY
+from binance.common.utils import wrap_coroutine
 
 KEY_FIRST_UPDATE_ID = 'U'
 KEY_LAST_UPDATE_ID = 'u'
@@ -32,6 +33,8 @@ class OrderBook(object):
         self._last_update_id = 0
         # The queue to save messages that are not continuous
         self._unsolved_queue = []
+        self._onchange_callbacks = None
+        self._updated_future = asyncio.Future()
 
         # Whether we are still fetching the depth snapshot
         self._fetching = False
@@ -40,8 +43,11 @@ class OrderBook(object):
 
     # Whether the orderbook is updated
     @property
-    def updated(self):
+    def ready(self):
         return not self._fetching and self._last_update_id != 0
+
+    async def updated(self):
+        await self._updated_future
 
     def set_client(self, client):
         if not client:
@@ -49,8 +55,12 @@ class OrderBook(object):
 
         self._client = client
 
-        if not self.updated:
+        if not self.ready:
             self._start_fetching()
+
+    def _emit_updated(self):
+        self._updated_future.set_result(None)
+        self._updated_future = asyncio.Future()
 
     # Returns `bool` whether the depth is updated
     async def fetch(self):
@@ -94,7 +104,9 @@ class OrderBook(object):
             pass
 
         if updated:
+            # success
             self._fetching = False
+            self._emit_updated()
             return
         # else: fails to update
 
@@ -140,6 +152,7 @@ class OrderBook(object):
         if first <= self._last_update_id + 1:
             # It is ok
             self._merge(last, payload[KEY_ASKS], payload[KEY_BIDS])
+            self._emit_updated()
             return True
 
         # else: Gap found
