@@ -287,7 +287,7 @@ handler = MyOrderBookHandler()
 orderbook = handler.orderbook('BTCUSDT')
 ```
 
-### OrderBook(symbol, **kwargs)
+## OrderBook(symbol, **kwargs)
 
 - **symbol** `str` the symbol name
 - **kwargs**
@@ -301,13 +301,34 @@ orderbook = handler.orderbook('BTCUSDT')
 async def main():
     # PAY attention that `orderbook` should be run in an event loop
     orderbook = OrderBook('BTCUSDT', client=client)
+
+    await orderbook.updated()
+
+    print(orderbook.asks)
 ```
 
-#### property `orderbook.ready`
+### orderbook.set_client(client) -> None
+
+- **client** `Client` the instance of `binance.Client`
+
+Set the client. If `client` is not specified in the constructor, then executing this method will make the orderbook to fetch the snapshot for the first time.
+
+### property `orderbook.ready` -> bool
 
 There is a property getter in `orderbook` to detect whether the asks and bids are updated in the orderbook.
 
 If there is a network malfunction of the stream which causing the gap between two depth update messages, `orderbook` will fetch a new snapshot from the server, and during that time and before we merge the snapshot, `orderbook.ready` is `False`.
+
+### property `orderbook.asks` -> list
+### property `orderbook.bids` -> list
+
+Get asks and bids in ascending order.
+
+### await orderbook.updated() -> None
+
+Wait for the next update of the orderbook.
+
+We could also await `orderbook.updated()` to make sure the orderbook is ready.
 
 #### Listen to the updates of `orderbook`
 
