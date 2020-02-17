@@ -288,6 +288,8 @@ orderbook = handler.orderbook('BTCUSDT')
 
 ### OrderBook
 
+`OrderBook` is another public class that we could import from binance-sdk.
+
 ## License
 
 [MIT](LICENSE)

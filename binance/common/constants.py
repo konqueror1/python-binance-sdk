@@ -99,6 +99,9 @@ TIME_IN_FORCE_GTC = 'GTC'
 ATOM_RETRY_DELAY = 0.1
 MAX_RETRIES_BEFORE_RESET = 10
 
+# If the network connection fails,
+#   we increase the delay by 100ms per failure
+#   and reset the retry counter after 10 failures
 def DEFAULT_RETRY_POLICY(retries: int):
     delay = retries * ATOM_RETRY_DELAY
     reset = retries >= MAX_RETRIES_BEFORE_RESET

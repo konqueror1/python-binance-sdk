@@ -100,8 +100,11 @@ class StreamBase(ABC):
         self._before_connect()
 
         self.close()
+
+        # If the retries == 0, we will reconnect immediately
         retries = self._retries
         self._retries += 1
+
         abandon, delay, reset = self._retry_policy(retries)
 
         if abandon:

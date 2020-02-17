@@ -1,6 +1,7 @@
 import asyncio
 
 from binance.common.sequenced_list import SequencedList
+from binance.common.constants import DEFAULT_DEPTH_LIMIT
 
 KEY_FIRST_UPDATE_ID = 'U'
 KEY_LAST_UPDATE_ID = 'u'
@@ -13,30 +14,46 @@ KEY_BIDS = 'b'
 KEY_ASKS = 'a'
 
 class OrderBook(object):
-    def __init__(self, symbol, limit):
+    # We redundant define the default value of limit,
+    #   because OrderBook is also a public class
+    def __init__(self, symbol,
+        limit=DEFAULT_DEPTH_LIMIT,
+        client=None,
+        retry_policy=DEFAULT_RETRY_POLICY
+    ):
         self.asks = SequencedList()
         self.bids = SequencedList()
 
         self._symbol = symbol
         self._limit = limit
         self._client = None
+        self._retry_policy = retry_policy
 
         self._last_update_id = 0
         # The queue to save messages that are not continuous
         self._unsolved_queue = []
 
         # Whether we are still fetching the depth snapshot
-        self._fetching = True
+        self._fetching = False
+
+        self.set_client(client)
 
     # Whether the orderbook is updated
     @property
     def updated(self):
-        return not self._fetching
+        return not self._fetching and self._last_update_id != 0
 
     def set_client(self, client):
+        if not client:
+            return
+
         self._client = client
 
-    async def _fetch(self):
+        if not self.updated:
+            self._start_fetching()
+
+    # Returns `bool` whether the depth is updated
+    async def fetch(self):
         snapshot = await self._client.get_order_book(
             symbol=self._symbol,
             limit=self._limit
@@ -51,10 +68,8 @@ class OrderBook(object):
             snapshot[KEY_REST_BIDS]
         )
 
-        self._fetching = False
-
         if len(self._unsolved_queue) == 0:
-            return
+            return True
 
         counter = 0
         for payload in self._unsolved_queue:
@@ -62,17 +77,45 @@ class OrderBook(object):
 
             if not updated:
                 del self._unsolved_queue[:counter]
-                self._start_fetching()
-                return
+                return False
 
             counter += 1
 
         self._unsolved_queue.clear()
+        return True
 
+    async def _fetch(self, retries=0):
+        updated = False
+
+        try:
+            updated = await self.fetch()
+        except:
+            # do nothing
+            pass
+
+        if updated:
+            self._fetching = False
+            return
+        # else: fails to update
+
+        abandon, delay, reset = self._retry_policy(retries)
+
+        if abandon:
+            self._fetching = False
+            return
+
+        retries = 0 if reset else retries + 1
+
+        if delay:
+            await asyncio.delay(delay)
+
+        # We re-fetch until succeeded
+        await self._fetch(retries)
 
     def _start_fetching(self):
-        self._fetching = True
-        asyncio.create_task(self._fetch())
+        if not self._fetching:
+            self._fetching = True
+            asyncio.create_task(self._fetch())
 
     def _merge(self, last_update_id, asks, bids):
         self._last_update_id = last_update_id
