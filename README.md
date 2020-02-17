@@ -278,19 +278,21 @@ In this section, we will note the parameters for each `subtypes`
 
 By default, binance-sdk maintains the orderbook for you. Specifically, `OrderBookHandlerBase` does the job.
 
-When we inherit `OrderBookHandlerBase`, method `def receive(self, payload)` of the subclass receives the raw payload of orderbook messages.
+When we inherit `OrderBookHandlerBase`, method `def receive(self, msg)` of the subclass receives the updates of managed orderbook which obey the rules of [the official documentation](https://github.com/binance-exchange/binance-official-api-docs/blob/master/web-socket-streams.md#how-to-manage-a-local-order-book-correctly).
 
-And there is another method `def receiveManaged(self, payload)` receives the updates of managed orderbook.
+And instead, there is another method `def receiveRaw(self, msg)` receives the raw payload of orderbook stream messages.
 
 We could also get the `OrderBook` object by the property getter `orderbook`.
 
 ```py
 class MyOrderBookHandler(OrderBookHandlerBase):
     def receive(self, msg):
-        # The `msg` here
+        # The `msg` here is always continuous
         print(msg)
 
-    def receiveManaged(self, msg):
+    def receiveRaw(self, msg):
+        # If the connection encounters some problem,
+        #   the msg here might loss some snapshot slices.
         print(msg)
 
 handler = MyOrderBookHandler()

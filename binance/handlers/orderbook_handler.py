@@ -1,4 +1,5 @@
 from binance.common.constants import STREAM_TYPE_MAP
+from binance.common.sequenced_list import SequencedList
 
 from .base import HandlerBase, pd
 
@@ -18,7 +19,11 @@ def create_depth_df(l):
     ])
 
 class OrderBook(object):
-    pass
+    def __init__(self):
+        self._asks = SequencedList()
+        self._bids = SequencedList()
+
+METHOD_NAME = 'receiveRaw'
 
 class OrderBookHandlerBase(HandlerBase):
     COLUMNS_MAP = ORDER_BOOK_COLUMNS_MAP
@@ -33,4 +38,4 @@ class OrderBookHandlerBase(HandlerBase):
         return info, [bids, asks]
 
     async def receiveDispatch(self, payload):
-        return super().receiveDispatch(payload)
+        return
