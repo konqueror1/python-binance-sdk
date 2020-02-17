@@ -297,8 +297,8 @@ class MyOrderBookHandler(OrderBookHandlerBase):
 
 handler = MyOrderBookHandler()
 
-# Get the reference of OrderBook object
-orderbook = handler.orderbook
+# Get the reference of OrderBook object for 'BTCUSDT'
+orderbook = handler.orderbook('BTCUSDT')
 ```
 
 ## License

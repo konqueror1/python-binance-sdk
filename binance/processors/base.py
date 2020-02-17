@@ -52,10 +52,11 @@ class ProcessorBase(object):
         return t == self.SUB_TYPE
 
     def add_handler(self, handler):
-        self._handlers.add(handler)
+        if handler not in self._handlers:
+            # set the client to handler
+            handler.set_client(self._client)
 
-        # set the client to handler
-        handler._client = self._client
+            self._handlers.add(handler)
 
     async def dispatch(self, payload):
         coro = []

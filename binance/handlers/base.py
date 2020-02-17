@@ -1,10 +1,20 @@
 import importlib
 
+from binance.common.exceptions import ReuseHandlerException
+
 pd = None
 
 class HandlerBase(object):
     def __init__(self):
         self._client = None
+
+    def set_client(self, client):
+        if self._client:
+            # If a handler used in more than one client,
+            #   there will be conflicts
+            raise ReuseHandlerException(self)
+
+        self._client = client
 
     def _receive(self, res, index=[0]):
         return pd.DataFrame(

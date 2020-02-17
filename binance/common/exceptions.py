@@ -101,3 +101,10 @@ class InvalidHandlerException(Exception):
 
     def __str__(self):
         return err_msg('invalid handler `%s`', self.handler)
+
+class ReuseHandlerException(Exception):
+    def __init__(self, handler):
+        self.handler = handler
+
+    def __str__(self):
+        return err_msg('handler `%s` should not be used in more one clients', self.handler)
