@@ -80,9 +80,9 @@ class KlineHandlerBase(HandlerBase):
     COLUMNS_MAP = KLINE_COLUMNS_MAP
     COLUMNS = KLINE_COLUMNS
 
-    def _receive(self, res):
-        k = res['k']
-        k['E'] = res['E']
+    def _receive(self, payload):
+        k = payload['k']
+        k['E'] = payload['E']
 
         return super()._receive(k)
 
@@ -127,14 +127,14 @@ class AllMarketMiniTickersHandlerBase(HandlerBase):
     COLUMNS_MAP = MINI_TICKER_COLUMNS_MAP
     COLUMNS = MINI_TICKER_COLUMNS
 
-    def _receive(self, res):
+    def _receive(self, payload):
         return super()._receive(
-            res, None)
+            payload, None)
 
 class AllMarketTickersHandlerBase(HandlerBase):
     COLUMNS_MAP = TICKER_COLUMNS_MAP
     COLUMNS = TICKER_COLUMNS
 
-    def _receive(self, res):
+    def _receive(self, payload):
         return super()._receive(
-            res, None)
+            payload, None)
