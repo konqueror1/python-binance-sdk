@@ -25,29 +25,55 @@ class SequencedList(list):
 
     # Add a new item into the list and maintain order
     def add(self, subject):
+        # suppose the list is [[1, 1], [2, 3]]
+
         key = subject[0]
+        quantity = subject[1]
+
         index = bisect.bisect_left(self._key_list, key)
 
         length = len(self)
 
         if index == length:
-            self.append(subject)
+            if quantity != 0:
+                # add [3, 1], then
+                # index -> 2, insert to the right
+                self.append(subject)
+
+            # else:
+            # add [3, 0], but it has 0 quantity, so abandon it
+            # > Receiving an event that removes a price level that is not
+            # >   in your local order book can happen and is normal.
+
             # insert_index, overridden
             return index, False
 
         origin = self[index]
         if origin[0] == key:
-            quantity = subject[1]
-
             if quantity == 0:
+                # add [2, 0]
+                # we need to remove the second item, the list will be
+                # [[1, 1]]
                 self.pop(index)
             else:
+                # add [2, 4], then the list will be
+                # [[1, 1], [2, 4]]
                 self[index] = subject
 
             return index, True
 
-        self.insert(index, subject)
+        if quantity != 0:
+            # add [0.5, 10], then
+            # index -> 0, insert to the left, the list will be
+            # [[0.5, 10], [1, 1], [2, 3]]
+            self.insert(index, subject)
+
         return index, False
+
+    # Merge a list into the current one and maintain order
+    def merge(self, l):
+        for subject in l:
+            self.add(subject)
 
     def insert(self, index, subject):
         self._key_list.insert(index, subject[0])

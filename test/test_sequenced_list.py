@@ -30,3 +30,9 @@ def test_add_last(l):
     assert l.add((100, 100)) == (10, False)
     assert l[10] == (100, 100)
     assert len(l) == 11
+
+def test_add_zero(l):
+    origin_quantity = l[0][1]
+
+    assert l.add((0, 0)) == (0, False)
+    assert l[0][1] == origin_quantity

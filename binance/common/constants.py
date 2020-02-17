@@ -105,6 +105,7 @@ def DEFAULT_RETRY_POLICY(retries: int):
     return False, delay, reset
 
 DEFAULT_STREAM_TIMEOUT = 5
+DEFAULT_DEPTH_LIMIT = 100
 
 STREAM_TYPE_MAP = {
     'e': 'type'

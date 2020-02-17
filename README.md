@@ -8,7 +8,7 @@ Unofficial Binance SDK for python 3.7+, which:
 - [x] Uses Binance's new websocket stream which supports live pub/sub so that we only need **ONE** websocket connection.
 - [x] Has optional `pandas.DataFrame` support. If `pandas` is installed, columns of all stream data frames are renamed for readability.
 - [x] Based on python `async`/`await`
-- [x] Manages the order book for you (handled by `OrderBookHandlerBase`), so that you need not to worry about websocket reconnection and message losses. For details, see the section [`OrderBook`](#orderbook)
+- [x] Manages the order book for you (handled by `OrderBookHandlerBase`), so that you need not to worry about websocket reconnection and message losses. For details, see the section [`OrderBookHandlerBase`](#orderbookhandlerbase)
 
 ## Install
 
@@ -266,25 +266,18 @@ In this section, we will note the parameters for each `subtypes`
 
 - `SubType.USER`
 
-## OrderBook
+## OrderBookHandlerBase
 
-By default, binance-sdk maintains the orderbook for you. Specifically, `OrderBookHandlerBase` does the job.
+By default, binance-sdk maintains the orderbook for you according to the rules of [the official documentation](https://github.com/binance-exchange/binance-official-api-docs/blob/master/web-socket-streams.md#how-to-manage-a-local-order-book-correctly).
 
-When we inherit `OrderBookHandlerBase`, method `def receive(self, msg)` of the subclass receives the updates of managed orderbook which obey the rules of [the official documentation](https://github.com/binance-exchange/binance-official-api-docs/blob/master/web-socket-streams.md#how-to-manage-a-local-order-book-correctly).
+Specifically, `OrderBookHandlerBase` does the job.
 
-And instead, there is another method `def receiveRaw(self, msg)` receives the raw payload of orderbook stream messages.
-
-We could also get the `OrderBook` object by the property getter `orderbook`.
+We could get the managed `OrderBook` object by method `def orderbook(symbol)`.
 
 ```py
 class MyOrderBookHandler(OrderBookHandlerBase):
     def receive(self, msg):
-        # The `msg` here is always continuous
-        print(msg)
-
-    def receiveRaw(self, msg):
-        # If the connection encounters some problem,
-        #   the msg here might loss some snapshot slices.
+        # We don't make sure that the `msg` here is continous.
         print(msg)
 
 handler = MyOrderBookHandler()
@@ -292,6 +285,8 @@ handler = MyOrderBookHandler()
 # Get the reference of OrderBook object for 'BTCUSDT'
 orderbook = handler.orderbook('BTCUSDT')
 ```
+
+### OrderBook
 
 ## License
 
