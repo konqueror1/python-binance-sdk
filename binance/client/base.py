@@ -28,8 +28,7 @@ import time
 from operator import itemgetter
 
 from binance.common.exceptions import \
-    APIKeyNotDefinedException, APISecretNotDefinedException, \
-    StatusException, InvalidResponseException
+    APISecretNotDefinedException, StatusException, InvalidResponseException
 
 def order_params(data):
     """Convert params to list with signature as last element

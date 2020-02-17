@@ -134,15 +134,16 @@ await client.subscribe(SubType.USER)
 
 # APIs
 
-## Client()
+## Client(api_key, **kwargs)
 
 All arguments of the constructor `Client` are keyworded arguments and all optional.
 
 - **api_key** `str=None` binance api key
-- **api_secret** `str=None` binance api secret
-- **requests_params** `dict=None` global requests params
-- **stream_retry_policy** `Callable[[int], (bool, int, bool)]` retry policy for websocket stream
-- **stream_timeout** `int=5` seconds util the stream reach an timeout error
+- **kwargs**
+  - **api_secret** `str=None` binance api secret
+  - **requests_params** `dict=None` global requests params
+  - **stream_retry_policy** `Callable[[int], (bool, int, bool)]` retry policy for websocket stream
+  - **stream_timeout** `int=5` seconds util the stream reach an timeout error
 
 ```py
 # retries is the counter number of
@@ -286,9 +287,27 @@ handler = MyOrderBookHandler()
 orderbook = handler.orderbook('BTCUSDT')
 ```
 
-### OrderBook
+### OrderBook(symbol, **kwargs)
+
+- **symbol** `str` the symbol name
+- **kwargs**
+  - **limit** `int=100` limit of the orderbook
+  - **client** `Client=None` the instance of `binance.Client`
+  - **retry_policy** `Callable[[int], (bool, int, bool)]` retry policy for depth snapshot which has the same mechanism as `Client::stream_retry_policy`
 
 `OrderBook` is another public class that we could import from binance-sdk.
+
+```py
+async def main():
+    # PAY attention that `orderbook` should be run in an event loop
+    orderbook = OrderBook('BTCUSDT', client=client)
+```
+
+#### property `orderbook.updated`
+
+There is a property getter in `orderbook` to detect whether the asks and bids are updated in the orderbook.
+
+If there is a network malfunction of the stream which causing the gap between two depth update messages, `orderbook` will fetch a new snapshot from the server, and during that time and before we merge the snapshot, `orderbook.updated` is `False`.
 
 ## License
 

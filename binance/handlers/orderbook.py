@@ -1,7 +1,7 @@
 import asyncio
 
 from binance.common.sequenced_list import SequencedList
-from binance.common.constants import DEFAULT_DEPTH_LIMIT
+from binance.common.constants import DEFAULT_DEPTH_LIMIT, DEFAULT_RETRY_POLICY
 
 KEY_FIRST_UPDATE_ID = 'U'
 KEY_LAST_UPDATE_ID = 'u'

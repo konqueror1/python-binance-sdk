@@ -31,8 +31,8 @@ def test_add_last(l):
     assert l[10] == (100, 100)
     assert len(l) == 11
 
-def test_add_zero(l):
+def test_zero_quantity_price_non_exists(l):
     origin_quantity = l[0][1]
 
-    assert l.add((0, 0)) == (0, False)
+    assert l.add((- 1, 0)) == (0, False)
     assert l[0][1] == origin_quantity

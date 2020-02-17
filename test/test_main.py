@@ -14,7 +14,3 @@ def test_init_client():
 def test_init_client_key():
     """create a client only with key"""
     client = Client('key')
-
-def test_init_client_no_key():
-    """create a client with no key and secret"""
-    client = Client()
