@@ -39,11 +39,16 @@ async def test_order_book():
         asks1 = [a10, a00]
         asks1_sort = [a00, a10]
 
-        m.get('https://api.binance.com/api/v3/depth?limit=100&symbol=BTCUSDT', payload=dict(
-            lastUpdateId=13,
-            asks=asks1,
-            bids=bids
-        ), status=200)
+        m.get(
+            'https://api.binance.com/api/v3/depth?limit=100&symbol=BTCUSDT', payload=dict(
+                lastUpdateId=13,
+                asks=asks1,
+                bids=bids
+            ),
+            status=200,
+            # https://github.com/pnuckowski/aioresponses/issues/128
+            repeat=True
+        )
 
         f = orderbook.updated()
 
@@ -80,34 +85,28 @@ async def test_order_book():
 
         print('round three')
 
-        # m.get('https://api.binance.com/api/v3/depth?limit=100&symbol=btcusdt', payload=dict(
-        #     lastUpdateId=13,
-        #     asks=asks1,
-        #     bids=bids
-        # ), status=200)
+        f = orderbook.updated()
 
-        # f = orderbook.updated()
+        updated = orderbook.update(dict(
+            # U=16 is missing
+            U=17,
+            u=18,
+            a=[],
+            b=[]
+        ))
 
-        # updated = orderbook.update(dict(
-        #     # U=16 is missing
-        #     U=17,
-        #     u=18,
-        #     a=[],
-        #     b=[]
-        # ))
+        assert not updated
 
-        # assert not updated
+        # orderbook is fetching
+        updated = orderbook.update(dict(
+            U=14,
+            u=15,
+            a=[[95, 1]],
+            b=[]
+        ))
 
-        # # orderbook is fetching
-        # updated = orderbook.update(dict(
-        #     U=14,
-        #     u=15,
-        #     a=[[95, 1]],
-        #     b=[]
-        # ))
+        assert not updated
 
-        # assert not updated
+        await f
 
-        # await f
-
-        # assert orderbook.asks == [[95, 1], *asks1_sort]
+        assert orderbook.asks == [[95, 1], *asks1_sort]

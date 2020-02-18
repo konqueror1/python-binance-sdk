@@ -101,7 +101,7 @@ class OrderBook(object):
             updated = await self.fetch()
         except Exception as e:
             # TODO: logger
-            print(e, type(e))
+            # print(e, type(e))
             pass
 
         if updated:
@@ -137,14 +137,15 @@ class OrderBook(object):
 
     def update(self, payload):
         if self._fetching:
-            # If fetching is not completed, we should not merge orderbook
+            # If fetching is not completed, we should not merge orderbook,
+            # We put the payload into the queue and will **try** to merge the
+            #   payload into orderbook
             self._unsolved_queue.append(payload)
             return False
 
         updated = self._update(payload)
 
         if not updated:
-            self._unsolved_queue.append(payload)
             self._start_fetching()
 
         return updated
