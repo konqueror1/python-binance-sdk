@@ -1,15 +1,11 @@
 import pytest
-import requests_mock
+from aioresponses import aioresponses
 
 from binance import Client, OrderBook
 
-@pytest.fixture
-def client():
-    return Client('api_key')
-
 @pytest.mark.asyncio
-async def test_order_book(client):
-    with requests_mock.mock() as m:
+async def test_order_book():
+    with aioresponses() as m:
         json_obj = {
             'lastUpdateId': 10,
             'asks': [
@@ -20,7 +16,9 @@ async def test_order_book(client):
                 [98, 2]
             ]
         }
-        m.get('https://api.binance.com/api/v3/depth', json=json_obj, status_code=200)
+        m.get('https://api.binance.com/api/v3/depth?limit=100&symbol=btcusdt', payload=json_obj, status=200)
+
+        client = Client('api_key')
 
         orderbook = OrderBook('BTCUSDT', client=client)
 

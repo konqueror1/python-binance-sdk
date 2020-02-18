@@ -2,7 +2,7 @@ import asyncio
 
 from binance.common.sequenced_list import SequencedList
 from binance.common.constants import DEFAULT_DEPTH_LIMIT, DEFAULT_RETRY_POLICY
-from binance.common.utils import wrap_coroutine
+from binance.common.utils import wrap_coroutine, normalize_symbol
 
 KEY_FIRST_UPDATE_ID = 'U'
 KEY_LAST_UPDATE_ID = 'u'
@@ -25,7 +25,7 @@ class OrderBook(object):
         self.asks = SequencedList()
         self.bids = SequencedList()
 
-        self._symbol = symbol
+        self._symbol = normalize_symbol(symbol)
         self._limit = limit
         self._client = None
         self._retry_policy = retry_policy
@@ -99,8 +99,8 @@ class OrderBook(object):
 
         try:
             updated = await self.fetch()
-        except:
-            # do nothing
+        except Exception as e:
+            # TODO: logger
             pass
 
         if updated:

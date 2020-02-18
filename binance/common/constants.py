@@ -84,7 +84,7 @@ ERROR_PREFIX = '[BinanceSDK] '
 # TODO: api version always changes,
 #   so that it should not be hardcoded globally.
 # api versions should be api-specific
-PUBLIC_API_VERSION = 'v1'
+PUBLIC_API_VERSION = 'v3'
 WITHDRAW_API_VERSION = 'v3'
 PRIVATE_API_VERSION = 'v3'
 

@@ -23,7 +23,7 @@ class SpotGetters(object):
         return self._api_host + '/api/' + version + '/' + path
 
     def _private_api_uri(self, path, version=PRIVATE_API_VERSION):
-        return self._api_url(path, version)
+        return self._api_uri(path, version)
 
     def _withdraw_api_uri(self, path, version=WITHDRAW_API_VERSION):
         return self._api_host + '/wapi/' + version + '/' + path

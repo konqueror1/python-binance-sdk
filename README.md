@@ -146,11 +146,12 @@ Create a binance client
   - **stream_timeout** `int=5` seconds util the stream reach an timeout error
 
 ```py
-# retries is the counter number of
-#   how many times the stream retried to reconnect
 abandon, delay, reset = stream_retry_policy(retries)
 
-# If abandon is `True`, then the client will give up to reconnect
+# retries is the counter number of
+#   how many times the stream retried to reconnect
+
+# If abandon is `True`, then the client will give up reconnecting
 # Otherwise:
 # - The client will delay `delay` seconds to reconnect
 # - If reset is `True`, the client will reset the retry counter to `0`
@@ -223,15 +224,17 @@ Register message handlers for streams. If we've subscribed to a stream of a cert
 
 Except for `HandlerExceptionHandler`, handlers each of whose name ends with `Base` should be inherited before use.
 
-Typically, we need to inherit the `def receive(self, payload)` method.
+Typically, we need to override the `def receive(self, payload)` method.
 
 ```py
 class MyTradeHandler(TradeHandlerBase):
     async def receive(self, msg):
         # If pandas is installed, then `payload` is a `pandas.DataFrame`,
         #   otherwise is a dict.
-        # If you don't want the `pandas.DataFrame`, use `msg` directly
         payload = super().receive(msg)
+
+        # If you don't want the `pandas.DataFrame`, use `msg` directly
+
         await saveTrade(payload)
 
 client.handler(MyTradeHandler())
@@ -278,6 +281,7 @@ We could get the managed `OrderBook` object by method `def orderbook(symbol)`.
 ```py
 class MyOrderBookHandler(OrderBookHandlerBase):
     def receive(self, msg):
+        # `msg` is the raw payload of the stream
         # We don't make sure that the `msg` here is continous.
         print(msg)
 
@@ -334,6 +338,7 @@ We could also await `orderbook.updated()` to make sure the orderbook is ready.
 
 ```py
 async def start_listening_updates(orderbook):
+    # This is an infinite loop
     while True:
         await orderbook.updated()
         # do something
