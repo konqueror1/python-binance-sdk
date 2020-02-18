@@ -43,7 +43,8 @@ class ProcessorBase(object):
         payload = msg.get(KEY_PAYLOAD)
 
         if payload != None and \
-            getattr(payload, KEY_PAYLOAD_TYPE, None) == self.PAYLOAD_TYPE:
+            type(payload) is dict and \
+            payload.get(KEY_PAYLOAD_TYPE) == self.PAYLOAD_TYPE:
             return True, payload
 
         return False, None

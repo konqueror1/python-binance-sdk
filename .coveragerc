@@ -1,2 +1,3 @@
 [run]
 source=binance
+omit=binance/no_track/*

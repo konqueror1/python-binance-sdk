@@ -19,6 +19,8 @@ async def test_order_book():
 
         client = Client('api_key')
 
+        # initialization
+        #################################################################
         orderbook = OrderBook('BTCUSDT', client=client)
 
         assert not orderbook.ready
@@ -39,6 +41,8 @@ async def test_order_book():
 
         f = orderbook.updated()
 
+        # wrong stream message,
+        # and orderbook will fetch the snapshot again
         updated = orderbook.update(dict(
             U=12,
             u=13,
@@ -55,6 +59,7 @@ async def test_order_book():
         assert orderbook.asks == asks1_sort
         assert orderbook.bids == bids_sort
 
+        # valid stream message
         assert orderbook.update(dict(
             U=14,
             u=15,
