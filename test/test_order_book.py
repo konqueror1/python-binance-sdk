@@ -54,3 +54,12 @@ async def test_order_book():
 
         assert orderbook.asks == asks1_sort
         assert orderbook.bids == bids_sort
+
+        assert orderbook.update(dict(
+            U=14,
+            u=15,
+            a=[[95, 1]],
+            b=[]
+        ))
+
+        assert orderbook.asks == [[95, 1], *asks1_sort]
