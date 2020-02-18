@@ -83,7 +83,7 @@ class OrderBook(object):
 
         counter = 0
         for payload in self._unsolved_queue:
-            updated = self.update(payload, False)
+            updated = self._update(payload)
 
             if not updated:
                 del self._unsolved_queue[:counter]
@@ -134,13 +134,22 @@ class OrderBook(object):
         self.asks.merge(asks)
         self.bids.merge(bids)
 
-    # Returns whether the payload is updated
-    def update(self, payload, fetch_if_gap=True):
+    def update(self, payload):
         if self._fetching:
             # If fetching is not completed, we should not merge orderbook
             self._unsolved_queue.append(payload)
             return False
 
+        updated = self._update(payload)
+
+        if not updated:
+            self._unsolved_queue.append(payload)
+            self._start_fetching()
+
+        return updated
+
+    # Returns whether the payload is updated
+    def _update(self, payload):
         first = payload[KEY_FIRST_UPDATE_ID]
         last = payload[KEY_LAST_UPDATE_ID]
         current_last = self._last_update_id
@@ -154,11 +163,5 @@ class OrderBook(object):
             self._merge(last, payload[KEY_ASKS], payload[KEY_BIDS])
             self._emit_updated()
             return True
-
-        # else: Gap found
-
-        if fetch_if_gap:
-            self._unsolved_queue.append(payload)
-            self._start_fetching()
 
         return False
