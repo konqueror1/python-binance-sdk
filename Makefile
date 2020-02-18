@@ -3,6 +3,7 @@ test:
 
 install:
 	pip install -r requirement.txt -r test-requirement.txt
+	pip install pandas
 
 report:
 	codecov
