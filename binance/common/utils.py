@@ -75,8 +75,9 @@ def err_msg(string, *args):
 def json_stringify(obj):
     return json.dumps(obj, separators=(',', ':'))
 
-def normalize_symbol(symbol):
-    return symbol.replace('_', '').lower()
+def normalize_symbol(symbol, upper=False):
+    symbol = symbol.replace('_', '')
+    return symbol.upper() if upper else symbol.lower()
 
 async def wrap_coroutine(ret):
     if inspect.iscoroutine(ret):

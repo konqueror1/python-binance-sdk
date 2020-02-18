@@ -25,7 +25,7 @@ class OrderBook(object):
         self.asks = SequencedList()
         self.bids = SequencedList()
 
-        self._symbol = normalize_symbol(symbol)
+        self._symbol = normalize_symbol(symbol, True)
         self._limit = limit
         self._client = None
         self._retry_policy = retry_policy
@@ -101,6 +101,7 @@ class OrderBook(object):
             updated = await self.fetch()
         except Exception as e:
             # TODO: logger
+            print(e, type(e))
             pass
 
         if updated:
