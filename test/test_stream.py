@@ -1,7 +1,7 @@
 import pytest
 import asyncio
 
-from binance import Stream
+from binance import Stream, StreamDisconnectedException
 from binance.common.constants import STREAM_HOST
 
 async def run_stream():
@@ -15,7 +15,11 @@ async def run_stream():
         on_message
     ).connect()
 
-    await stream.subscribe(['btcusdt@ticker'])
+    params = ['btcusdt@ticker']
+
+    print('subscribed', await stream.subscribe(params))
+
+    assert await stream.list_subscriptions() == params
 
     msg = await f
 
@@ -26,3 +30,13 @@ async def run_stream():
 @pytest.mark.asyncio
 async def test_binance_stream():
     await run_stream()
+
+def test_stream_never_connect():
+    def on_message():
+        pass
+
+    with pytest.raises(StreamDisconnectedException, match='never connected'):
+        Stream(
+            STREAM_HOST + '/stream',
+            on_message
+        ).send({})

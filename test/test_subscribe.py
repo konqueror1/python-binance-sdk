@@ -58,18 +58,18 @@ async def test_handler_exception_handler(client):
     assert await f == exc
 
 def test_invalid_handler(client):
-    with pytest.raises(InvalidHandlerException):
+    with pytest.raises(InvalidHandlerException, match='invalid handler'):
         client.handler(1)
 
 @pytest.mark.asyncio
 async def test_invalid_subtype_symbol(client):
-    with pytest.raises(InvalidSubTypeParamException):
+    with pytest.raises(InvalidSubTypeParamException, match='invalid param'):
         await client.subscribe(SubType.TICKER)
 
     with pytest.raises(InvalidSubTypeParamException):
         await client.subscribe(SubType.TICKER, 1)
 
-    with pytest.raises(InvalidSubParamsException):
+    with pytest.raises(InvalidSubParamsException, match='invalid subscribe'):
         await client.subscribe(SubType.TICKER, 1, 2)
 
 @pytest.mark.asyncio

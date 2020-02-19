@@ -4,7 +4,7 @@ import websockets as ws
 from abc import ABC, abstractmethod
 
 from binance.common.utils import json_stringify
-from binance.common.exceptions import StreamAbandonedException
+from binance.common.exceptions import StreamDisconnectedException
 from binance.common.constants import (
     DEFAULT_RETRY_POLICY, DEFAULT_STREAM_TIMEOUT, DEFAULT_STREAM_CLOSE_CODE
 )
@@ -65,9 +65,6 @@ class StreamBase(ABC):
         await self._on_message(msg)
 
     def _before_connect(self):
-        if self._open_future:
-            return
-
         self._open_future = asyncio.Future()
 
     def _set_socket(self, socket):
@@ -84,11 +81,12 @@ class StreamBase(ABC):
         except asyncio.TimeoutError:
             await self._socket.ping()
         except asyncio.CancelledError:
-            await self._socket.ping()
+            return
         else:
             try:
                 parsed = json.loads(msg)
             except ValueError:
+                # TODO: logger
                 pass
             else:
                 await self._handle_message(parsed)
@@ -149,6 +147,7 @@ class StreamBase(ABC):
             await self._socket.close(self._close_code)
 
         self._conn_task.cancel()
+        self._after_close()
 
     async def send(self, msg):
         socket = self._socket
@@ -157,7 +156,7 @@ class StreamBase(ABC):
             if self._open_future:
                 socket = await self._open_future
             else:
-                raise StreamAbandonedException(self._uri)
+                raise StreamDisconnectedException(self._uri)
 
         future = asyncio.Future()
 

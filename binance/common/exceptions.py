@@ -5,7 +5,7 @@ import json
 from .utils import err_msg
 
 __all__ = [
-    'StreamAbandonedException',
+    'StreamDisconnectedException',
     'APISecretNotDefinedException',
     'StatusException',
     'InvalidResponseException',
@@ -15,13 +15,13 @@ __all__ = [
     'InvalidHandlerException'
 ]
 
-class StreamAbandonedException(Exception):
+class StreamDisconnectedException(Exception):
     def __init__(self, uri):
         self.uri = uri
 
     def __str__(self):
         return err_msg(
-            'websocket "%s" is abandoned after too many retries according to the `retry_policy`', self.url)
+            'stream "%s" is never connected or is abandoned after too many retries according to the `retry_policy`, run `stream.connect()`', self.url)
 
 class APISecretNotDefinedException(Exception):
     def __init__(self, url):
