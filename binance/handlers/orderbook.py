@@ -28,7 +28,6 @@ class OrderBook(object):
         self._symbol = normalize_symbol(symbol, True)
         self._limit = limit
         self._client = None
-        self._retry_policy = None
 
         self._last_update_id = 0
         # The queue to save messages that are not continuous
@@ -51,9 +50,6 @@ class OrderBook(object):
         await self._updated_future
 
     def set_retry_policy(self, retry_policy):
-        if not retry_policy:
-            return
-
         self._retry_policy = retry_policy
 
     def set_client(self, client):
@@ -96,11 +92,13 @@ class OrderBook(object):
         for payload in self._unsolved_queue:
             updated = self._update(payload)
 
+            counter += 1
+
             if not updated:
+                # If the current item is invalid,
+                #   then remove the current item and all previous items
                 del self._unsolved_queue[:counter]
                 return False
-
-            counter += 1
 
         self._unsolved_queue.clear()
         return True
@@ -121,10 +119,12 @@ class OrderBook(object):
             return
         # else: fails to update
 
-        abandon, delay, reset = self._retry_policy(retries)
+        abandon, delay, reset = self._retry_policy(retries) \
+            if callable(self._retry_policy) else (True, 0, True)
 
         if abandon:
             self._fetching = False
+            # TODO: if fails to merge, there might be no exceptions
             self._emit_exception(exc)
             return
 
@@ -173,11 +173,12 @@ class OrderBook(object):
         current_last = self._last_update_id
 
         if last <= current_last:
-            # abandon the payload
+            # abandon the payload,
+            #   but however it is ok, it does not ruin the orderbook
             return True
 
         if first <= self._last_update_id + 1:
-            # It is ok
+            # It is ok, just merge
             self._merge(last, payload[KEY_ASKS], payload[KEY_BIDS])
             self._emit_updated()
             return True

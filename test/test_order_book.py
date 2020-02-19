@@ -22,7 +22,7 @@ async def test_order_book():
 
         client = Client('api_key')
 
-        def preset_a():
+        def preset_10():
             m.get('https://api.binance.com/api/v3/depth?limit=100&symbol=BTCUSDT', payload=dict(
                 lastUpdateId=10,
                 asks=asks,
@@ -33,7 +33,7 @@ async def test_order_book():
             assert orderbook.asks == asks
             assert orderbook.bids == bids_sort
 
-        def preset_b():
+        def preset_13():
             m.get(
                 'https://api.binance.com/api/v3/depth?limit=100&symbol=BTCUSDT', payload=dict(
                     lastUpdateId=13,
@@ -47,23 +47,13 @@ async def test_order_book():
             assert orderbook.asks == asks1_sort
             assert orderbook.bids == bids_sort
 
-        def preset_c():
-            m.get(
-                'https://api.binance.com/api/v3/depth?limit=100&symbol=BTCUSDT', payload=dict(
-                    lastUpdateId=13,
-                    asks=asks1,
-                    bids=bids
-                ),
-                status=200
-            )
-
         def assert_state_c():
             assert orderbook.asks == [[95, 1], *asks1_sort]
             assert orderbook.bids == bids_sort
 
-        print('\nround one')
+        print('\nround one  : normal initialization')
 
-        preset_a()
+        preset_10()
 
         orderbook = OrderBook('BTCUSDT', client)
 
@@ -73,9 +63,7 @@ async def test_order_book():
 
         assert_state_a()
 
-        print('round two')
-
-        # preset_b()
+        print('round two  : wrong update, refetch, retry policy and finally fetched')
 
         f = orderbook.updated()
 
@@ -94,7 +82,7 @@ async def test_order_book():
 
         await asyncio.sleep(0.5)
         # delay initialize preset b
-        preset_b()
+        preset_13()
 
         await f
         assert orderbook.ready
@@ -111,9 +99,9 @@ async def test_order_book():
 
         assert orderbook.asks == [[95, 1], *asks1_sort]
 
-        print('round three')
+        print('round three: new update when still refetching')
 
-        preset_c()
+        preset_13()
 
         f = orderbook.updated()
 
@@ -141,41 +129,101 @@ async def test_order_book():
 
         assert_state_c()
 
-        print('round four')
+        print('round four : retry policy -> abandon')
 
         def no_retry_policy(retries):
             return True, 0, True
 
         orderbook.set_retry_policy(no_retry_policy)
 
-        updated = orderbook.update(dict(
-            # U=16 is missing
-            U=17,
-            u=18,
+        async def test_no_retry_policy():
+            updated = orderbook.update(dict(
+                # U=16 is missing
+                U=17,
+                u=18,
+                a=[],
+                b=[]
+            ))
+
+            exc = None
+
+            try:
+                await orderbook.updated()
+            except Exception as e:
+                exc = e
+
+            assert exc != None
+
+            preset_13()
+
+            await orderbook.fetch()
+
+            assert orderbook.ready
+
+            updated = orderbook.update(dict(
+                U=14,
+                u=15,
+                a=[[95, 1]],
+                b=[]
+            ))
+
+            assert_state_c()
+
+        await test_no_retry_policy()
+
+        print('round five : no retry policy')
+
+        orderbook.set_retry_policy(None)
+
+        await test_no_retry_policy()
+
+        print('round six: part of unsolved_queue is invalid')
+
+        preset_10()
+        # will fetch twice
+        preset_10()
+
+        def allow_retry_once(retries):
+            if retries >= 1:
+                return True, 0, True
+
+            return False, 0, False
+
+        orderbook.set_retry_policy(allow_retry_once)
+
+        # however, use private method, do not do this unless for testing
+
+        orderbook._fetching = True
+
+        asyncio.create_task(orderbook._fetch())
+
+        f = orderbook.updated()
+
+        # valid, but now is fetching
+        orderbook.update(dict(
+            U=11,
+            u=12,
             a=[],
             b=[]
         ))
 
-        exc = None
-
-        try:
-            await orderbook.updated()
-        except Exception as e:
-            exc = e
-
-        assert exc != None
-
-        preset_c()
-
-        await orderbook.fetch()
-
-        assert orderbook.ready
-
-        updated = orderbook.update(dict(
+        # invalid, and it will also clean the previous one
+        orderbook.update(dict(
             U=14,
             u=15,
             a=[[95, 1]],
             b=[]
         ))
 
-        assert_state_c()
+        # orderbook will refetch
+
+        orderbook.update(dict(
+            U=11,
+            u=12,
+            a=[a10],
+            b=[]
+        ))
+
+        await f
+
+        assert_state_b()

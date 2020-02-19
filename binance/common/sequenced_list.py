@@ -19,10 +19,6 @@ class SequencedList(list):
         self._key_list.append(subject[0])
         return super().append(subject)
 
-    def insert(self, index, subject):
-        self._key_list.insert(index, subject[0])
-        return super().insert(index, subject)
-
     def bisect(self, subject):
         key = subject[0]
         return bisect.bisect_left(self._key_list, key)

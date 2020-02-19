@@ -98,4 +98,4 @@ class ReuseHandlerException(Exception):
         self.handler = handler
 
     def __str__(self):
-        return err_msg('handler `%s` should not be used in more one clients', self.handler)
+        return err_msg('handler `%s` should not be used in more than one clients', self.handler)
