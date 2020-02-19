@@ -100,12 +100,14 @@ class StreamBase(ABC):
             try:
                 while True:
                     await self._receive()
+
             except ws.ConnectionClosed as e:
                 if e.code == self._close_code:
                     # The socket is closed by `await self.close()`
                     return
 
                 await self._reconnect()
+
             except Exception as e:
                 await self._reconnect()
 
@@ -146,7 +148,6 @@ class StreamBase(ABC):
             await self._socket.close(self._close_code)
 
         self._conn_task.cancel()
-        self._close_code = INVALID_WS_CLOSE_CODE
 
     async def send(self, msg):
         socket = self._socket

@@ -91,17 +91,28 @@ async def test_client_handler(client):
 
     await client.close()
 
-@pytest.mark.asyncio
-async def test_orderbook_handler(client):
+async def run_orderbook_handler(client, init_orderbook_first):
+    f = asyncio.Future()
+
     class OrderBookHandler(OrderBookHandlerBase):
-        pass
+        def receive(self, payload):
+            f.set_result(super().receive(payload))
 
     handler = OrderBookHandler()
+
+    if init_orderbook_first:
+        orderbook = handler.orderbook('BTCUSDT')
 
     client.handler(handler)
     await client.subscribe(SubType.ORDER_BOOK, 'BTCUSDT')
 
-    orderbook = handler.orderbook('BTCUSDT')
+    info, [bids, asks] = await f
+    assert isinstance(info, pandas.DataFrame)
+    assert isinstance(bids, pandas.DataFrame)
+    assert isinstance(asks, pandas.DataFrame)
+
+    if not init_orderbook_first:
+        orderbook = handler.orderbook('BTCUSDT')
 
     async def assert_no_change():
         asks = [*orderbook.asks]
@@ -127,6 +138,14 @@ async def test_orderbook_handler(client):
     await assert_no_change()
 
     await client.close()
+
+@pytest.mark.asyncio
+async def test_orderbook_handler_init_orderbook_ahead(client):
+    await run_orderbook_handler(client, True)
+
+@pytest.mark.asyncio
+async def test_orderbook_handler_init_orderbook_after(client):
+    await run_orderbook_handler(client, False)
 
 # TODO
 # stop()
