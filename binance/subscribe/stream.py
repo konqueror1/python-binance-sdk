@@ -1,9 +1,16 @@
-from .stream_base import StreamBase
 from binance.common.utils import normalize_symbol
+from binance.common.constants import \
+    DEFAULT_RETRY_POLICY, DEFAULT_STREAM_TIMEOUT
+
+from .stream_base import StreamBase
 
 class Stream(StreamBase):
-    def __init__(self,
-        uri, on_message, retry_policy, timeout):
+    def __init__(self, uri, on_message,
+        # We redundant the default value here,
+        #   because `binance.Stream` is also a public class
+        retry_policy=DEFAULT_RETRY_POLICY,
+        timeout=DEFAULT_STREAM_TIMEOUT
+    ):
         super().__init__(uri, on_message, retry_policy, timeout)
 
         self._subscribed = set()

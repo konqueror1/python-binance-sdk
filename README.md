@@ -328,11 +328,26 @@ If there is a network malfunction of the stream which causing the gap between tw
 
 Get asks and bids in ascending order.
 
+### orderbook.update(payload) -> bool
+
+- **payload** `dict` the data payload of the `depthUpdate` stream message
+
+Returns `True` if the payload is valid and is updated to the orderbook, otherwise `False`
+
+If the return value is `False`, the orderbook will automatically start fetching the snapshot
+
+### await orderbook.fetch() -> None
+
+Manually fetch the snapshot. For most scenarios, you need not to call this method because once
+there is an invalid payload, the orderbook will fetch the snapshot itself.
+
 ### await orderbook.updated() -> None
 
 Wait for the next update of the orderbook.
 
 We could also await `orderbook.updated()` to make sure the orderbook is ready.
+
+If the orderbook fails to fetch depth snapshot for so many times which means the fetching is abanboned by the `retry_policy`, an `aiohttp` exception will be raised.
 
 #### Listen to the updates of `orderbook`
 
