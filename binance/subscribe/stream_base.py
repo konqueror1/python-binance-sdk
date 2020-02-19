@@ -14,6 +14,8 @@ KEY_RESULT = 'result'
 # TODO: handle error code
 # KEY_CODE = 'code'
 
+INVALID_WS_CLOSE_CODE = - 1
+
 class StreamBase(ABC):
     def __init__(self,
         uri,
@@ -22,12 +24,13 @@ class StreamBase(ABC):
         #   because `binance.Stream` is also a public class
         retry_policy=DEFAULT_RETRY_POLICY,
         timeout=DEFAULT_STREAM_TIMEOUT,
-        close_code=DEFAULT_STREAM_CLOSE_CODE
     ):
         self._on_message = on_message
         self._retry_policy = retry_policy
         self._timeout = timeout
-        self._close_code = close_code
+
+        # `websockets` close code is never - 1
+        self._close_code = INVALID_WS_CLOSE_CODE
 
         self._socket = None
         self._conn_task = None
@@ -136,11 +139,14 @@ class StreamBase(ABC):
     def _after_close(self):
         pass
 
-    async def close(self):
+    async def close(self, code=DEFAULT_STREAM_CLOSE_CODE):
+        self._close_code = code
+
         if self._socket:
             await self._socket.close(self._close_code)
 
         self._conn_task.cancel()
+        self._close_code = INVALID_WS_CLOSE_CODE
 
     async def send(self, msg):
         socket = self._socket

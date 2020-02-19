@@ -212,7 +212,9 @@ Start receiving streams
 
 Stop receiving streams
 
-### await client.close() -> None
+### await client.close(code=4999) -> None
+
+- **code** `int=4999` the custom close code for websocket. It should be in the [range 4000 - 4999](https://tools.ietf.org/html/rfc6455#section-7.4.2)
 
 Close stream connection, clear all stream subscriptions and clear all handlers.
 

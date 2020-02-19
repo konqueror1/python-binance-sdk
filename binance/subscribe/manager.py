@@ -1,4 +1,4 @@
-from binance.common.constants import RET_OK
+from binance.common.constants import RET_OK, DEFAULT_STREAM_CLOSE_CODE
 from binance.common.exceptions import InvalidHandlerException
 
 from .stream import Stream
@@ -14,9 +14,9 @@ class SubscriptionManager(object):
 
         return self
 
-    async def close(self):
+    async def close(self, code=DEFAULT_STREAM_CLOSE_CODE):
         if self._data_stream:
-            await self._data_stream.close()
+            await self._data_stream.close(code)
             self._data_stream = None
 
         self._handler_ctx = None
@@ -36,8 +36,7 @@ class SubscriptionManager(object):
             self._data_stream = Stream(
                 self._stream_host + '/stream',
                 self._receive,
-                self._stream_retry_policy,
-                self._stream_timeout
+                **self._stream_kwargs
             ).connect()
 
         return self._data_stream

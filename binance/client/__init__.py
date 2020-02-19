@@ -43,8 +43,11 @@ class Client(
         self._api_host = api_host
         self._website_host = website_host
         self._stream_host = stream_host
-        self._stream_retry_policy = stream_retry_policy
-        self._stream_timeout = stream_timeout
+
+        self._stream_kwargs = dict(
+            retry_policy=stream_retry_policy,
+            timeout=stream_timeout
+        )
 
         self._receiving = False
         self._handler_ctx = None
