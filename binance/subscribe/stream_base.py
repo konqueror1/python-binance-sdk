@@ -5,6 +5,8 @@ from abc import ABC, abstractmethod
 
 from binance.common.utils import json_stringify
 from binance.common.exceptions import StreamAbandonedException
+from binance.common.constants import \
+    DEFAULT_RETRY_POLICY, DEFAULT_STREAM_TIMEOUT, DEFAULT_STREAM_CLOSE_CODE
 
 KEY_ID = 'id'
 KEY_RESULT = 'result'
@@ -16,15 +18,19 @@ class StreamBase(ABC):
     def __init__(self,
         uri,
         on_message,
-        retry_policy,
-        timeout
+        # We redundant the default value here,
+        #   because `binance.Stream` is also a public class
+        retry_policy=DEFAULT_RETRY_POLICY,
+        timeout=DEFAULT_STREAM_TIMEOUT,
+        close_code=DEFAULT_STREAM_CLOSE_CODE
     ):
         self._on_message = on_message
         self._retry_policy = retry_policy
         self._timeout = timeout
+        self._close_code = close_code
 
         self._socket = None
-        self._conn = None
+        self._conn_task = None
         self._retries = 0
 
         # message_id
@@ -38,7 +44,7 @@ class StreamBase(ABC):
     def connect(self):
         self._before_connect()
 
-        self._conn = asyncio.create_task(self._connect())
+        self._conn_task = asyncio.create_task(self._connect())
         return self
 
     async def _handle_message(self, msg):
@@ -92,14 +98,16 @@ class StreamBase(ABC):
                 while True:
                     await self._receive()
             except ws.ConnectionClosed as e:
+                if e.code == self._close_code:
+                    # The socket is closed by `await self.close()`
+                    return
+
                 await self._reconnect()
             except Exception as e:
                 await self._reconnect()
 
     async def _reconnect(self):
         self._before_connect()
-
-        self.close()
 
         # If the retries == 0, we will reconnect immediately
         retries = self._retries
@@ -128,9 +136,11 @@ class StreamBase(ABC):
     def _after_close(self):
         pass
 
-    def close(self):
-        self._conn.cancel()
-        self._socket = None
+    async def close(self):
+        if self._socket:
+            await self._socket.close(self._close_code)
+
+        self._conn_task.cancel()
 
     async def send(self, msg):
         socket = self._socket

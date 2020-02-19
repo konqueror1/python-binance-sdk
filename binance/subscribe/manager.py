@@ -14,14 +14,12 @@ class SubscriptionManager(object):
 
         return self
 
-    def close(self):
+    async def close(self):
         if self._data_stream:
-            self._data_stream.close()
+            await self._data_stream.close()
             self._data_stream = None
 
         self._handler_ctx = None
-
-        return self
 
     async def _receive(self, msg):
         if self._receiving:

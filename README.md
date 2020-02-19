@@ -212,7 +212,7 @@ Start receiving streams
 
 Stop receiving streams
 
-### client.close() -> self
+### await client.close() -> None
 
 Close stream connection, clear all stream subscriptions and clear all handlers.
 

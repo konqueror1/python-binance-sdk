@@ -4,8 +4,7 @@ import asyncio
 from binance import Stream
 from binance.common.constants import STREAM_HOST
 
-@pytest.mark.asyncio
-async def test_binance_stream():
+async def run_stream():
     f = asyncio.Future()
 
     async def on_message(msg):
@@ -21,3 +20,7 @@ async def test_binance_stream():
     msg = await f
     print(msg)
     stream.close()
+
+@pytest.mark.asyncio
+async def test_binance_stream():
+    await run_stream()
