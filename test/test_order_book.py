@@ -15,17 +15,53 @@ async def test_order_book():
         bids=[b00, b01]
         bids_sort = [b01, b00]
 
-        m.get('https://api.binance.com/api/v3/depth?limit=100&symbol=BTCUSDT', payload=dict(
-            lastUpdateId=10,
-            asks=asks,
-            bids=bids
-        ), status=200)
+        asks1 = [a10, a00]
+        asks1_sort = [a00, a10]
 
         client = Client('api_key')
 
-        # initialization
-        #################################################################
-        print('round one')
+        def preset_a():
+            m.get('https://api.binance.com/api/v3/depth?limit=100&symbol=BTCUSDT', payload=dict(
+                lastUpdateId=10,
+                asks=asks,
+                bids=bids
+            ), status=200)
+
+        def assert_state_a():
+            assert orderbook.asks == asks
+            assert orderbook.bids == bids_sort
+
+        def preset_b():
+            m.get(
+                'https://api.binance.com/api/v3/depth?limit=100&symbol=BTCUSDT', payload=dict(
+                    lastUpdateId=13,
+                    asks=asks1,
+                    bids=bids
+                ),
+                status=200
+            )
+
+        def assert_state_b():
+            assert orderbook.asks == asks1_sort
+            assert orderbook.bids == bids_sort
+
+        def preset_c():
+            m.get(
+                'https://api.binance.com/api/v3/depth?limit=100&symbol=BTCUSDT', payload=dict(
+                    lastUpdateId=13,
+                    asks=asks1,
+                    bids=bids
+                ),
+                status=200
+            )
+
+        def assert_state_c():
+            assert orderbook.asks == [[95, 1], *asks1_sort]
+            assert orderbook.bids == bids_sort
+
+        print('\nround one')
+
+        preset_a()
 
         orderbook = OrderBook('BTCUSDT', client=client)
 
@@ -33,26 +69,13 @@ async def test_order_book():
         await orderbook.updated()
         assert orderbook.ready
 
-        assert orderbook.asks == asks
-        assert orderbook.bids == bids_sort
-
-        asks1 = [a10, a00]
-        asks1_sort = [a00, a10]
-
-        m.get(
-            'https://api.binance.com/api/v3/depth?limit=100&symbol=BTCUSDT', payload=dict(
-                lastUpdateId=13,
-                asks=asks1,
-                bids=bids
-            ),
-            status=200,
-            # https://github.com/pnuckowski/aioresponses/issues/128
-            repeat=True
-        )
-
-        f = orderbook.updated()
+        assert_state_a()
 
         print('round two')
+
+        preset_b()
+
+        f = orderbook.updated()
 
         # wrong stream message,
         # and orderbook will fetch the snapshot again
@@ -70,8 +93,7 @@ async def test_order_book():
         await f
         assert orderbook.ready
 
-        assert orderbook.asks == asks1_sort
-        assert orderbook.bids == bids_sort
+        assert_state_b()
 
         # valid stream message
         assert orderbook.update(dict(
@@ -84,6 +106,8 @@ async def test_order_book():
         assert orderbook.asks == [[95, 1], *asks1_sort]
 
         print('round three')
+
+        preset_c()
 
         f = orderbook.updated()
 
@@ -109,4 +133,43 @@ async def test_order_book():
 
         await f
 
-        assert orderbook.asks == [[95, 1], *asks1_sort]
+        assert_state_c()
+
+        print('round four')
+
+        def no_retry_policy(retries):
+            return True, 0, True
+
+        orderbook.set_retry_policy(no_retry_policy)
+
+        updated = orderbook.update(dict(
+            # U=16 is missing
+            U=17,
+            u=18,
+            a=[],
+            b=[]
+        ))
+
+        exc = None
+
+        try:
+            await orderbook.updated()
+        except Exception as e:
+            exc = e
+
+        assert exc != None
+
+        preset_c()
+
+        await orderbook.fetch()
+
+        assert orderbook.ready
+
+        updated = orderbook.update(dict(
+            U=14,
+            u=15,
+            a=[[95, 1]],
+            b=[]
+        ))
+
+        assert_state_c()

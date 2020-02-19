@@ -28,7 +28,7 @@ class OrderBook(object):
         self._symbol = normalize_symbol(symbol, True)
         self._limit = limit
         self._client = None
-        self._retry_policy = retry_policy
+        self._retry_policy = None
 
         self._last_update_id = 0
         # The queue to save messages that are not continuous
@@ -39,6 +39,7 @@ class OrderBook(object):
         # Whether we are still fetching the depth snapshot
         self._fetching = False
 
+        self.set_retry_policy(retry_policy)
         self.set_client(client)
 
     # Whether the orderbook is updated
@@ -48,6 +49,12 @@ class OrderBook(object):
 
     async def updated(self):
         await self._updated_future
+
+    def set_retry_policy(self, retry_policy):
+        if not retry_policy:
+            return
+
+        self._retry_policy = retry_policy
 
     def set_client(self, client):
         if not client:
@@ -62,8 +69,12 @@ class OrderBook(object):
         self._updated_future.set_result(None)
         self._updated_future = asyncio.Future()
 
+    def _emit_exception(self, exc):
+        self._updated_future.set_exception(exc)
+        self._updated_future = asyncio.Future()
+
     # Returns `bool` whether the depth is updated
-    async def fetch(self):
+    async def _fetch_snapshot(self):
         snapshot = await self._client.get_order_book(
             symbol=self._symbol,
             limit=self._limit
@@ -96,13 +107,12 @@ class OrderBook(object):
 
     async def _fetch(self, retries=0):
         updated = False
+        exc = None
 
         try:
-            updated = await self.fetch()
+            updated = await self._fetch_snapshot()
         except Exception as e:
-            # TODO: logger
-            # print(e, type(e))
-            pass
+            exc = e
 
         if updated:
             # success
@@ -115,6 +125,7 @@ class OrderBook(object):
 
         if abandon:
             self._fetching = False
+            self._emit_exception(exc)
             return
 
         retries = 0 if reset else retries + 1
@@ -129,6 +140,11 @@ class OrderBook(object):
         if not self._fetching:
             self._fetching = True
             asyncio.create_task(self._fetch())
+
+    async def fetch(self):
+        if not self._fetching:
+            self._fetching = True
+            await self._fetch()
 
     def _merge(self, last_update_id, asks, bids):
         self._last_update_id = last_update_id
