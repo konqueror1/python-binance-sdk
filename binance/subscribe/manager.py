@@ -11,7 +11,6 @@ class SubscriptionManager(object):
 
     def stop(self):
         self._receiving = False
-
         return self
 
     async def close(self, code=DEFAULT_STREAM_CLOSE_CODE):

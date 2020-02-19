@@ -5,7 +5,7 @@ from binance.common.constants import STREAM_TYPE_MAP, STREAM_OHLC_MAP
 from .base import HandlerBase
 
 __all__ = [
-    'HandlerExceptionHandler',
+    'HandlerExceptionHandlerBase',
     'TradeHandlerBase',
     'AggTradeHandlerBase',
     'KlineHandlerBase',
@@ -15,7 +15,7 @@ __all__ = [
     'AllMarketTickersHandlerBase'
 ]
 
-class HandlerExceptionHandler(HandlerBase):
+class HandlerExceptionHandlerBase(HandlerBase):
     def receive(self, e):
         traceback.print_exc()
         return e

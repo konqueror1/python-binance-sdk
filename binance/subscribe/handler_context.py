@@ -85,12 +85,6 @@ class HandlerContext(object):
 
         raise UnsupportedSubTypeException(subtype)
 
-    # def register_processor(self, processor):
-    #     if isinstance(processor, ProcessorBase):
-    #         self._processors.append(processor)
-
-    #     # TODO: invalid processor
-
     async def _receive(self, msg):
         for processor in self._processors:
             is_payload, payload = processor.is_message_type(msg)

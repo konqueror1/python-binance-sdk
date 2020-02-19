@@ -7,7 +7,7 @@ from binance.common.constants import SubType, \
 from .base import ProcessorBase
 
 class ExceptionProcessor(ProcessorBase):
-    HANDLER = HandlerExceptionHandler
+    HANDLER = HandlerExceptionHandlerBase
 
 class KlineProcessor(ProcessorBase):
     HANDLER = KlineHandlerBase

@@ -272,7 +272,9 @@ In this section, we will note the parameters for each `subtypes`
 
 - `SubType.USER`
 
-## OrderBookHandlerBase
+## OrderBookHandlerBase(limit=100)
+
+- **limit** `int=100` the limit of the depth snapshot
 
 By default, binance-sdk maintains the orderbook for you according to the rules of [the official documentation](https://github.com/binance-exchange/binance-official-api-docs/blob/master/web-socket-streams.md#how-to-manage-a-local-order-book-correctly).
 
@@ -340,7 +342,9 @@ If the return value is `False`, the orderbook will automatically start fetching 
 
 ### await orderbook.fetch() -> None
 
-Manually fetch the snapshot. For most scenarios, you need not to call this method because once
+Manually fetch the snapshot.
+
+For most scenarios, you need **NOT** to call this method because once
 there is an invalid payload, the orderbook will fetch the snapshot itself.
 
 ### await orderbook.updated() -> None
