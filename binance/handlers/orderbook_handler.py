@@ -50,7 +50,7 @@ class OrderBookHandlerBase(HandlerBase):
         if symbol in self._orderbooks:
             return self._orderbooks[symbol]
 
-        orderbook = OrderBook(symbol, self._limit)
+        orderbook = OrderBook(symbol, limit=self._limit)
 
         if self._client:
             orderbook.set_client(self._client)

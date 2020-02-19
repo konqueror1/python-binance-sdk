@@ -2,7 +2,15 @@ import pytest
 from aioresponses import aioresponses
 
 from binance import Client, \
-    InvalidResponseException, StatusException
+    InvalidResponseException, StatusException, APISecretNotDefinedException
+
+@pytest.mark.asyncio
+async def test_no_secret():
+    client = Client('api_key')
+
+    for method in ['get', 'post', 'delete', 'put']:
+        with pytest.raises(APISecretNotDefinedException):
+            await getattr(client, method)('/foo', True)
 
 @pytest.mark.asyncio
 async def test_invalid_json():

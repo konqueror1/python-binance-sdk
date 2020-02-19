@@ -1,4 +1,6 @@
 import pytest
+import asyncio
+
 from aioresponses import aioresponses
 
 from binance import Client, OrderBook
@@ -63,7 +65,7 @@ async def test_order_book():
 
         preset_a()
 
-        orderbook = OrderBook('BTCUSDT', client=client)
+        orderbook = OrderBook('BTCUSDT', client)
 
         assert not orderbook.ready
         await orderbook.updated()
@@ -73,7 +75,7 @@ async def test_order_book():
 
         print('round two')
 
-        preset_b()
+        # preset_b()
 
         f = orderbook.updated()
 
@@ -89,6 +91,10 @@ async def test_order_book():
 
         assert not updated
         assert not orderbook.ready
+
+        await asyncio.sleep(0.5)
+        # delay initialize preset b
+        preset_b()
 
         await f
         assert orderbook.ready

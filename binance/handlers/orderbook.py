@@ -18,8 +18,8 @@ class OrderBook(object):
     # We redundant define the default value of limit,
     #   because OrderBook is also a public class
     def __init__(self, symbol,
-        limit=DEFAULT_DEPTH_LIMIT,
         client=None,
+        limit=DEFAULT_DEPTH_LIMIT,
         retry_policy=DEFAULT_RETRY_POLICY
     ):
         self.asks = SequencedList()
@@ -131,7 +131,7 @@ class OrderBook(object):
         retries = 0 if reset else retries + 1
 
         if delay:
-            await asyncio.delay(delay)
+            await asyncio.sleep(delay)
 
         # We re-fetch until succeeded
         await self._fetch(retries)
