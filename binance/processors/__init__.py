@@ -15,5 +15,5 @@ PROCESSORS = [
     TickerProcessor,
     AllMarketMiniTickersProcessor,
     AllMarketTickersProcessor,
-    UserProcessor
+    # UserProcessor
 ]

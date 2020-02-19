@@ -14,6 +14,7 @@ KEY_RESULT = 'result'
 # TODO: handle error code
 # KEY_CODE = 'code'
 
+# `websockets` close code is never - 1
 INVALID_WS_CLOSE_CODE = - 1
 
 class StreamBase(ABC):
@@ -29,7 +30,6 @@ class StreamBase(ABC):
         self._retry_policy = retry_policy
         self._timeout = timeout
 
-        # `websockets` close code is never - 1
         self._close_code = INVALID_WS_CLOSE_CODE
 
         self._socket = None

@@ -18,8 +18,10 @@ async def run_stream():
     await stream.subscribe(['btcusdt@ticker'])
 
     msg = await f
-    print(msg)
-    stream.close()
+
+    assert msg['stream'] == 'btcusdt@ticker'
+
+    await stream.close()
 
 @pytest.mark.asyncio
 async def test_binance_stream():

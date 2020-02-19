@@ -15,6 +15,8 @@ class SubscriptionManager(object):
         return self
 
     async def close(self, code=DEFAULT_STREAM_CLOSE_CODE):
+        self._receiving = False
+
         if self._data_stream:
             await self._data_stream.close(code)
             self._data_stream = None
