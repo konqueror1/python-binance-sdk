@@ -5,8 +5,9 @@ from abc import ABC, abstractmethod
 
 from binance.common.utils import json_stringify
 from binance.common.exceptions import StreamAbandonedException
-from binance.common.constants import \
+from binance.common.constants import (
     DEFAULT_RETRY_POLICY, DEFAULT_STREAM_TIMEOUT, DEFAULT_STREAM_CLOSE_CODE
+)
 
 KEY_ID = 'id'
 KEY_RESULT = 'result'

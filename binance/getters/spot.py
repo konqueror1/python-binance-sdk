@@ -2,8 +2,9 @@ import asyncio
 import time
 
 from binance.common.utils import interval_to_milliseconds, convert_ts_str
-from binance.common.constants import \
+from binance.common.constants import (
     PUBLIC_API_VERSION, WITHDRAW_API_VERSION, PRIVATE_API_VERSION
+)
 
 SIDE_BUY = 'BUY'
 SIDE_SELL = 'SELL'

@@ -2,8 +2,10 @@ import asyncio
 
 from binance.processors import PROCESSORS, ExceptionProcessor
 from binance.common.constants import RET_OK, RET_ERROR, ATOM
-from binance.common.exceptions import InvalidSubParamsException, \
+from binance.common.exceptions import (
+    InvalidSubParamsException,
     UnsupportedSubTypeException
+)
 
 from binance.common.utils import make_list, wrap_coroutine
 

@@ -27,8 +27,9 @@ import hmac
 import time
 from operator import itemgetter
 
-from binance.common.exceptions import \
+from binance.common.exceptions import (
     APISecretNotDefinedException, StatusException, InvalidResponseException
+)
 
 def order_params(data):
     """Convert params to list with signature as last element

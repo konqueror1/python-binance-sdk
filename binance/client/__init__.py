@@ -1,8 +1,9 @@
 from binance.getters import *
 from binance.subscribe.manager import SubscriptionManager
-from binance.common.constants import \
-    API_HOST, WEBSITE_HOST, STREAM_HOST, \
+from binance.common.constants import (
+    API_HOST, WEBSITE_HOST, STREAM_HOST,
     DEFAULT_RETRY_POLICY, DEFAULT_STREAM_TIMEOUT
+)
 
 from .base import ClientBase
 

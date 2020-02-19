@@ -1,8 +1,10 @@
 import asyncio
 
 from binance.handlers import *
-from binance.common.constants import SubType, \
+from binance.common.constants import (
+    SubType,
     KLINE_SUBTYPE_LIST, KEY_STREAM_TYPE, KEY_PAYLOAD
+)
 
 from .base import ProcessorBase
 

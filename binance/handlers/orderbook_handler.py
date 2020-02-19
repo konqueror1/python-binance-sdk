@@ -4,8 +4,10 @@ from binance.common.constants import STREAM_TYPE_MAP, DEFAULT_DEPTH_LIMIT
 from binance.common.utils import normalize_symbol, wrap_coroutine
 
 from .base import HandlerBase, pd
-from .orderbook import OrderBook, \
+from .orderbook import (
+    OrderBook,
     KEY_FIRST_UPDATE_ID, KEY_LAST_UPDATE_ID, KEY_BIDS, KEY_ASKS
+)
 
 KEY_SYMBOL = 's'
 

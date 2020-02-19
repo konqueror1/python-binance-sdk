@@ -1,8 +1,9 @@
 import asyncio
 import inspect
 
-from binance.common.exceptions import \
+from binance.common.exceptions import (
     InvalidSubParamsException, InvalidSubTypeParamException
+)
 from binance.common.utils import normalize_symbol
 from binance.common.constants import ATOM, KEY_PAYLOAD, KEY_PAYLOAD_TYPE
 
