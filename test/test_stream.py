@@ -17,7 +17,7 @@ async def run_stream():
 
     params = ['btcusdt@ticker']
 
-    print('subscribed', await stream.subscribe(params))
+    print('\nsubscribed', await stream.subscribe(params))
 
     assert await stream.list_subscriptions() == params
 

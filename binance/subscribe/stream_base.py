@@ -42,7 +42,7 @@ class StreamBase(ABC):
         self._message_futures = {}
 
         self._open_future = None
-        self._close_future = None
+        self._closing = False
 
         self._uri = uri
 
@@ -98,16 +98,21 @@ class StreamBase(ABC):
             self._retries = 0
 
             try:
-                while True:
+                # Do not receive messages if the stream is closing
+                while not self._closing:
                     await self._receive()
 
-            except ws.ConnectionClosed as e:
-                if e.code == self._close_code:
-                    self._close_future.set_result(None)
+            except ws.ConnectionClosed:
+                # We don't know whether `ws.ConnectionClosed(close_code)` or
+                # `asyncio.CancelledError` comes first
+                if self._closing:
                     # The socket is closed by `await self.close()`
                     return
 
                 await self._reconnect()
+
+            except asyncio.CancelledError:
+                return
 
             except Exception as e:
                 await self._reconnect()
@@ -143,19 +148,33 @@ class StreamBase(ABC):
         pass
 
     async def close(self, code=DEFAULT_STREAM_CLOSE_CODE):
-        self._close_code = code
+        if not self._conn_task:
+            raise StreamDisconnectedException(self._uri)
 
-        if self._socket:
-            self._close_future = asyncio.Future()
-            await asyncio.gather(
-                self._close_future,
-                self._socket.close(code)
-            )
+        # A lot of incomming messages might prevent
+        #   the socket from gracefully shutting down, which leads `websockets`
+        #   to fail connection and result in a 1006 close code.
+        # In that situation, we can not properly figure out whether the socket
+        #   is closed by socket.close() or network connection error.
+        # So just set up a flag to do the trick
+        self._closing = True
 
-            self._close_future = None
-            self._socket = None
+        # make socket.close run in background
+        close_task = asyncio.create_task(
+            self._socket.close(code)
+        ) if self._socket else None
 
         self._conn_task.cancel()
+
+        try:
+            await close_task
+        except:
+            # TODO: logger
+            pass
+
+        self._socket = None
+        self._closing = False
+
         self._after_close()
 
     async def send(self, msg):
