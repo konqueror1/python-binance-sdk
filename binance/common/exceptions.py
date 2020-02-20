@@ -99,3 +99,13 @@ class ReuseHandlerException(Exception):
 
     def __str__(self):
         return err_msg('handler `%s` should not be used in more than one clients', self.handler)
+
+class OrderBookFetchAbandonedException(Exception):
+    def __init__(self, symbol, reason, exception=None):
+        self.symbol = symbol
+        self.reason = reason
+        self.exception = exception
+
+    def __str__(self):
+        return err_msg('orderbook for `%s` failed to fetch snapshot and fetching is abandoned by retry policy, reason: %s', self.symbol, self.reason)
+

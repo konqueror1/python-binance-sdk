@@ -3,6 +3,7 @@ import asyncio
 from binance.common.sequenced_list import SequencedList
 from binance.common.constants import DEFAULT_DEPTH_LIMIT, DEFAULT_RETRY_POLICY
 from binance.common.utils import wrap_coroutine, normalize_symbol
+from binance.common.exceptions import OrderBookFetchAbandonedException
 
 KEY_FIRST_UPDATE_ID = 'U'
 KEY_LAST_UPDATE_ID = 'u'
@@ -124,8 +125,17 @@ class OrderBook(object):
 
         if abandon:
             self._fetching = False
-            # TODO: if fails to merge, there might be no exceptions
-            self._emit_exception(exc)
+
+            exception = OrderBookFetchAbandonedException(
+                self._symbol,
+                'encountered an exceptionn',
+                exc
+            ) if exc else OrderBookFetchAbandonedException(
+                self._symbol,
+                'fails to merge'
+            )
+
+            self._emit_exception(exception)
             return
 
         retries = 0 if reset else retries + 1
