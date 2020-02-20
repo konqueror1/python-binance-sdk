@@ -46,6 +46,13 @@ class StreamBase(ABC):
 
         self._uri = uri
 
+    def _set_socket(self, socket):
+        if self._open_future:
+            self._open_future.set_result(socket)
+            self._open_future = None
+
+        self._socket = socket
+
     def connect(self):
         self._before_connect()
 
@@ -67,13 +74,6 @@ class StreamBase(ABC):
 
     def _before_connect(self):
         self._open_future = asyncio.Future()
-
-    def _set_socket(self, socket):
-        if self._open_future:
-            self._open_future.set_result(socket)
-            self._open_future = None
-
-        self._socket = socket
 
     async def _receive(self):
         try:
@@ -159,15 +159,21 @@ class StreamBase(ABC):
         # So just set up a flag to do the trick
         self._closing = True
 
-        # make socket.close run in background
-        close_task = asyncio.create_task(
-            self._socket.close(code)
-        ) if self._socket else None
+        tasks = [self._conn_task]
+
+        if self._socket:
+            tasks.append(
+                # make socket.close run in background
+                asyncio.create_task(self._socket.close(code))
+            )
 
         self._conn_task.cancel()
 
         try:
-            await asyncio.wait([close_task, self._conn_task])
+            # Make sure:
+            # - conn_task is cancelled
+            # - socket is closed
+            await asyncio.wait(tasks)
         except:
             # TODO: logger
             pass

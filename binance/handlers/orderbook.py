@@ -2,7 +2,7 @@ import asyncio
 
 from binance.common.sequenced_list import SequencedList
 from binance.common.constants import DEFAULT_DEPTH_LIMIT, DEFAULT_RETRY_POLICY
-from binance.common.utils import wrap_coroutine, normalize_symbol
+from binance.common.utils import normalize_symbol
 from binance.common.exceptions import OrderBookFetchAbandonedException
 
 KEY_FIRST_UPDATE_ID = 'U'
