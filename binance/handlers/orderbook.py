@@ -27,7 +27,6 @@ class OrderBook(object):
         self.bids = SequencedList()
 
         self._symbol = normalize_symbol(symbol, True)
-        self._limit = limit
         self._client = None
 
         self._last_update_id = 0
@@ -40,6 +39,7 @@ class OrderBook(object):
         self._fetching = False
 
         self.set_retry_policy(retry_policy)
+        self.set_limit(limit)
         self.set_client(client)
 
     # Whether the orderbook is updated
@@ -52,6 +52,9 @@ class OrderBook(object):
 
     def set_retry_policy(self, retry_policy):
         self._retry_policy = retry_policy
+
+    def set_limit(self, limit):
+        self._limit = limit
 
     def set_client(self, client):
         if not client:

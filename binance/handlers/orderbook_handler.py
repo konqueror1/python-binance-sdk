@@ -26,6 +26,8 @@ def create_depth_df(l):
         {'price': x[0], 'quantity': x[1]} for x in l
     ])
 
+METHOD_NAME_RECEIVE = 'receive'
+
 class OrderBookHandlerBase(HandlerBase):
     COLUMNS_MAP = ORDER_BOOK_COLUMNS_MAP
     COLUMNS = ORDER_BOOK_COLUMNS
@@ -37,6 +39,10 @@ class OrderBookHandlerBase(HandlerBase):
         self._orderbooks = {}
 
         self._uninit_orderbooks = []
+
+        # If the current class has no `receive` method,
+        #   the raw payload will not be dispatched to self.receive
+        self._has_receive = hasattr(self.__class__, METHOD_NAME_RECEIVE)
 
     def _receive(self, payload):
         info = super()._receive(payload)
@@ -76,4 +82,6 @@ class OrderBookHandlerBase(HandlerBase):
 
     async def receiveDispatch(self, payload):
         self.orderbook(payload[KEY_SYMBOL]).update(payload)
-        await wrap_coroutine(self.receive(payload))
+
+        if self._has_receive:
+            await wrap_coroutine(self.receive(payload))

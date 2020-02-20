@@ -142,20 +142,8 @@ Create a binance client
 - **kwargs**
   - **api_secret** `str=None` binance api secret
   - **requests_params** `dict=None` global requests params
-  - **stream_retry_policy** `Callable[[int], (bool, int, bool)]` retry policy for websocket stream
+  - **stream_retry_policy** `Callable[[int], (bool, int, bool)]` retry policy for websocket stream. For details, see [RetryPolicy](#retrypolicy)
   - **stream_timeout** `int=5` seconds util the stream reach an timeout error
-
-```py
-abandon, delay, reset = stream_retry_policy(retries)
-
-# retries is the counter number of
-#   how many times the stream retried to reconnect
-
-# If abandon is `True`, then the client will give up reconnecting
-# Otherwise:
-# - The client will delay `delay` seconds to reconnect
-# - If reset is `True`, the client will reset the retry counter to `0`
-```
 
 ### client.secret(api_secret) -> self
 
@@ -272,6 +260,23 @@ In this section, we will note the parameters for each `subtypes`
 
 - `SubType.USER`
 
+## RetryPolicy
+
+Retry policy is used by binance-sdk to determine what to do next after the client fails to do some certain thing.
+
+```py
+abandon, delay, reset = stream_retry_policy(retries)
+
+# `retries` is the counter number of
+#   how many times has the stream retried to reconnect.
+# If the stream is disconnected just now for the first time, `retries` will be `0`
+
+# If abandon is `True`, then the client will give up reconnecting.
+# Otherwise:
+# - The client will asyncio.sleep `delay` seconds before reconnecting.
+# - If reset is `True`, the client will reset the retry counter to `0`
+```
+
 ## OrderBookHandlerBase(limit=100)
 
 - **limit** `int=100` the limit of the depth snapshot
@@ -280,19 +285,36 @@ By default, binance-sdk maintains the orderbook for you according to the rules o
 
 Specifically, `OrderBookHandlerBase` does the job.
 
-We could get the managed `OrderBook` object by method `def orderbook(symbol)`.
+We could get the managed `OrderBook` object by method `handler.orderbook(symbol)`.
 
 ```py
-class MyOrderBookHandler(OrderBookHandlerBase):
-    def receive(self, msg):
-        # `msg` is the raw payload of the stream
-        # We don't make sure that the `msg` here is continous.
-        print(msg)
+async def main():
+    client = Client('api_key')
 
-handler = MyOrderBookHandler()
+    # Unlike other handlers, we usually do not need to inherit `OrderBookHandlerBase`,
+    #   unless we need to receive the raw payload of 'depthUpdate' message
+    handler = OrderBookHandlerBase()
 
-# Get the reference of OrderBook object for 'BTCUSDT'
-orderbook = handler.orderbook('BTCUSDT')
+    client.handler(handler)
+    await client.subscribe(SubType.ORDER_BOOK, 'BTCUSDT')
+
+    # Get the reference of OrderBook object for 'BTCUSDT'
+    orderbook = handler.orderbook('BTCUSDT')
+
+    while True:
+        # If the `retry_policy` never abandon a retry,
+        #   the 'try' block could be emitted
+        try:
+            await orderbook.updated()
+        except Exception as e:
+            print('exception occurred')
+        else:
+            await doSomethingWith(orderbook.asks, orderbook.bids)
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(main())
+
+loop.run_forever()
 ```
 
 ## OrderBook(symbol, **kwargs)
@@ -320,6 +342,18 @@ async def main():
 - **client** `Client` the instance of `binance.Client`
 
 Set the client. If `client` is not specified in the constructor, then executing this method will make the orderbook to fetch the snapshot for the first time.
+
+### orderbook.set_limit(limit) -> None
+
+- **limit** `int`
+
+Set depth limit which is used by [binance reset api](https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md#order-book).
+
+### orderbook.set_retry_policy(retry_policy) -> None
+
+- **retry_policy** `Callable`
+
+Set retry policy of the orderbook
 
 ### property `orderbook.ready` -> bool
 
