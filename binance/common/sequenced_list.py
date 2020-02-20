@@ -11,17 +11,17 @@ class SequencedList(list):
         # For performance, just hardcode the logic to get the key
         self._key_list = [x[0] for x in self]
 
-    def pop(self, index):
-        self._key_list.pop(index)
-        return super().pop(index)
-
     def append(self, subject):
         self._key_list.append(subject[0])
         return super().append(subject)
 
-    def bisect(self, subject):
-        key = subject[0]
-        return bisect.bisect_left(self._key_list, key)
+    def pop(self, index):
+        self._key_list.pop(index)
+        return super().pop(index)
+
+    def insert(self, index, subject):
+        self._key_list.insert(index, subject[0])
+        return super().insert(index, subject)
 
     def clear(self):
         self._key_list.clear()
@@ -30,7 +30,6 @@ class SequencedList(list):
     # Add a new item into the list and maintain order
     def add(self, subject):
         # suppose the list is [[1, 1], [2, 3]]
-
         key = subject[0]
         quantity = subject[1]
 

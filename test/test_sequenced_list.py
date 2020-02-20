@@ -36,3 +36,7 @@ def test_zero_quantity_price_non_exists(l):
 
     assert l.add((- 1, 0)) == (0, False)
     assert l[0][1] == origin_quantity
+
+def test_add_to_last(l):
+    assert l.add((101, 1)) == (10, False)
+    assert l[10][0] == 101

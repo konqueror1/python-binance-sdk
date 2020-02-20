@@ -6,7 +6,7 @@ import pandas
 from binance import Client, TickerHandlerBase, \
     InvalidHandlerException, SubType, OrderBookHandlerBase, \
     InvalidSubTypeParamException, InvalidSubParamsException, \
-    HandlerExceptionHandlerBase
+    HandlerExceptionHandlerBase, UnsupportedSubTypeException
 
 @pytest.fixture
 def client():
@@ -71,6 +71,9 @@ async def test_invalid_subtype_symbol(client):
 
     with pytest.raises(InvalidSubParamsException, match='invalid subscribe'):
         await client.subscribe(SubType.TICKER, 1, 2)
+
+    with pytest.raises(UnsupportedSubTypeException, match='subtype "unknown"'):
+        await client.subscribe('unknown')
 
 @pytest.mark.asyncio
 async def test_client_handler(client):

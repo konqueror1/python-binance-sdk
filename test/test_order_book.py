@@ -177,7 +177,7 @@ async def test_order_book():
 
         await test_no_retry_policy()
 
-        print('round six : part of unsolved_queue is invalid')
+        print('round six  : part of unsolved_queue is invalid')
 
         preset_10()
         # will fetch twice
