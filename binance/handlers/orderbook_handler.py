@@ -1,6 +1,8 @@
 import asyncio
 
-from binance.common.constants import STREAM_TYPE_MAP, DEFAULT_DEPTH_LIMIT
+from binance.common.constants import (
+    STREAM_TYPE_MAP, DEFAULT_DEPTH_LIMIT, DEFAULT_RETRY_POLICY
+)
 from binance.common.utils import normalize_symbol, wrap_coroutine
 
 from .base import HandlerBase, pd
@@ -32,10 +34,15 @@ class OrderBookHandlerBase(HandlerBase):
     COLUMNS_MAP = ORDER_BOOK_COLUMNS_MAP
     COLUMNS = ORDER_BOOK_COLUMNS
 
-    def __init__(self, limit=DEFAULT_DEPTH_LIMIT):
+    def __init__(self,
+        limit=DEFAULT_DEPTH_LIMIT,
+        retry_policy=DEFAULT_RETRY_POLICY
+    ):
         super().__init__()
 
         self._limit = limit
+        self._retry_policy = retry_policy
+
         self._orderbooks = {}
 
         self._uninit_orderbooks = []
@@ -58,7 +65,10 @@ class OrderBookHandlerBase(HandlerBase):
         if symbol in self._orderbooks:
             return self._orderbooks[symbol]
 
-        orderbook = OrderBook(symbol, limit=self._limit)
+        orderbook = OrderBook(symbol,
+            limit=self._limit,
+            retry_policy=self._retry_policy
+        )
 
         if self._client:
             orderbook.set_client(self._client)

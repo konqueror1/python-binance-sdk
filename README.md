@@ -277,9 +277,11 @@ abandon, delay, reset = stream_retry_policy(retries)
 # - If reset is `True`, the client will reset the retry counter to `0`
 ```
 
-## OrderBookHandlerBase(limit=100)
+## OrderBookHandlerBase(**kwargs)
 
-- **limit** `int=100` the limit of the depth snapshot
+- **kwargs**
+  - **limit?** `int=100` the limit of the depth snapshot
+  - **retry_policy?** `Callable=`
 
 By default, binance-sdk maintains the orderbook for you according to the rules of [the official documentation](https://github.com/binance-exchange/binance-official-api-docs/blob/master/web-socket-streams.md#how-to-manage-a-local-order-book-correctly).
 
@@ -321,9 +323,9 @@ loop.run_forever()
 
 - **symbol** `str` the symbol name
 - **kwargs**
-  - **limit** `int=100` limit of the orderbook
+  - **limit?** `int=100` limit of the orderbook
   - **client** `Client=None` the instance of `binance.Client`
-  - **retry_policy** `Callable[[int], (bool, int, bool)]` retry policy for depth snapshot which has the same mechanism as `Client::stream_retry_policy`
+  - **retry_policy?** `Callable[[int], (bool, int, bool)]` retry policy for depth snapshot which has the same mechanism as `Client::stream_retry_policy`
 
 `OrderBook` is another public class that we could import from binance-sdk and you could also construct your own `OrderBook` instance.
 
@@ -353,7 +355,7 @@ Set depth limit which is used by [binance reset api](https://github.com/binance-
 
 - **retry_policy** `Callable`
 
-Set retry policy of the orderbook
+Set retry policy of the certain orderbook
 
 ### property `orderbook.ready` -> bool
 

@@ -25,6 +25,7 @@ async def run_stream():
 
     assert msg['stream'] == 'btcusdt@ticker'
 
+    print('before close')
     await stream.close()
 
 @pytest.mark.asyncio

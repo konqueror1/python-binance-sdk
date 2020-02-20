@@ -42,6 +42,7 @@ class StreamBase(ABC):
         self._message_futures = {}
 
         self._open_future = None
+        self._close_future = None
 
         self._uri = uri
 
@@ -102,6 +103,7 @@ class StreamBase(ABC):
 
             except ws.ConnectionClosed as e:
                 if e.code == self._close_code:
+                    self._close_future.set_result(None)
                     # The socket is closed by `await self.close()`
                     return
 
@@ -144,7 +146,14 @@ class StreamBase(ABC):
         self._close_code = code
 
         if self._socket:
-            await self._socket.close(self._close_code)
+            self._close_future = asyncio.Future()
+            await asyncio.gather(
+                self._close_future,
+                self._socket.close(code)
+            )
+
+            self._close_future = None
+            self._socket = None
 
         self._conn_task.cancel()
         self._after_close()
