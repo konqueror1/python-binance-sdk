@@ -31,12 +31,13 @@ async def run_stream():
 async def test_binance_stream():
     await run_stream()
 
-def test_stream_never_connect():
+@pytest.mark.asyncio
+async def test_stream_never_connect():
     def on_message():
         pass
 
     with pytest.raises(StreamDisconnectedException, match='never connected'):
-        Stream(
+        await Stream(
             STREAM_HOST + '/stream',
             on_message
         ).send({})

@@ -12,7 +12,9 @@ __all__ = [
     'InvalidSubParamsException',
     'UnsupportedSubTypeException',
     'InvalidSubTypeParamException',
-    'InvalidHandlerException'
+    'InvalidHandlerException',
+    'ReuseHandlerException',
+    'OrderBookFetchAbandonedException'
 ]
 
 class StreamDisconnectedException(Exception):
@@ -21,7 +23,7 @@ class StreamDisconnectedException(Exception):
 
     def __str__(self):
         return err_msg(
-            'stream "%s" is never connected or is abandoned after too many retries according to the `retry_policy`, run `stream.connect()`', self.url)
+            'stream "%s" is never connected or is abandoned after too many retries according to the `retry_policy`, run `stream.connect()`', self.uri)
 
 class APISecretNotDefinedException(Exception):
     def __init__(self, url):
