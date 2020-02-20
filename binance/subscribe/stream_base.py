@@ -167,7 +167,7 @@ class StreamBase(ABC):
         self._conn_task.cancel()
 
         try:
-            await close_task
+            await asyncio.wait([close_task, self._conn_task])
         except:
             # TODO: logger
             pass
