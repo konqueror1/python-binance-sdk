@@ -1,6 +1,46 @@
 KLINE_TYPE_PREFIX = 'kline_'
 
 SUBTYPE_PROP_LIST = [
+    'KLINE',
+
+    'TRADE',
+    'AGG_TRADE',
+    'MINI_TICKER',
+    'TICKER',
+    'ORDER_BOOK',
+
+    'ALL_MARKET_MINI_TICKERS',
+    'ALL_MARKET_TICKERS',
+
+    'USER'
+]
+
+SUBTYPE_VALUE_LIST = [
+    'kline',
+
+    'trade',
+    'aggTrade',
+    'miniTicker',
+    'ticker',
+    'depth',
+
+    'allMarketMiniTickers',
+    'allMarketTickers',
+
+    'user'
+]
+
+class SubType(object):
+    pass
+
+def merge_attr(target, props, values):
+    for i in range(len(props)):
+        k, v = props[i], values[i]
+        setattr(SubType, k, v)
+
+merge_attr(SubType, SUBTYPE_PROP_LIST, SUBTYPE_VALUE_LIST)
+
+KLINE_INVERVAL_PROP_LIST = [
     'KLINE_1M',
     'KLINE_3M',
     'KLINE_5M',
@@ -18,21 +58,10 @@ SUBTYPE_PROP_LIST = [
     'KLINE_3DAY',
 
     'KLINE_WEEK',
-    'KLINE_MONTH',
-
-    'TRADE',
-    'AGG_TRADE',
-    'MINI_TICKER',
-    'TICKER',
-    'ORDER_BOOK',
-
-    'ALL_MARKET_MINI_TICKERS',
-    'ALL_MARKET_TICKERS',
-
-    'USER'
+    'KLINE_MONTH'
 ]
 
-KLINE_SUBTYPE_LIST = [KLINE_TYPE_PREFIX + x for x in [
+KLINE_INTERVAL_VALUE_LIST = [
     '1m',
     '3m',
     '5m',
@@ -51,31 +80,12 @@ KLINE_SUBTYPE_LIST = [KLINE_TYPE_PREFIX + x for x in [
 
     '1w',
     '1M'
-]]
-
-SUBTYPE_VALUE_LIST = KLINE_SUBTYPE_LIST + [
-    'trade',
-    'aggTrade',
-    'miniTicker',
-    'ticker',
-    'depth',
-
-    'allMarketMiniTickers',
-    'allMarketTickers',
-
-    'user'
 ]
 
-SUBTYPE_MAP = {}
-
-class SubType(object):
+class KlineInterval:
     pass
 
-for i in range(len(SUBTYPE_PROP_LIST)):
-    k, v = SUBTYPE_PROP_LIST[i], SUBTYPE_VALUE_LIST[i]
-
-    setattr(SubType, k, v)
-    SUBTYPE_MAP[v] = k
+merge_attr(KlineInterval, KLINE_INVERVAL_PROP_LIST, KLINE_INTERVAL_VALUE_LIST)
 
 RET_OK = 0
 RET_ERROR = -1

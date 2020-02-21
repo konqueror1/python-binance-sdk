@@ -91,8 +91,7 @@ await client.subscribe(
     #   for both `BNBUSDT` and 'BNBBTC'
     [
         SubType.AGG_TRADE,
-        SubType.ORDER_BOOK,
-        SubType.KLINE_DAY
+        SubType.ORDER_BOOK
     ],
     # We could subscribe more than one symbol pairs at a time
     [
@@ -171,6 +170,8 @@ Send a GET/POST/PUT/DELETE HTTPs request.
 Subscribe to a stream or multiple streams. If no websocket connection is made up, `client.subscribe` will also create a websocket connection.
 
 ```py
+from binance import SubType, KlineInterval
+
 await client.subscribe(SubType.TICKER, 'BNBUSDT')
 
 # SubType.ALL_MARKET_MINI_TICKERS with default param
@@ -181,6 +182,7 @@ await client.subscribe(SubType.ALL_MARKET_MINI_TICKERS, 3000)
 
 # Subcribe to multiple types
 await client.subscribe(
+    (SubType.KLINE, 'BTC_USDT', KlineInterval.KLINE_DAY),
     (SubType.TICKER, 'BNBUSDT'),
     (SubType.ALL_MARKET_MINI_TICKERS,) # <-- PAY ATTENTION to the `,` here
 )
@@ -242,9 +244,14 @@ If we register an invalid handler, an `InvalidHandlerException` exception will b
 
 In this section, we will note the parameters for each `subtypes`
 
+### `SubType` with parameters `symbol` and `interval`
+
+- `SubType.KLINE`
+
+And `interval` should be one of the `KlineInterval` enumerables
+
 ### `SubType`s with a param `symbol`
 
-- `SubType.KLINE_*`
 - `SubType.TRADE`
 - `SubType.AGG_TRADE`
 - `SubType.MINI_TICKER`

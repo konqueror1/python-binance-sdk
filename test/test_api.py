@@ -18,10 +18,10 @@ async def test_invalid_json():
 
     with pytest.raises(InvalidResponseException, match='invalid response'):
         with aioresponses() as m:
-            m.get('https://www.binance.com/exchange/public/product', body='<head></html>')
+            m.get('https://api.binance.com/api/v3/time', body='<head></html>')
 
             client = Client('api_key')
-            await client.get_products()
+            await client.get_server_time()
 
 @pytest.mark.asyncio
 async def test_api_exception():

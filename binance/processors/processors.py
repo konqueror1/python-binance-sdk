@@ -3,8 +3,11 @@ import asyncio
 from binance.handlers import *
 from binance.common.constants import (
     SubType,
-    KLINE_SUBTYPE_LIST, KEY_STREAM_TYPE, KEY_PAYLOAD
+    KLINE_TYPE_PREFIX, KLINE_INTERVAL_VALUE_LIST,
+    KEY_STREAM_TYPE, KEY_PAYLOAD
 )
+from binance.common.exceptions import InvalidSubTypeParamException
+from binance.common.utils import normalize_symbol
 
 from .base import ProcessorBase
 
@@ -13,10 +16,26 @@ class ExceptionProcessor(ProcessorBase):
 
 class KlineProcessor(ProcessorBase):
     HANDLER = KlineHandlerBase
-    PAYLOAD_TYPE = 'kline'
+    SUB_TYPE = SubType.KLINE
 
-    def is_subtype(self, t):
-        return t in KLINE_SUBTYPE_LIST
+    def subscribe_param(self, subscribe, t, *args):
+        length = len(args)
+
+        if length == 2:
+            symbol, interval = args
+        else:
+            raise InvalidSubTypeParamException(
+                t, 'interval', 'string expected but not specified')
+
+        if type(symbol) is not str:
+            raise InvalidSubTypeParamException(
+                t, 'symbol', 'string expected but got `%s`' % symbol)
+
+        if interval not in KLINE_INTERVAL_VALUE_LIST:
+            raise InvalidSubTypeParamException(
+                t, 'interval', '`KlineInterval` enum expected but got `%s`' % symbol)
+
+        return normalize_symbol(symbol) + '@' + KLINE_TYPE_PREFIX + interval
 
 class TradeProcessor(ProcessorBase):
     HANDLER = TradeHandlerBase
