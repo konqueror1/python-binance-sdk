@@ -45,7 +45,7 @@ Binance-sdk provides handler-based APIs to handle all websocket messages, and yo
 ```py
 from binance import Client, TickerHandlerBase, SubType
 
-client = Client()
+client = Client(api_key)
 
 async def main():
     # Start receiving websocket data
@@ -86,7 +86,7 @@ loop.run_forever()
 ### Subscribe to more symbol pairs and types
 
 ```py
-result = await client.subscribe(
+await client.subscribe(
     # We could also subscribe multiple types
     #   for both `BNBUSDT` and 'BNBBTC'
     [
@@ -291,7 +291,7 @@ We could get the managed `OrderBook` object by method `handler.orderbook(symbol)
 
 ```py
 async def main():
-    client = Client('api_key')
+    client = Client(api_key)
 
     # Unlike other handlers, we usually do not need to inherit `OrderBookHandlerBase`,
     #   unless we need to receive the raw payload of 'depthUpdate' message
