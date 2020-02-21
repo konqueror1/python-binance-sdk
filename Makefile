@@ -9,6 +9,6 @@ report:
 	codecov
 
 publish:
-	bash publish.sh
+	python setup.py sdist upload -r pypi
 
 .PHONY: test

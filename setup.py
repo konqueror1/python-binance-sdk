@@ -1,5 +1,6 @@
 import os
 from setuptools import setup
+
 from binance import __version__
 
 # Utility function to read the README file.
@@ -22,7 +23,9 @@ setup(
     license = 'MIT',
     keywords = 'binance exchange sdk rest api bitcoin btc bnb ethereum eth neo',
     url = 'https://github.com/kaelzhang/python-binance-sdk',
-    long_description=read('README.rst'),
+    long_description=read('README.md'),
+    long_description_content_type='text/markdown',
+    python_requires='>=3.7',
     classifiers=[
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Programming Language :: Python :: 3.7',
