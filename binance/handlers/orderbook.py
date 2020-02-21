@@ -75,7 +75,7 @@ class OrderBook(object):
 
     # Returns `bool` whether the depth is updated
     async def _fetch_snapshot(self):
-        snapshot = await self._client.get_order_book(
+        snapshot = await self._client.get_orderbook(
             symbol=self._symbol,
             limit=self._limit
         )
