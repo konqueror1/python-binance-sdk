@@ -1,3 +1,4 @@
+# This is a BETA VERSION
 __version__ = '0.0.2'
 
 from binance.client import Client

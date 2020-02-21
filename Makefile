@@ -8,7 +8,11 @@ install:
 report:
 	codecov
 
+build:
+	python setup.py sdist bdist_wheel
+
 publish:
-	python setup.py sdist upload -r pypi
+	make build
+	twine upload --config-file ~/.pypirc -r pypi dist/*
 
 .PHONY: test
