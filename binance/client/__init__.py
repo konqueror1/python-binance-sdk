@@ -1,4 +1,4 @@
-from binance.getters import *
+from binance.apis import *
 from binance.subscribe.manager import SubscriptionManager
 from binance.common.constants import (
     API_HOST, WEBSITE_HOST, STREAM_HOST,
@@ -9,7 +9,7 @@ from .base import ClientBase
 
 class Client(
     ClientBase,
-    SpotGetters,
+    RestAPIGetters,
     SubscriptionManager
 ):
     def __init__(

@@ -5,6 +5,7 @@
 
 Unofficial Binance SDK for python 3.7+, which:
 
+- Based on [Binance Official API Docs v3](https://github.com/binance-exchange/binance-official-api-docs)
 - Uses Binance's new websocket stream which supports live pub/sub so that we only need **ONE** websocket connection.
 - Has optional `pandas.DataFrame` support. If `pandas` is installed, columns of all stream data frames are renamed for readability.
 - Based on python `async`/`await`

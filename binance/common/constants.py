@@ -89,27 +89,12 @@ class KlineInterval:
 
 merge_attr(KlineInterval, KLINE_INVERVAL_PROP_LIST, KLINE_INTERVAL_VALUE_LIST)
 
-# class SecurityType:
-#     pass
-
 RET_OK = 0
 RET_ERROR = -1
 ERROR_PREFIX = '[BinanceSDK] '
 
-# TODO: api version always changes,
-#   so that it should not be hardcoded globally.
-# api versions should be api-specific
-PUBLIC_API_VERSION = 'v3'
-WITHDRAW_API_VERSION = 'v3'
-PRIVATE_API_VERSION = 'v3'
-
-API_HOST = 'https://api.binance.com'
-WEBSITE_HOST = 'https://www.binance.com'
-
-# Binance now supports default 443 port for websockets
-STREAM_HOST = 'wss://stream.binance.com'
-
-TIME_IN_FORCE_GTC = 'GTC'
+# RetryPolicy
+# ==================================================
 
 ATOM_RETRY_DELAY = 0.1
 MAX_RETRIES_BEFORE_RESET = 10
@@ -121,6 +106,11 @@ def DEFAULT_RETRY_POLICY(retries: int):
     delay = retries * ATOM_RETRY_DELAY
     reset = retries >= MAX_RETRIES_BEFORE_RESET
     return False, delay, reset
+
+# Streams
+# ==================================================
+
+STREAM_HOST = 'wss://stream.binance.com'
 
 DEFAULT_STREAM_TIMEOUT = 5
 
@@ -146,3 +136,46 @@ KEY_PAYLOAD_TYPE = 'e'
 KEY_STREAM_TYPE = 'stream'
 
 ATOM = {}
+
+# APIs
+# ==================================================
+
+class SecurityType:
+    # {TYPE} = (NEED_API_KEY, NEED_SIGNATURE)
+    NONE = (False, False)
+    TRADE = (True, True)
+    USER_DATA = (True, True)
+    USER_STREAM = (True, False)
+    MARKET_DATA = (True, False)
+
+class RequestMethod:
+    GET = 'get'
+    POST = 'post'
+    PUT = 'put'
+    DELETE = 'delete'
+
+HEADER_API_KEY = 'X-MBX-APIKEY'
+
+REST_API_VERSION = 'v3'
+REST_API_HOST = 'https://api.binance.com'
+
+# WEBSITE_HOST = 'https://www.binance.com'
+
+# Binance now supports default 443 port for websockets
+
+
+# TIME_IN_FORCE_GTC = 'GTC'
+
+
+# SIDE_BUY = 'BUY'
+# SIDE_SELL = 'SELL'
+
+# ORDER_TYPE_LIMIT = 'LIMIT'
+# ORDER_TYPE_MARKET = 'MARKET'
+
+# TIME_IN_FORCE_GTC = 'GTC'  # Good till cancelled
+# TIME_IN_FORCE_IOC = 'IOC'  # Immediate or cancel
+# TIME_IN_FORCE_FOK = 'FOK'  # Fill or kill
+
+# For accessing the data returned by Client.aggregate_trades().
+# AGG_ID = 'a'

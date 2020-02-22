@@ -3,57 +3,194 @@ import time
 
 from binance.common.utils import interval_to_milliseconds, convert_ts_str
 from binance.common.constants import (
-    PUBLIC_API_VERSION, WITHDRAW_API_VERSION, PRIVATE_API_VERSION
+    REST_API_VERSION,
+    SecurityType,
+    RequestMethod
 )
 
-# SIDE_BUY = 'BUY'
-# SIDE_SELL = 'SELL'
-
-# ORDER_TYPE_LIMIT = 'LIMIT'
-# ORDER_TYPE_MARKET = 'MARKET'
-
-# TIME_IN_FORCE_GTC = 'GTC'  # Good till cancelled
-# TIME_IN_FORCE_IOC = 'IOC'  # Immediate or cancel
-# TIME_IN_FORCE_FOK = 'FOK'  # Fill or kill
-
-# For accessing the data returned by Client.aggregate_trades().
-# AGG_ID = 'a'
-
-# APIS = [
-#     dict(
-#         name='ping',
-#         path='ping'
-#     ),
-#     dict(
-#         name=''
-#     )
-# ]
-
-class SpotGetters:
-    def _api_uri(self, path, version=PUBLIC_API_VERSION):
-        return self._api_host + '/api/' + version + '/' + path
-
-    def _private_api_uri(self, path, version=PRIVATE_API_VERSION):
-        return self._api_uri(path, version)
-
-    def _withdraw_api_uri(self, path, version=WITHDRAW_API_VERSION):
-        return self._api_host + '/wapi/' + version + '/' + path
-
-    def _website_uri(self, path):
-        return self._website_host + '/' + path
+# Ref:
+# https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md
+APIS = [
 
     # General Endpoints
 
-    async def ping(self):
-        return await self.get(self._api_uri('ping'))
+    dict(
+        name   = 'ping',
+        path   = 'ping',
 
-    async def get_server_time(self):
-        return await self.get(self._api_uri('time'))
+        # Support params, defaults to `True`
+        params = False,
 
-    # Exchange Endpoints
+        # request method, defaults to 'get'
+        # method = RequestMethod.GET
 
-    async def get_exchange_info(self):
-        return await self.get(self._api_uri('exchangeInfo'))
+        # SecurityType, defaults to NONE (False, False)
+        # ref: https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md#endpoint-security-type
+        # security_type=SecurityType.NONE
+
+        # api version
+        # version=REST_API_VERSION
+    ),
+
+    dict(
+        name   = 'get_server_time',
+        path   = 'time',
+        params = False
+    ),
+
+    dict(
+        name   = 'get_exchange_info',
+        path   = 'exchangeInfo',
+        params = False
+    ),
+
+    # Market Data endpoints
+
+    dict(
+        name = 'get_orderbook',
+        path = 'depth'
+    ),
+
+    dict(
+        name = 'get_recent_trades',
+        path = 'trades'
+    ),
+
+    dict(
+        name = 'get_historical_trades',
+        path = 'historicalTrades',
+        security_type = SecurityType.MARKET_DATA
+    ),
+
+    dict(
+        name = 'get_aggregate_trades',
+        path = 'aggTrades'
+    ),
+
+    dict(
+        name = 'get_klines',
+        path = 'klines'
+    ),
+
+    dict(
+        name = 'get_average_price',
+        path = 'avgPrice'
+    ),
+
+    dict(
+        name = 'get_24hr_ticker_price_changes',
+        path = 'ticker/24hr'
+    ),
+
+    dict(
+        name = 'get_ticker_price',
+        path = 'ticker/price'
+    ),
+
+    dict(
+        name = 'get_orderbook_ticker',
+        path = 'ticker/bookTicker'
+    ),
+
+    dict(
+        name = 'create_order',
+        path = 'order',
+        method = RequestMethod.POST,
+        security_type = SecurityType.TRADE
+    ),
+
+    dict(
+        name = 'create_test_order',
+        path = 'order/test',
+        method = RequestMethod.POST,
+        security_type = SecurityType.TRADE
+    ),
+
+    dict(
+        name = 'get_order',
+        path = 'order',
+        security_type = SecurityType.USER_DATA
+    ),
+
+    dict(
+        name = 'cancel_order',
+        path = 'order',
+        method = RequestMethod.DELETE,
+        security_type = SecurityType.TRADE
+    ),
+
+    dict(
+        name = 'get_open_orders',
+        path = 'openOrders',
+        security_type = SecurityType.USER_DATA
+    ),
+
+    dict(
+        name = 'get_all_orders',
+        path = 'allOrders',
+        security_type = SecurityType.USER_DATA
+    ),
+
+    # Create a one-cancels-the-other order
+    dict(
+        name = 'create_oco',
+        path = 'order/oco',
+        method = RequestMethod.POST,
+        security_type = SecurityType.TRADE
+    ),
+
+    dict(
+        name = 'cancel_oco',
+        path = 'orderList',
+        method = RequestMethod.DELETE,
+        security_type = SecurityType.NONE
+    ),
+
+    dict(
+        name = 'get_oco',
+        path = 'orderList',
+        security_type = SecurityType.USER_DATA
+    ),
+
+    dict(
+        name = 'get_all_oco',
+        path = 'allOrderList',
+        security_type = SecurityType.USER_DATA
+    ),
+
+    dict(
+        name = 'get_open_oco',
+        path = 'openOrderList',
+        security_type = SecurityType.USER_DATA
+    ),
+
+    dict(
+        name = 'get_account',
+        path = 'account',
+        security_type = SecurityType.USER_DATA
+    ),
+
+    dict(
+        name = 'get_my_trade',
+        path = 'myTrades',
+        security_type = SecurityType.USER_DATA
+    )
+]
+
+def define_getter(
+    Target,
+    name,
+    path,
+    params=True,
+    version=REST_API_VERSION,
+    method=RequestMethod.GET,
+    security_type=SecurityType.NONE
+):
+    pass
+
+class RestAPIGetters:
+    def _rest_uri(self, path, version):
+        return self._api_host + '/api/' + version + '/' + path
 
     async def get_symbol_info(self, symbol):
         res = await self.get_exchange_info()
@@ -64,30 +201,34 @@ class SpotGetters:
 
         return None
 
-    # Market Data Endpoints
+    # User data stream endpoints
 
-    async def get_orderbook(self, **params):
-        return await self.get(self._api_uri('depth'), data=params)
+    async def get_listen_key(self):
+        res = await self.post(
+            self._rest_uri('userDataStream'),
+            security_type = SecurityType.USER_STREAM
+        )
+        return res['listenKey']
 
-    async def get_recent_trades(self, **params):
-        return await self.get(self._api_uri('trades'), data=params)
+    async def keepalive_listen_key(self, listenKey):
+        return await self.put(
+            self._rest_uri('userDataStream'),
+            security_type = SecurityType.USER_STREAM,
+            listenKey = listenKey
+        )
 
-    async def get_historical_trades(self, **params):
-        return await self.get(self._api_uri('historicalTrades'), data=params)
+    async def close_listen_key(self, listenKey):
+        params = {
+            'listenKey': listenKey
+        }
+        return await self.delete(
+            self._rest_uri('userDataStream'),
+            security_type = SecurityType.USER_STREAM,
+            listenKey = listenKey
+        )
 
-    async def get_aggregate_trades(self, **params):
-        return await self.get(self._api_uri('aggTrades'), data=params)
-
-    async def get_klines(self, **params):
-        return await self.get(self._api_uri('klines'), data=params)
-
-    # async def get_all_tickers(self):
-    #     return await self.get(self._api_uri('ticker/allPrices'))
-
-    # async def get_orderbook_tickers(self):
-    #     return await self.get(self._api_uri('ticker/allBookTickers'))
-
-
+for getter in APIS:
+    define_getter(RestAPIGetters, **getter)
 
     # async def aggregate_trade_iter(self, symbol, start_str=None, last_id=None):
     #     if start_str is not None and last_id is not None:
@@ -267,9 +408,7 @@ class SpotGetters:
 
     # # Account Endpoints
 
-    # async def create_order(self, **params):
-    #     return await self.post(
-    #         self._private_api_uri('order'), True, data=params)
+
 
     # async def order_limit(self, timeInForce=TIME_IN_FORCE_GTC, **params):
     #     params.update({
@@ -308,30 +447,6 @@ class SpotGetters:
     #     })
     #     return await self.order_market(**params)
 
-    # async def create_test_order(self, **params):
-    #     return await self.post(
-    #         self._private_api_uri('order/test'), True, data=params)
-
-    # async def get_order(self, **params):
-    #     return await self.get(self._private_api_uri('order'), True, data=params)
-
-    # async def get_all_orders(self, **params):
-    #     return await self.get(
-    #         self._private_api_uri('allOrders'), True, data=params)
-
-    # async def cancel_order(self, **params):
-    #     return await self.delete(
-    #         self._private_api_uri('order'), True, data=params)
-
-    # async def get_open_orders(self, **params):
-    #     return await self.get(
-    #         self._private_api_uri('openOrders'), True, data=params)
-
-    # # User Stream Endpoints
-    # async def get_account(self, **params):
-    #     return await self.get(
-    #         self._private_api_uri('account'), True, data=params)
-
     # async def get_asset_balance(self, asset, **params):
     #     res = await self.get_account(**params)
     #     # find asset balance in list of balances
@@ -340,10 +455,6 @@ class SpotGetters:
     #             if bal['asset'].lower() == asset.lower():
     #                 return bal
     #     return None
-
-    # async def get_my_trades(self, **params):
-    #     return await self.get(
-    #         self._private_api_uri('myTrades'), True, data=params)
 
     # async def get_system_status(self):
     #     return await self.get(self._withdraw_api_uri('systemStatus.html'))
@@ -379,20 +490,3 @@ class SpotGetters:
 
     # # User Stream Endpoints
 
-    # async def get_user_listen_key(self):
-    #     res = await self.post(self._api_uri('userDataStream'), False, data={})
-    #     return res['listenKey']
-
-    # async def keepalive_listen_key(self, listenKey):
-    #     params = {
-    #         'listenKey': listenKey
-    #     }
-    #     return await self.put(
-    #         self._api_uri('userDataStream'), False, data=params)
-
-    # async def close_listen_key(self, listenKey):
-    #     params = {
-    #         'listenKey': listenKey
-    #     }
-    #     return await self.delete(
-    #         self._api_uri('userDataStream'), False, data=params)

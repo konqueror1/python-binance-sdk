@@ -23,7 +23,7 @@ class UserProcessor(ProcessorBase):
             self._listen_key = None
             return key
 
-        key = await self._client.get_user_listen_key()
+        key = await self._client.get_listen_key()
 
         self._listen_key = key
         self._start_keep_alive()

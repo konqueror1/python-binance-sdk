@@ -31,7 +31,12 @@ from binance.common.exceptions import (
     APISecretNotDefinedException, StatusException, InvalidResponseException
 )
 
-def order_params(data):
+from binance.common.constants import (
+    HEADER_API_KEY,
+    SecurityType
+)
+
+def sort_params(data):
     """Convert params to list with signature as last element
 
     :param data:
@@ -54,10 +59,13 @@ def order_params(data):
 
     return params
 
+KEY_REQUEST_PARAMS = 'requests_params'
+KEY_FORCE_PARAMS = 'force_params'
+
 class ClientBase:
-    def _init_api_session(self):
+    def _init_api_session(self, need_api_key):
         loop = asyncio.get_event_loop()
-        headers = self._get_headers()
+        headers = self._get_headers(need_api_key)
 
         session = aiohttp.ClientSession(
             loop=loop,
@@ -65,50 +73,56 @@ class ClientBase:
         )
         return session
 
-    def _get_headers(self):
-        return {
+    def _get_headers(self, need_api_key):
+        headers = {
             'Accept': 'application/json',
-            'User-Agent': 'binance-sdk',
-            'X-MBX-APIKEY': self._api_key
+            'User-Agent': 'binance-sdk'
         }
 
-    def _get_request_kwargs(self, method, signed, force_params=False, **kwargs):
-        # set default requests timeout
-        kwargs['timeout'] = 10
+        if need_api_key:
+            headers[HEADER_API_KEY] = self._api_key
 
-        # add our global requests params
+        return headers
+
+    def _get_request_kwargs(self, method, need_signed, **data):
+        # Usually, `data` is the data param for aiohttp
+
+        kwargs = dict(
+            # set default requests timeout
+            # TODO: no hard coding
+            timeout = 10
+        )
+
+        # add global requests params for aiohttp
         if self._requests_params:
             kwargs.update(self._requests_params)
 
-        data = kwargs.get('data', None)
-        if data and isinstance(data, dict):
-            kwargs['data'] = data
+        # find any requests params passed and apply them
+        if KEY_REQUEST_PARAMS in data:
+            # merge requests params into kwargs
+            kwargs.update(data[KEY_REQUEST_PARAMS])
+            del data[KEY_REQUEST_PARAMS]
 
-            # find any requests params passed and apply them
-            if 'requests_params' in kwargs['data']:
-                # merge requests params into kwargs
-                kwargs.update(kwargs['data']['requests_params'])
-                del(kwargs['data']['requests_params'])
+        force_params = False
+        if KEY_FORCE_PARAMS in data:
+            force_params = True
+            del data[KEY_FORCE_PARAMS]
 
-        if signed:
+        if need_signed:
             # generate signature
-            kwargs['data']['timestamp'] = int(time.time() * 1000)
-            kwargs['data']['signature'] = self._generate_signature(kwargs['data'])
+            data['timestamp'] = int(time.time() * 1000)
+            data['signature'] = self._generate_signature(data)
 
-        # sort get and post params to match signature order
-        if data:
-            # sort post params
-            kwargs['data'] = order_params(kwargs['data'])
+        sorted_data = sort_params(data)
 
-        # if get request assign data array to params value for requests lib
-        if data and (method == 'get' or force_params):
-            kwargs['params'] = kwargs['data']
-            del(kwargs['data'])
+        kwargs[
+            'params' if force_params or method == 'get' else 'data'
+        ] = sorted_data
 
         return kwargs
 
     def _generate_signature(self, data):
-        ordered_data = order_params(data)
+        ordered_data = sort_params(data)
         query_string = '&'.join(["{}={}".format(d[0], d[1]) for d in ordered_data])
 
         m = hmac.new(
@@ -126,25 +140,33 @@ class ClientBase:
         except ValueError:
             raise InvalidResponseException(response, await response.text())
 
-    async def _request(self, method, uri, signed, force_params=False, **kwargs):
-        if signed and not self._api_secret:
+    # self._request('get', uri, symbol='BTCUSDT')
+    async def _request(self,
+        method,
+        uri,
+        security_type=SecurityType.NONE,
+        **kwargs
+    ):
+        need_api_key, need_signed = security_type
+
+        if need_signed and not self._api_secret:
             raise APISecretNotDefinedException(uri)
 
-        kwargs = self._get_request_kwargs(
-            method, signed, force_params, **kwargs)
+        req_kwargs = self._get_request_kwargs(
+            method, need_signed, **kwargs)
 
-        async with self._init_api_session() as session:
-            async with getattr(session, method)(uri, **kwargs) as response:
+        async with self._init_api_session(need_api_key) as session:
+            async with getattr(session, method)(uri, **req_kwargs) as response:
                 return await self._handle_response(response)
 
-    async def get(self, uri, signed=False, **kwargs):
-        return await self._request('get', uri, signed, **kwargs)
+    async def get(self, uri, **kwargs):
+        return await self._request('get', uri, **kwargs)
 
-    async def post(self, uri, signed=False, **kwargs):
-        return await self._request('post', uri, signed, **kwargs)
+    async def post(self, uri, **kwargs):
+        return await self._request('post', uri, **kwargs)
 
-    async def put(self, uri, signed=False, **kwargs):
-        return await self._request('put', uri, signed, **kwargs)
+    async def put(self, uri, **kwargs):
+        return await self._request('put', uri, **kwargs)
 
-    async def delete(self, uri, signed=False, **kwargs):
-        return await self._request('delete', uri, signed, **kwargs)
+    async def delete(self, uri, **kwargs):
+        return await self._request('delete', uri, **kwargs)
