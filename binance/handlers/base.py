@@ -4,7 +4,7 @@ from binance.common.exceptions import ReuseHandlerException
 
 pd = None
 
-class HandlerBase(object):
+class HandlerBase:
     def __init__(self):
         self._client = None
 

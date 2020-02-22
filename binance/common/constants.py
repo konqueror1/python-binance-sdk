@@ -30,7 +30,7 @@ SUBTYPE_VALUE_LIST = [
     'user'
 ]
 
-class SubType(object):
+class SubType:
     pass
 
 def merge_attr(target, props, values=None):

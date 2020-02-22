@@ -29,7 +29,7 @@ from binance.common.constants import (
 #     )
 # ]
 
-class SpotGetters(object):
+class SpotGetters:
     def _api_uri(self, path, version=PUBLIC_API_VERSION):
         return self._api_host + '/api/' + version + '/' + path
 

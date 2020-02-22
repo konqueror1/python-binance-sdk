@@ -15,7 +15,7 @@ KEY_REST_ASKS = 'asks'
 KEY_BIDS = 'b'
 KEY_ASKS = 'a'
 
-class OrderBook(object):
+class OrderBook:
     # We redundant define the default value of limit,
     #   because OrderBook is also a public class
     def __init__(self, symbol,

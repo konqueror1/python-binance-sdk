@@ -4,7 +4,7 @@ from binance.common.exceptions import InvalidHandlerException
 from .stream import Stream
 from .handler_context import HandlerContext
 
-class SubscriptionManager(object):
+class SubscriptionManager:
     def start(self):
         self._receiving = True
         return self

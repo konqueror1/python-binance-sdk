@@ -7,7 +7,7 @@ from binance.common.exceptions import (
 from binance.common.utils import normalize_symbol
 from binance.common.constants import ATOM, KEY_PAYLOAD, KEY_PAYLOAD_TYPE
 
-class ProcessorBase(object):
+class ProcessorBase:
     # The handler class
     HANDLER = None
 

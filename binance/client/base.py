@@ -54,7 +54,7 @@ def order_params(data):
 
     return params
 
-class ClientBase(object):
+class ClientBase:
     def _init_api_session(self):
         loop = asyncio.get_event_loop()
         headers = self._get_headers()

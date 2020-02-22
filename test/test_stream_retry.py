@@ -7,7 +7,7 @@ from binance import Stream
 
 PORT = 9081
 
-class Server(object):
+class Server:
     def __init__(self):
         self._started = False
         app = web.Application()

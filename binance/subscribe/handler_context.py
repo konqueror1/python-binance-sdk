@@ -9,7 +9,7 @@ from binance.common.exceptions import (
 
 from binance.common.utils import make_list, wrap_coroutine
 
-class HandlerContext(object):
+class HandlerContext:
     PROCESSORS = PROCESSORS
 
     def __init__(self, client):
