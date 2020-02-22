@@ -163,7 +163,7 @@ Send a GET/POST/PUT/DELETE HTTPs request.
 ### await client.subscribe(subtype, *subtype_params) -> None
 ### await client.subscribe(*subscriptions) -> None
 
-- **subtype** `str` subscription type, should be one of `SubType.*`s
+- **subtype** `str` subscription type, should be one of `SubType.*`s. For details, see [SubType](#subtype)
 - **subtype_params** `List` params for a certain `subtype`
 - **subscriptions** `List[Tuple]` a pack of subscriptions each of which is a tuple of `subtype` and `*subtype_params`.
 

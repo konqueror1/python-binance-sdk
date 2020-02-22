@@ -33,10 +33,12 @@ SUBTYPE_VALUE_LIST = [
 class SubType(object):
     pass
 
-def merge_attr(target, props, values):
+def merge_attr(target, props, values=None):
+    values = values or props
+
     for i in range(len(props)):
         k, v = props[i], values[i]
-        setattr(SubType, k, v)
+        setattr(target, k, v)
 
 merge_attr(SubType, SUBTYPE_PROP_LIST, SUBTYPE_VALUE_LIST)
 
@@ -86,6 +88,9 @@ class KlineInterval:
     pass
 
 merge_attr(KlineInterval, KLINE_INVERVAL_PROP_LIST, KLINE_INTERVAL_VALUE_LIST)
+
+# class SecurityType:
+#     pass
 
 RET_OK = 0
 RET_ERROR = -1

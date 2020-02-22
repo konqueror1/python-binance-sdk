@@ -5,7 +5,7 @@ import os
 
 from aioresponses import aioresponses, CallbackResult
 
-from binance import Client
+from binance import Client, KlineInterval
 from binance.common.utils import json_stringify
 
 mock = False
@@ -63,12 +63,13 @@ CASES = [
             symbol='BTCUSDT'
         )
     ),
-    # dict(
-    #     name='get_klines',
-    #     ka=dict(
-    #         symbol='BTCUSDT'
-    #     )
-    # ),
+    dict(
+        name='get_klines',
+        ka=dict(
+            symbol='BTCUSDT',
+            interval=KlineInterval.KLINE_DAY
+        )
+    ),
 ]
 
 def callback(method, url, **kwargs):

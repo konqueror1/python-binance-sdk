@@ -57,9 +57,11 @@ def order_params(data):
 class ClientBase(object):
     def _init_api_session(self):
         loop = asyncio.get_event_loop()
+        headers = self._get_headers()
+
         session = aiohttp.ClientSession(
             loop=loop,
-            headers=self._get_headers()
+            headers=headers
         )
         return session
 

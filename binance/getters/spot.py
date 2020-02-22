@@ -6,18 +6,28 @@ from binance.common.constants import (
     PUBLIC_API_VERSION, WITHDRAW_API_VERSION, PRIVATE_API_VERSION
 )
 
-SIDE_BUY = 'BUY'
-SIDE_SELL = 'SELL'
+# SIDE_BUY = 'BUY'
+# SIDE_SELL = 'SELL'
 
-ORDER_TYPE_LIMIT = 'LIMIT'
-ORDER_TYPE_MARKET = 'MARKET'
+# ORDER_TYPE_LIMIT = 'LIMIT'
+# ORDER_TYPE_MARKET = 'MARKET'
 
-TIME_IN_FORCE_GTC = 'GTC'  # Good till cancelled
+# TIME_IN_FORCE_GTC = 'GTC'  # Good till cancelled
 # TIME_IN_FORCE_IOC = 'IOC'  # Immediate or cancel
 # TIME_IN_FORCE_FOK = 'FOK'  # Fill or kill
 
 # For accessing the data returned by Client.aggregate_trades().
-AGG_ID = 'a'
+# AGG_ID = 'a'
+
+# APIS = [
+#     dict(
+#         name='ping',
+#         path='ping'
+#     ),
+#     dict(
+#         name=''
+#     )
+# ]
 
 class SpotGetters(object):
     def _api_uri(self, path, version=PUBLIC_API_VERSION):
@@ -68,8 +78,8 @@ class SpotGetters(object):
     async def get_aggregate_trades(self, **params):
         return await self.get(self._api_uri('aggTrades'), data=params)
 
-    # async def get_klines(self, **params):
-    #     return await self.get(self._api_uri('klines'), data=params)
+    async def get_klines(self, **params):
+        return await self.get(self._api_uri('klines'), data=params)
 
     # async def get_all_tickers(self):
     #     return await self.get(self._api_uri('ticker/allPrices'))
