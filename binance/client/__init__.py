@@ -11,6 +11,7 @@ from .base import ClientBase
 class Client(
     ClientBase,
     RestAPIGetters,
+    WapiAPIGetters,
     SubscriptionManager
 ):
     def __init__(

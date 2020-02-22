@@ -1,5 +1,3 @@
-import asyncio
-
 from binance.common.constants import (
     REST_API_VERSION,
     SecurityType,
@@ -76,7 +74,7 @@ APIS = [
     ),
 
     dict(
-        name = 'get_24hr_ticker_price_changes',
+        name = 'get_ticker',
         path = 'ticker/24hr'
     ),
 

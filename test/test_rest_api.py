@@ -25,18 +25,17 @@ CASES = [
         # ka={},
         #########################################
         # uri to be requested
-        uri='https://api.binance.com/api/v3/time',
+        # uri='https://api.binance.com/api/v3/time',
         # request method, defaults to 'get'
         # method='get'
     ),
     dict(
-        name='get_exchange_info',
+        name='get_exchange_info'
         # uri='https://www'
     ),
-    # dict(
-    #     name='get_symbol_info',
-    #     a=('BTCUSDT',)
-    # ),
+    dict(
+        name='get_system_status'
+    ),
     dict(
         name='get_orderbook',
         ka=dict(
@@ -51,12 +50,6 @@ CASES = [
             limit=100
         )
     ),
-    # dict(
-    #     name='get_historical_trades',
-    #     ka=dict(
-    #         symbol='BTCUSDT'
-    #     )
-    # ),
     dict(
         name='get_aggregate_trades',
         ka=dict(
@@ -69,7 +62,7 @@ CASES = [
             symbol='BTCUSDT',
             interval=KlineInterval.KLINE_DAY
         )
-    ),
+    )
 ]
 
 def callback(method, url, **kwargs):

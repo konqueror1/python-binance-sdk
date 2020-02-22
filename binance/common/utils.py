@@ -60,6 +60,7 @@ def convert_ts_str(ts_str):
         return ts_str
     return date_to_milliseconds(ts_str)
 
+# TODO: make it simpler
 def make_list(l):
     ret = []
     if not l:
