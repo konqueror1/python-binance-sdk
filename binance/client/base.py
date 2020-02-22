@@ -40,11 +40,8 @@ from binance.common.constants import (
 )
 
 def sort_params(data):
-    """Convert params to list with signature as last element
-
-    :param data:
-    :return:
-
+    """
+    Convert params to list with signature as last element
     """
     has_signature = False
     params = []

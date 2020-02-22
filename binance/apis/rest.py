@@ -1,7 +1,5 @@
 import asyncio
-import time
 
-from binance.common.utils import interval_to_milliseconds, convert_ts_str
 from binance.common.constants import (
     REST_API_VERSION,
     SecurityType,
@@ -203,15 +201,6 @@ class RestAPIGetters:
     def _rest_uri(self, path, version):
         return self._api_host + '/api/' + version + '/' + path
 
-    async def get_symbol_info(self, symbol):
-        res = await self.get_exchange_info()
-
-        for item in res['symbols']:
-            if item['symbol'] == symbol.upper():
-                return item
-
-        return None
-
     # User data stream endpoints
 
     async def get_listen_key(self):
@@ -221,18 +210,15 @@ class RestAPIGetters:
         )
         return res['listenKey']
 
-    async def keepalive_listen_key(self, listenKey):
-        return await self.put(
+    def keepalive_listen_key(self, listenKey):
+        return self.put(
             self._rest_uri('userDataStream', REST_API_VERSION),
             security_type = SecurityType.USER_STREAM,
             listenKey = listenKey
         )
 
-    async def close_listen_key(self, listenKey):
-        params = {
-            'listenKey': listenKey
-        }
-        return await self.delete(
+    def close_listen_key(self, listenKey):
+        return self.delete(
             self._rest_uri('userDataStream', REST_API_VERSION),
             security_type = SecurityType.USER_STREAM,
             listenKey = listenKey
