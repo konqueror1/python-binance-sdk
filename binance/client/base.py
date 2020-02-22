@@ -28,7 +28,10 @@ import time
 from operator import itemgetter
 
 from binance.common.exceptions import (
-    APISecretNotDefinedException, StatusException, InvalidResponseException
+    APIKeyNotDefinedException,
+    APISecretNotDefinedException,
+    StatusException,
+    InvalidResponseException
 )
 
 from binance.common.constants import (
@@ -148,6 +151,9 @@ class ClientBase:
         **kwargs
     ):
         need_api_key, need_signed = security_type
+
+        if need_api_key and not self._api_key:
+            raise APIKeyNotDefinedException(uri)
 
         if need_signed and not self._api_secret:
             raise APISecretNotDefinedException(uri)

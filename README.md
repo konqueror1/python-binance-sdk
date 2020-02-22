@@ -134,22 +134,27 @@ await client.subscribe(SubType.USER)
 
 # APIs
 
-## Client(api_key, **kwargs)
+## Client(**kwargs)
+
+All arguments of the constructor Client are keyworded arguments and all optional.
+
+- **api_key** `str=None` binance api key
+- **api_secret** `str=None` binance api secret
+- **requests_params** `dict=None` global requests params
+- **stream_retry_policy** `Callable[[int], (bool, int, bool)]` retry policy for websocket stream. For details, see [RetryPolicy](#retrypolicy)
+- **stream_timeout** `int=5` seconds util the stream reach an timeout error
 
 Create a binance client
 
-- **api_key** `str=None` binance api key
-- **kwargs**
-  - **api_secret** `str=None` binance api secret
-  - **requests_params** `dict=None` global requests params
-  - **stream_retry_policy** `Callable[[int], (bool, int, bool)]` retry policy for websocket stream. For details, see [RetryPolicy](#retrypolicy)
-  - **stream_timeout** `int=5` seconds util the stream reach an timeout error
+### client.key(api_key) -> self
+
+Define or change api key. This method is unnecessary if we only request APIs of [`SecurityType.NONE`](https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md#endpoint-security-type)
 
 ### client.secret(api_secret) -> self
 
 Define or change api secret, especially when we have not define api secret in `Client` constructor.
 
-`api_secret` is not always required for using binance-sdk.
+`api_secret` is not always required for using binance-sdk. See [Endpoint security type](https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md#endpoint-security-type)
 
 ### await client.get(uri, signed=False, **kwargs)
 ### await client.post(uri, signed=False, **kwargs)

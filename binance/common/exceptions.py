@@ -6,6 +6,7 @@ from .utils import err_msg
 
 __all__ = [
     'StreamDisconnectedException',
+    'APIKeyNotDefinedException',
     'APISecretNotDefinedException',
     'StatusException',
     'InvalidResponseException',
@@ -24,6 +25,14 @@ class StreamDisconnectedException(Exception):
     def __str__(self):
         return err_msg(
             'stream "%s" is never connected or is abandoned after too many retries according to the `retry_policy`, run `stream.connect()`', self.uri)
+
+class APIKeyNotDefinedException(Exception):
+    def __init__(self, url):
+        self.url = url
+
+    def __str__(self):
+        return err_msg(
+            'api_key is required for requesting "%s"', self.url)
 
 class APISecretNotDefinedException(Exception):
     def __init__(self, url):

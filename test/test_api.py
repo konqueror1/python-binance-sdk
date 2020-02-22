@@ -1,8 +1,14 @@
 import pytest
 from aioresponses import aioresponses
 
-from binance import Client, \
-    InvalidResponseException, StatusException, APISecretNotDefinedException
+from binance import (
+    Client,
+    SecurityType,
+    InvalidResponseException,
+    StatusException,
+    APIKeyNotDefinedException,
+    APISecretNotDefinedException
+)
 
 @pytest.mark.asyncio
 async def test_no_secret():
@@ -10,7 +16,14 @@ async def test_no_secret():
 
     for method in ['get', 'post', 'delete', 'put']:
         with pytest.raises(APISecretNotDefinedException, match='api_secret'):
-            await getattr(client, method)('/foo', True)
+            await getattr(client, method)('/foo', security_type=SecurityType.USER_DATA)
+
+@pytest.mark.asyncio
+async def test_no_key():
+    client = Client()
+
+    with pytest.raises(APIKeyNotDefinedException, match='api_key'):
+        await client.get('/foo', security_type=SecurityType.USER_DATA)
 
 @pytest.mark.asyncio
 async def test_invalid_json():

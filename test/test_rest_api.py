@@ -33,10 +33,10 @@ CASES = [
         name='get_exchange_info',
         # uri='https://www'
     ),
-    dict(
-        name='get_symbol_info',
-        a=('BTCUSDT',)
-    ),
+    # dict(
+    #     name='get_symbol_info',
+    #     a=('BTCUSDT',)
+    # ),
     dict(
         name='get_orderbook',
         ka=dict(

@@ -10,5 +10,6 @@ def test_init_client_key():
     client = Client('key')
 
 def test_no_api_key():
-    with pytest.raises(Exception):
-        client = Client()
+    """create a client with no args"""
+    client = Client()
+
