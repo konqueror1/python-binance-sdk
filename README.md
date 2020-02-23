@@ -5,6 +5,8 @@
 
 # binance-sdk
 
+> binance-sdk reaches 88% test coverage, although it is still under ALPHA testing.
+
 Unofficial Binance SDK for python 3.7+, which:
 
 - Based on [Binance Official API Docs v3](https://github.com/binance-exchange/binance-official-api-docs)
@@ -33,10 +35,10 @@ pip install binance-sdk[pandas]
 import asyncio
 from binance import Client
 
-client = Client(api_key)
+client = Client()
 
 async def main():
-    print(await client.get_symbol_info('BTCUSDT'))
+    print(await client.get_exchange_info())
 
 asyncio.run(main())
 ```

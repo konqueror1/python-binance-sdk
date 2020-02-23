@@ -162,14 +162,14 @@ class ClientBase:
             async with getattr(session, method)(uri, **req_kwargs) as response:
                 return await self._handle_response(response)
 
-    async def get(self, uri, **kwargs):
-        return await self._request('get', uri, **kwargs)
+    def get(self, uri, **kwargs):
+        return self._request('get', uri, **kwargs)
 
-    async def post(self, uri, **kwargs):
-        return await self._request('post', uri, **kwargs)
+    def post(self, uri, **kwargs):
+        return self._request('post', uri, **kwargs)
 
-    async def put(self, uri, **kwargs):
-        return await self._request('put', uri, **kwargs)
+    def put(self, uri, **kwargs):
+        return self._request('put', uri, **kwargs)
 
-    async def delete(self, uri, **kwargs):
-        return await self._request('delete', uri, **kwargs)
+    def delete(self, uri, **kwargs):
+        return self._request('delete', uri, **kwargs)
