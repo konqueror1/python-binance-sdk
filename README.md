@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/kaelzhang/python-binance-sdk.svg?branch=master)](https://travis-ci.org/kaelzhang/python-binance-sdk)
 [![Coverage](https://codecov.io/gh/kaelzhang/python-binance-sdk/branch/master/graph/badge.svg)](https://codecov.io/gh/kaelzhang/python-binance-sdk)
+[![Pypi](https://img.shields.io/pypi/v/binance-sdk.svg)](https://pypi.org/project/binance-sdk/)
+[![License MIT](https://img.shields.io/pypi/l/binance-sdk.svg)](https://pypi.org/project/binance-sdk/)
 
 # binance-sdk
 
