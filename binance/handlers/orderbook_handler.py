@@ -60,6 +60,16 @@ class OrderBookHandlerBase(HandlerBase):
         return info, [bids, asks]
 
     def orderbook(self, symbol):
+        """Gets the orderbook for a certain symbol. If you get a certain orderbook, don't forget to subscribe to the orderbook stream of `symbol`::
+
+            await client.subscribe(SubType.ORDER_BOOK, 'BTCUSDT')
+
+        Args:
+            symbol (str): The symbol name.
+
+        Returns:
+            OrderBook: The orderbook.
+        """
         symbol = normalize_symbol(symbol)
 
         if symbol in self._orderbooks:
@@ -80,6 +90,11 @@ class OrderBookHandlerBase(HandlerBase):
         return orderbook
 
     def set_client(self, client):
+        """Sets the client for the orderbook. Most usually, you should not call this method directly. This method is invoked by `OrderBookHandlerBase` internally.
+
+        Args:
+            client (Client): the client instance of binance sdk
+        """
         super().set_client(client)
 
         if len(self._uninit_orderbooks) == 0:
@@ -91,6 +106,11 @@ class OrderBookHandlerBase(HandlerBase):
         self._uninit_orderbooks.clear()
 
     async def receiveDispatch(self, payload):
+        """Receives a `depthUpdate` stream message. Most usually, you should not call this method directly. This method is invoked by `OrderBookHandlerBase` internally.
+
+        Args:
+            payload: the message payload of the stream
+        """
         self.orderbook(payload[KEY_SYMBOL]).update(payload)
 
         if self._has_receive:

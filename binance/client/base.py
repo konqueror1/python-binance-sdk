@@ -39,6 +39,8 @@ from binance.common.constants import (
     SecurityType
 )
 
+# pylint: disable=no-member
+
 def sort_params(data):
     """
     Convert params to list with signature as last element
@@ -163,13 +165,41 @@ class ClientBase:
                 return await self._handle_response(response)
 
     def get(self, uri, **kwargs):
+        """Sends a GET request.
+
+        For details, see `client.post(uri, **kwargs)`
+        """
         return self._request('get', uri, **kwargs)
 
     def post(self, uri, **kwargs):
+        """Sends a POST request.
+
+        Args:
+            uri (str): The absolute url to be requested.
+            security_type (:obj:`SecurityType`, optional): The security type of the API of uri. Defaults to `SecurityType.NONE` which means the endpoint can be accessed freely.
+            requests_params (:obj:`dict`, optional): Other params passed into `aiohttp::ClientSession::post()`.
+            force_params (:obj:`bool`, optional): `True` to make ``**kwargs`` as querystring after the ``uri``. Defaults to `False`
+            **kwargs: Arbitrary keyword arguments. For POST/PUT/DELETE requests, `kwargs` will be the request body if ``force_params`` is not `True` otherwise the querystring of the request url. For GET requests, `kwargs` will always be converted to querystring of the url.
+
+        Returns:
+            The server response.
+
+        Raises:
+            StatusException: If the response status is not `2xx`.
+            InvalidResponseException: If the response is not a valid JSON.
+        """
         return self._request('post', uri, **kwargs)
 
     def put(self, uri, **kwargs):
+        """Sends a PUT request.
+
+        For details, see `client.post(uri, **kwargs)`
+        """
         return self._request('put', uri, **kwargs)
 
     def delete(self, uri, **kwargs):
+        """Sends a DELETE request.
+
+        For details, see `client.post(uri, **kwargs)`
+        """
         return self._request('delete', uri, **kwargs)

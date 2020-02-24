@@ -128,6 +128,8 @@ def define_getter(
 
     setattr(Target, name, getter)
 
+# pylint: disable=no-member
+
 class WapiAPIGetters:
     def _wapi_uri(self, path, version, prefix=PREFIX_WAPI):
         return self._api_host + prefix + version + '/' + path + '.html'

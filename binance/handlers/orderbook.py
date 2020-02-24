@@ -42,15 +42,29 @@ class OrderBook:
         self.set_limit(limit)
         self.set_client(client)
 
-    # Whether the orderbook is updated
     @property
     def ready(self):
+        """bool: Whether the orderbook is updated. `False` indicates that the orderbook has not been initialized yet or is still fetching new snapshot.
+
+        Most usually, you should not rely on this property or polling the value of this property. `await orderbook.updated()` is recommended for this scenario.
+        """
         return not self._fetching and self._last_update_id != 0
 
     async def updated(self):
+        """Await for the next time when the orderbook is updated. Awaiting for this method is the recommended way to notify your program to do something when the orderbook changes::
+
+            while True:
+                await orderbook.updated()
+                await doSomethingWith(order)
+        """
         await self._updated_future
 
     def set_retry_policy(self, retry_policy):
+        """Sets the retry policy for the orderbook.
+
+        Args:
+            retry_policy (Callable): the function retry policy
+        """
         self._retry_policy = retry_policy
 
     def set_limit(self, limit):
@@ -155,6 +169,10 @@ class OrderBook:
             asyncio.create_task(self._fetch())
 
     async def fetch(self):
+        """Manually fetches the new snapshot. Most usually, you should not call this method directly.
+
+        However, this method is for testing purpose mainly.
+        """
         if not self._fetching:
             self._fetching = True
             await self._fetch()
@@ -165,6 +183,14 @@ class OrderBook:
         self.bids.merge(bids)
 
     def update(self, payload):
+        """Applies the `depthUpdate` message to the orderbook. Most usually, you should not call this method directly, unless you want to manage the orderbook manually yourself. This method is called by `OrderBookHandlerBase` internally if the orderbook is created by a instance of `OrderBookHandlerBase`.
+
+        Args:
+            payload (dict): the message payload
+
+        Returns:
+            bool: `True` if the payload is ok to update into the orderbook, otherwise `False`
+        """
         if self._fetching:
             # If fetching is not completed, we should not merge orderbook,
             # We put the payload into the queue and will **try** to merge the

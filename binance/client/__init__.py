@@ -58,11 +58,31 @@ class Client(
         self._data_stream = None
 
     def key(self, key):
+        """Defines or changes api key. This method is unnecessary if we only request APIs of `SecurityType.NONE`
+
+        Args:
+            key (str): api key
+
+        Returns:
+            self
+        """
+
         if key:
             self._api_key = key
         return self
 
     def secret(self, secret):
+        """Defines or changes api secret, especially when we have not define api secret in Client constructor.
+
+        `secret` is not always required for using binance-sdk.
+
+        Args:
+            secret (str): api secret
+
+        Returns:
+            self
+        """
+
         if secret:
             self._api_secret = secret
         return self

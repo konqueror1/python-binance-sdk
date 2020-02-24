@@ -4,16 +4,40 @@ from binance.common.exceptions import InvalidHandlerException
 from .stream import Stream
 from .handler_context import HandlerContext
 
+# pylint: disable=no-member
+
 class SubscriptionManager:
     def start(self):
+        """Starts receiving messages.
+
+        By calling this method, the client will not actually start the stream connection.
+
+        Returns:
+            self
+        """
+
         self._receiving = True
         return self
 
     def stop(self):
+        """Stops receiving messages.
+
+        By calling this method, the client only ignores all incomming stream message, and will not close the stream connection.
+
+        Returns:
+            self
+        """
+
         self._receiving = False
         return self
 
     async def close(self, code=DEFAULT_STREAM_CLOSE_CODE):
+        """Closes stream connection, clear all stream subscriptions and clear all handlers.
+
+        Args:
+            code (:obj:`int`, optional): the close code for python library websockets. Defaults to 4999, and it should be in the range 4000 - 4999
+        """
+
         self._receiving = False
 
         if self._data_stream:
@@ -64,10 +88,13 @@ class SubscriptionManager:
         return await self._get_data_stream().list_subscriptions()
 
     def handler(self, *handlers):
-        """
-        set the callback processing object to be used to handle websocket messages
-        :param handler:the object in callback handler base
-        :return: RET_ERROR or RET_OK
+        """Sets the callback processing object to be used to handle websocket messages.
+
+        Args:
+            *handlers (HandlerBase):
+
+        Returns:
+            self
         """
 
         ctx = self._get_handler_ctx()

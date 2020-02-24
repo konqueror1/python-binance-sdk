@@ -214,6 +214,8 @@ def define_getter(
 # So, however, we need to just create those methods and docstrings first,
 #   then override them.
 
+# pylint: disable=no-member
+
 class RestAPIGetters:
     def _rest_uri(self, path, version=REST_API_VERSION):
         return self._api_host + '/api/' + version + '/' + path
