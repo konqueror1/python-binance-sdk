@@ -36,9 +36,9 @@ FREE_CASES = [
         name='get_exchange_info'
         # uri='https://www'
     ),
-    # dict(
-    #     name='get_system_status'
-    # ),
+    dict(
+        name='get_system_status'
+    ),
     dict(
         name='get_orderbook',
         ka=dict(

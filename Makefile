@@ -12,6 +12,9 @@ build: binance
 	rm -rf dist
 	python setup.py sdist bdist_wheel
 
+build-doc:
+	sphinx-build -b html docs build_docs
+
 publish:
 	make build
 	twine upload --config-file ~/.pypirc -r pypi dist/*

@@ -1,6 +1,11 @@
 # Pandoc
 README.rst
 
+# Sphinx
+docs/_build
+docs/_templates
+build_docs
+
 # Python
 __pycache__
 *.pyc
