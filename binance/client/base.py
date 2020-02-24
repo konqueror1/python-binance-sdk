@@ -182,11 +182,13 @@ class ClientBase:
             **kwargs: Arbitrary keyword arguments. For POST/PUT/DELETE requests, `kwargs` will be the request body if ``force_params`` is not `True` otherwise the querystring of the request url. For GET requests, `kwargs` will always be converted to querystring of the url.
 
         Returns:
-            The server response.
+            object: The server response JSON.
 
         Raises:
             StatusException: If the response status is not `2xx`.
             InvalidResponseException: If the response is not a valid JSON.
+            APIKeyNotDefinedException: If the API endpoint requires a valid api key, but the api key is not defined for the client.
+            APISecretNotDefinedException: If the API endpoint requires a valid signature, but the api secret is not defined for the client.
         """
         return self._request('post', uri, **kwargs)
 

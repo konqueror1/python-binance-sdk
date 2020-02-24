@@ -226,7 +226,7 @@ class RestAPIGetters:
         Returns:
             dict: An empty dict `{}`
         """
-        pass
+        pass # pragma: no cover
 
     def get_server_time(self):
         """Tests connectivity to the Rest API and gets the current server time.
@@ -236,7 +236,7 @@ class RestAPIGetters:
 
                 {"serverTime": 1499827319559}
         """
-        pass
+        pass # pragma: no cover
 
     def get_exchange_info(self):
         """Gets Current exchange trading rules and symbol information.
@@ -289,7 +289,7 @@ class RestAPIGetters:
                     ]
                 }
         """
-        pass
+        pass # pragma: no cover
 
     # Market Data endpoints
 
@@ -319,7 +319,7 @@ class RestAPIGetters:
                     ]
                 }
         """
-        pass
+        pass # pragma: no cover
 
     def get_recent_trades(self, **kwargs):
         """Gets recent trades.
@@ -345,7 +345,7 @@ class RestAPIGetters:
                     # ...
                 ]
         """
-        pass
+        pass # pragma: no cover
 
     def get_historical_trades(self, **kwargs):
         """Get older trades.
@@ -372,7 +372,7 @@ class RestAPIGetters:
                     # ...
                 ]
         """
-        pass
+        pass # pragma: no cover
 
     def get_aggregate_trades(self, **kwargs):
         """Gets compressed, aggregate trades. Trades that fill at the time, from the same order, with the same price will have the quantity aggregated.
@@ -403,7 +403,7 @@ class RestAPIGetters:
                     }
                 ]
         """
-        pass
+        pass # pragma: no cover
 
     def get_klines(self, **kwargs):
         """Gets kline/candlestick bars for a symbol. Klines are uniquely identified by their open time.
@@ -437,7 +437,7 @@ class RestAPIGetters:
                     ]
                 ]
         """
-        pass
+        pass # pragma: no cover
 
     def get_average_price(self, **kwargs):
         """Gets current average price for a symbol.
@@ -453,7 +453,7 @@ class RestAPIGetters:
                     'price': '9.35751834'
                 }
         """
-        pass
+        pass # pragma: no cover
 
     def get_ticker(self, **kwargs):
         """Gets 24 hour rolling window price change statistics. Careful when accessing this with no symbol.
@@ -515,7 +515,7 @@ class RestAPIGetters:
                 ]
 
         """
-        pass
+        pass # pragma: no cover
 
     def get_ticker_price(self):
         """Gets latest price for a symbol or symbols.
@@ -546,7 +546,7 @@ class RestAPIGetters:
                     }
                 ]
         """
-        pass
+        pass # pragma: no cover
 
     dict(
         name = 'get_orderbook_ticker',
@@ -592,7 +592,7 @@ class RestAPIGetters:
                     }
                 ]
         """
-        pass
+        pass # pragma: no cover
 
     # Account endpoints
 
@@ -688,14 +688,14 @@ class RestAPIGetters:
                     ]
                 }
         """
-        pass
+        pass # pragma: no cover
 
     def create_test_order(self, **kwargs):
-        """Test new order creation and signature/recvWindow long. Creates and validates a new order but does not send it into the matching engine.
+        """Tests new order creation and signature/recvWindow long. Creates and validates a new order but does not send it into the matching engine.
 
         Which has the same parameters as `client.create_order()`
         """
-        pass
+        pass # pragma: no cover
 
     def get_order(self, **kwargs):
         """Checks an order's status.
@@ -734,7 +734,7 @@ class RestAPIGetters:
                     'origQuoteOrderQty': '0.000000'
                 }
         """
-        pass
+        pass # pragma: no cover
 
     def cancel_order(self, **kwargs):
         """Cancel an active order.
@@ -769,7 +769,7 @@ class RestAPIGetters:
                 }
 
         """
-        pass
+        pass # pragma: no cover
 
     def get_open_orders(self, **kwargs):
         """Gets all open orders on a symbol. Careful when accessing this with no symbol.
@@ -808,7 +808,7 @@ class RestAPIGetters:
                 ]
 
         """
-        pass
+        pass # pragma: no cover
 
     def get_all_orders(self, **kwargs):
         """Gets all account orders, either active, or canceled, or filled.
@@ -851,7 +851,7 @@ class RestAPIGetters:
                     }
                 ]
         """
-        pass
+        pass # pragma: no cover
 
     def create_oco(self, **kwargs):
         """Sends in a new one-cancels-the-other order
@@ -939,7 +939,7 @@ class RestAPIGetters:
                     ]
                 }
         """
-        pass
+        pass # pragma: no cover
 
     def cancel_oco(self, **kwargs):
         """Cancels an entire Order List
@@ -1016,7 +1016,7 @@ class RestAPIGetters:
                     ]
                 }
         """
-        pass
+        pass # pragma: no cover
 
     def get_oco(self, **kwargs):
         """Retrieves a specific OCO based on provided optional parameters.
@@ -1057,7 +1057,7 @@ class RestAPIGetters:
                 }
 
         """
-        pass
+        pass # pragma: no cover
 
     def get_all_oco(self, **kwargs):
         """Retrieves all OCO based on provided optional parameters.
@@ -1120,7 +1120,7 @@ class RestAPIGetters:
                     }
                 ]
         """
-        pass
+        pass # pragma: no cover
 
     dict(
         name = 'get_open_oco',
@@ -1164,7 +1164,7 @@ class RestAPIGetters:
                     }
                 ]
         """
-        pass
+        pass # pragma: no cover
 
     def get_account(self, **kwargs):
         """Gets current account information.
@@ -1202,7 +1202,7 @@ class RestAPIGetters:
                     ]
                 }
         """
-        pass
+        pass # pragma: no cover
 
     def get_my_trade(self, **kwargs):
         """Gets trades for a specific account and symbol.
@@ -1240,7 +1240,7 @@ class RestAPIGetters:
                 ]
 
         """
-        pass
+        pass # pragma: no cover
 
     # User data stream endpoints
 
@@ -1269,7 +1269,7 @@ class RestAPIGetters:
         )
 
     def close_listen_key(self, listen_key: str):
-        """Close out a user data stream.
+        """Closes out a user data stream.
 
         Args:
             listen_key: user stream listen key

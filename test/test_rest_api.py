@@ -5,14 +5,17 @@ import os
 
 from aioresponses import aioresponses, CallbackResult
 
+# pylint: disable=no-member
+
 from binance import Client, KlineInterval
 from binance.common.utils import json_stringify
+from binance.apis.rest import APIS
 
 mock = False
 api_key = os.environ.get('BNC_API_KEY', 'api_key')
 MAX_PRINT = 150
 
-CASES = [
+FREE_CASES = [
     dict(
         name='ping'
     ),
@@ -33,9 +36,9 @@ CASES = [
         name='get_exchange_info'
         # uri='https://www'
     ),
-    dict(
-        name='get_system_status'
-    ),
+    # dict(
+    #     name='get_system_status'
+    # ),
     dict(
         name='get_orderbook',
         ka=dict(
@@ -62,14 +65,38 @@ CASES = [
             symbol='BTCUSDT',
             interval=KlineInterval.KLINE_DAY
         )
+    ),
+    dict(
+        name='get_average_price',
+        ka=dict(
+            symbol='BTCUSDT'
+        )
+    ),
+    dict(
+        name='get_ticker',
+        ka=dict(
+            symbol='BTCUSDT'
+        )
+    ),
+    dict(
+        name='get_ticker_price',
+        ka=dict(
+            symbol='BTCUSDT'
+        )
+    ),
+    dict(
+        name='get_orderbook_ticker',
+        ka=dict(
+            symbol='BTCUSDT'
+        )
     )
 ]
 
-def callback(method, url, **kwargs):
-    def real_callback(url, **kwargs):
-        print(url, kwargs)
-        return CallbackResult(status=200)
-    return real_callback
+# def callback(method, url, **kwargs):
+#     def real_callback(url, **kwargs):
+#         print(url, kwargs)
+#         return CallbackResult(status=200)
+#     return real_callback
 
 def print_str(name, d):
     s = json_stringify(d)
@@ -81,33 +108,34 @@ def print_str(name, d):
         print(name, s)
 
 @pytest.mark.asyncio
-async def test_apis():
-    client = Client(api_key)
+async def test_free_apis():
+    client = Client()
 
     print('')
 
     async def go():
-        for case in CASES:
+        for case in FREE_CASES:
             name = case['name']
             args = case.get('a', tuple())
             kwargs = case.get('ka', {})
 
             ret = await getattr(client, name)(*args, **kwargs)
 
-            if not mock:
-                print_str(name + ':', ret)
+            print_str(name + ':', ret)
 
-    if not mock:
-        await go()
-        return
+    await go()
 
-    with aioresponses() as m:
-        pattern = re.compile(r'^https://(?:api|www).binance.com')
+    # if not mock:
+    #     await go()
+    #     return
 
-        if mock:
-            m.get(pattern, callback=callback('get'), repeat=True)
+    # with aioresponses() as m:
+    #     pattern = re.compile(r'^https://(?:api|www).binance.com')
 
-        await go()
+    #     if mock:
+    #         m.get(pattern, callback=callback('get'), repeat=True)
+
+    #     await go()
 
 
 
