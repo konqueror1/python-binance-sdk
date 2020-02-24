@@ -194,6 +194,13 @@ await client.subscribe(SubType.ALL_MARKET_MINI_TICKERS, 3000)
 await client.subscribe(
     (SubType.KLINE, 'BTC_USDT', KlineInterval.KLINE_DAY),
     (SubType.TICKER, 'BNBUSDT'),
+    (
+        [
+            SubType.ORDER_BOOK,
+            SubType.TRADE
+        ],
+        ['BNBUSDT', 'BTCUSDT']
+    ),
     (SubType.ALL_MARKET_MINI_TICKERS,) # <-- PAY ATTENTION to the `,` here
 )
 ```

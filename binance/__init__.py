@@ -2,11 +2,7 @@
 __version__ = '0.0.6'
 
 from binance.client import Client
-from binance.common.constants import (
-    SubType,
-    KlineInterval,
-    SecurityType
-)
+from binance.common.constants import *
 from binance.common.exceptions import *
 from binance.handlers import *
 from binance.handlers.orderbook import OrderBook

@@ -1,3 +1,12 @@
+__all__ = (
+    'SubType',
+    'KlineInterval',
+    'SecurityType',
+    'RequestMethod',
+    'TimeInForce',
+    'OrderSide'
+)
+
 KLINE_TYPE_PREFIX = 'kline_'
 
 SUBTYPE_PROP_LIST = [
@@ -153,6 +162,29 @@ class RequestMethod:
     POST = 'post'
     PUT = 'put'
     DELETE = 'delete'
+
+class OrderSide:
+    BUY = 'BUY'
+    SELL = 'SELL'
+
+class OrderType:
+    LIMIT = 'LIMIT'
+    MARKET = 'MARKET'
+    STOP_LOSS = 'STOP_LOSS'
+    STOP_LOSS_LIMIT = 'STOP_LOSS_LIMIT'
+    TAKE_PROFIT = 'TAKE_PROFIT'
+    TAKE_PROFIT_LIMIT = 'TAKE_PROFIT_LIMIT'
+    LIMIT_MAKER = 'LIMIT_MAKER'
+
+class OrderRespType:
+    ACK = 'ACK'
+    RESULT = 'RESULT'
+    FULL = 'FULL'
+
+class TimeInForce:
+    GTC = 'GTC'
+    IOC = 'IOC'
+    FOK = 'FOK'
 
 HEADER_API_KEY = 'X-MBX-APIKEY'
 

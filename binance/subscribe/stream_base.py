@@ -15,9 +15,6 @@ KEY_RESULT = 'result'
 # TODO: handle error code
 # KEY_CODE = 'code'
 
-# `websockets` close code is never - 1
-INVALID_WS_CLOSE_CODE = - 1
-
 class StreamBase(ABC):
     def __init__(self,
         uri,
@@ -30,8 +27,6 @@ class StreamBase(ABC):
         self._on_message = on_message
         self._retry_policy = retry_policy
         self._timeout = timeout
-
-        self._close_code = INVALID_WS_CLOSE_CODE
 
         self._socket = None
         self._conn_task = None
