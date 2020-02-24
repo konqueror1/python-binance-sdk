@@ -1,5 +1,8 @@
 version: 2
 
+sphinx:
+  configuration: docs/conf.py
+
 build:
   image: latest
 
@@ -7,9 +10,5 @@ python:
   version: 3.7
   install:
     - requirements: docs/requirements.txt
-
-sphinx:
-  builder: html
-  configuration: sphinx.py
 
 formats: all
