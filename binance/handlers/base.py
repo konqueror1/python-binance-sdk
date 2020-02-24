@@ -58,12 +58,9 @@ try:
         pandas.DataFrame: the DataFrame converted from `msg` with columns renamed.
     """
 
-except ModuleNotFoundError:
+except ModuleNotFoundError: # pragma: no cover
     # If pandas is not installed
     HandlerBase.receive = lambda self, msg: msg
 
     HandlerBase.receive.__doc__ = """Most usually, you do not need to call this method.
     """
-
-except Exception as e:
-    raise e

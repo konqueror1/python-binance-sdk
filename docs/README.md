@@ -1,15 +1,14 @@
-[![Build Status](https://travis-ci.org/kaelzhang/python-binance-sdk.svg?branch=master)](https://travis-ci.org/kaelzhang/python-binance-sdk)
-[![Coverage](https://codecov.io/gh/kaelzhang/python-binance-sdk/branch/master/graph/badge.svg)](https://codecov.io/gh/kaelzhang/python-binance-sdk)
-[![Pypi](https://img.shields.io/pypi/v/binance-sdk.svg)](https://pypi.org/project/binance-sdk/)
-[![License MIT](https://img.shields.io/pypi/l/binance-sdk.svg)](https://pypi.org/project/binance-sdk/)
+[![](https://travis-ci.org/kaelzhang/python-binance-sdk.svg?branch=master)](https://travis-ci.org/kaelzhang/python-binance-sdk)
+[![](https://codecov.io/gh/kaelzhang/python-binance-sdk/branch/master/graph/badge.svg)](https://codecov.io/gh/kaelzhang/python-binance-sdk)
+[![](https://img.shields.io/pypi/v/binance-sdk.svg)](https://pypi.org/project/binance-sdk/)
+[![](https://img.shields.io/pypi/pyversions/binance-sdk.svg)](https://pypi.org/project/binance-sdk/)
+[![](https://img.shields.io/pypi/l/binance-sdk.svg)](https://github.com/kaelzhang/python-binance-sdk)
 
 # binance-sdk
 
-> binance-sdk reaches 88% test coverage, although it is still under ALPHA testing.
+`binance-sdk` is an another unofficial Binance SDK for python 3.7+, which:
 
-Unofficial Binance SDK for python 3.7+, which:
-
-- Based on [Binance Official API Docs v3](https://github.com/binance-exchange/binance-official-api-docs)
+- Based on [Binance Official API Docs v3](https://github.com/binance-exchange/binance-official-api-docs).
 - Uses Binance's new websocket stream which supports live pub/sub so that we only need **ONE** websocket connection.
 - Has optional `pandas.DataFrame` support. If `pandas` is installed, columns of all stream data frames are renamed for readability.
 - Based on python `async`/`await`
@@ -32,6 +31,8 @@ pip install binance-sdk[pandas]
 ## Basic Usage
 
 ```py
+#!/usr/bin/env python
+
 import asyncio
 from binance import Client
 
@@ -48,6 +49,8 @@ asyncio.run(main())
 Binance-sdk provides handler-based APIs to handle all websocket messages, and you are able to not worry about websockets.
 
 ```py
+#!/usr/bin/env python
+
 from binance import Client, TickerHandlerBase, SubType
 
 client = Client(api_key)
@@ -91,6 +94,11 @@ loop.run_forever()
 ### Subscribe to more symbol pairs and types
 
 ```py
+# This will subscribe to
+# - bnbusdt@aggTrade
+# - bnbusdt@depth
+# - bnbbtc@aggTrade
+# - bnbbtc@depth
 await client.subscribe(
     # We could also subscribe multiple types
     #   for both `BNBUSDT` and 'BNBBTC'
@@ -160,13 +168,13 @@ Define or change api secret, especially when we have not define api secret in `C
 
 `api_secret` is not always required for using binance-sdk. See [Endpoint security type](https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md#endpoint-security-type)
 
-### await client.get(uri, signed=False, **kwargs)
-### await client.post(uri, signed=False, **kwargs)
-### await client.put(uri, signed=False, **kwargs)
-### await client.delete(uri, signed=False, **kwargs)
+### await client.get(uri, **kwargs)
+### await client.post(uri, **kwargs)
+### await client.put(uri, **kwargs)
+### await client.delete(uri, **kwargs)
 
 - **uri** `str` the request url
-- **signed** `bool=False` whether the client should sign the requests by using `api_secret`. If `signed` is `True`, `api_secret` must be provided, or there will be an `APISecretNotDefinedException` error
+- **security_type?** `SecurityType` endpoint security type. Defaults to `SecurityType.NONE`.
 
 Send a GET/POST/PUT/DELETE HTTPs request.
 

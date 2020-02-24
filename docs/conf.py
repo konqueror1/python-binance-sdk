@@ -37,7 +37,10 @@ extensions = [
 ]
 
 
-source_suffix = '.md'
+source_suffix = [
+    '.rst',
+    '.md'
+]
 
 master_doc = 'README'
 
