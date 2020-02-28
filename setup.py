@@ -16,7 +16,12 @@ settings = dict(
     version = __version__,
     author = 'Kael Zhang',
     author_email = 'i+pypi@kael.me',
-    description = ('Binance Python SDK'),
+    description = 'Binance Python SDK',
+    install_requires=[
+        'aiohttp',
+        'dateparser',
+        'websockets'
+    ],
     extras_require = {
         'pandas': ['pandas']
     },

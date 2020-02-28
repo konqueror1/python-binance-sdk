@@ -10,7 +10,7 @@
 
 - Based on [Binance Official API Docs v3](https://github.com/binance-exchange/binance-official-api-docs).
 - Uses Binance's new websocket stream which supports live pub/sub so that we only need **ONE** websocket connection.
-- Has optional `pandas.DataFrame` support. If `pandas` is installed, columns of all stream data frames are renamed for readability.
+- Has an optional `pandas.DataFrame` support. If `pandas` is installed, columns of all stream data frames are renamed for readability.
 - Based on python `async`/`await`
 - Manages the order book for you (handled by `OrderBookHandlerBase`), so that you need not to worry about websocket reconnection and message losses. For details, see the section [`OrderBookHandlerBase`](#orderbookhandlerbasekwargs)
 
@@ -66,10 +66,10 @@ async def main():
             # If binance-sdk is installed with pandas support, then
             #   `ticker` will be a `DataFrame` with columns renamed
             # Or `ticker` is a raw dict
-            ticker = super().receive(res)
+            ticker_df = super().receive(res)
 
             # Just print the ticker
-            print(ticker)
+            print(ticker_df)
 
     # Register the handler for `SubType.TICKER`
     client.handler(TickerPrinter())
