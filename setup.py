@@ -12,7 +12,15 @@ def read(fname):
 
 settings = dict(
     name = 'binance-sdk',
-    packages = ['binance'],
+    packages = [
+        'binance',
+        'binance/apis',
+        'binance/client',
+        'binance/common',
+        'binance/handlers',
+        'binance/processors',
+        'binance/subscribe',
+    ],
     version = __version__,
     author = 'Kael Zhang',
     author_email = 'i+pypi@kael.me',
