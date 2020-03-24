@@ -30,7 +30,6 @@ settings = dict(
     description='Binance Python SDK',
     install_requires=[
         'aiohttp',
-        'dateparser',
         'websockets'
     ],
     extras_require={
