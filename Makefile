@@ -1,4 +1,4 @@
-files = binance test
+files = binance test *.py
 
 test:
 	pytest -s -v test/test_*.py --doctest-modules --cov binance --cov-config=.coveragerc --cov-report term-missing
