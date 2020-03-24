@@ -2,12 +2,16 @@ import asyncio
 import json
 import websockets as ws
 from abc import ABC, abstractmethod
+import logging
 
 from binance.common.utils import json_stringify
 from binance.common.exceptions import StreamDisconnectedException
 from binance.common.constants import (
     DEFAULT_RETRY_POLICY, DEFAULT_STREAM_TIMEOUT, DEFAULT_STREAM_CLOSE_CODE
 )
+
+
+logger = logging.getLogger(__name__)
 
 KEY_ID = 'id'
 KEY_RESULT = 'result'
@@ -110,7 +114,7 @@ class StreamBase(ABC):
             except asyncio.CancelledError:
                 return
 
-            except Exception as e:
+            except Exception:
                 await self._reconnect()
 
     async def _reconnect(self):
@@ -170,9 +174,8 @@ class StreamBase(ABC):
             # - conn_task is cancelled
             # - socket is closed
             await asyncio.wait(tasks)
-        except:
-            # TODO: logger
-            pass
+        except Exception as e:
+            logger.error('close tasks error: %s', e)
 
         self._socket = None
         self._closing = False

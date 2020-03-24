@@ -18,7 +18,7 @@ class UserProcessor(ProcessorBase):
         self._keep_alive_task = None
 
     async def subscribe_param(self, subscribe, t):
-        if subscribe == False:
+        if not subscribe:
             key = self._listen_key
             await self._close_stream()
             self._listen_key = None

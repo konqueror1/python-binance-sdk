@@ -1,5 +1,3 @@
-import asyncio
-
 from binance.handlers import *
 from binance.common.constants import (
     SubType,
@@ -75,8 +73,8 @@ class AllMarketMiniTickersProcessor(ProcessorBase):
 
     def is_message_type(self, msg):
         stream_type = msg.get(KEY_STREAM_TYPE)
-        if stream_type == None or \
-                stream_type.startswith(self.STREAM_TYPE_PREFIX) == False:
+        if stream_type is None or \
+                not stream_type.startswith(self.STREAM_TYPE_PREFIX):
             return False, None
 
         return True, msg.get(KEY_PAYLOAD)

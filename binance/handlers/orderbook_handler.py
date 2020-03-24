@@ -1,5 +1,3 @@
-import asyncio
-
 from binance.common.constants import (
     STREAM_TYPE_MAP, DEFAULT_DEPTH_LIMIT, DEFAULT_RETRY_POLICY
 )

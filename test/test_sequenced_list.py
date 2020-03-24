@@ -5,7 +5,7 @@ from binance.common.sequenced_list import SequencedList
 
 
 @pytest.fixture
-def l():
+def l():  # noqa:E743
     return SequencedList([
         (x, random.randint(0, 100)) for x in range(0, 10)
     ])

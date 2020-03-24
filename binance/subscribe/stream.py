@@ -1,5 +1,3 @@
-from binance.common.utils import normalize_symbol
-
 from .stream_base import StreamBase
 
 

@@ -1,15 +1,11 @@
 import pytest
-import asyncio
-import re
 import os
-
-from aioresponses import aioresponses, CallbackResult
 
 # pylint: disable=no-member
 
 from binance import Client, KlineInterval
 from binance.common.utils import json_stringify
-from binance.apis.rest import APIS
+
 
 mock = False
 api_key = os.environ.get('BNC_API_KEY', 'api_key')

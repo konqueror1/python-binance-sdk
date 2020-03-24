@@ -139,7 +139,7 @@ async def test_order_book():
         orderbook.set_retry_policy(no_retry_policy)
 
         async def test_no_retry_policy():
-            updated = orderbook.update(dict(
+            orderbook.update(dict(
                 # U=16 is missing
                 U=17,
                 u=18,
@@ -154,7 +154,7 @@ async def test_order_book():
             except Exception as e:
                 exc = e
 
-            assert exc != None
+            assert exc is not None
 
             preset_13()
 
@@ -162,7 +162,7 @@ async def test_order_book():
 
             assert orderbook.ready
 
-            updated = orderbook.update(dict(
+            orderbook.update(dict(
                 U=14,
                 u=15,
                 a=[[95, 1]],

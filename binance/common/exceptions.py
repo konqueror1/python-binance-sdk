@@ -25,7 +25,7 @@ class StreamDisconnectedException(Exception):
 
     def __str__(self):
         return err_msg(
-            'stream "%s" is never connected or is abandoned after too many retries according to the `retry_policy`, run `stream.connect()`', self.uri)
+            'stream "%s" is never connected or is abandoned after too many retries according to the `retry_policy`, run `stream.connect()`', self.uri)  # noqa:E501
 
 
 class APIKeyNotDefinedException(Exception):
@@ -55,7 +55,7 @@ class StatusException(Exception):
             try:
                 json_res = json.loads(text)
             except ValueError:
-                self.message = 'Invalid JSON error message from Binance: {}'.format(response.text)
+                self.message = f'Invalid JSON error message from Binance: {response.text}'  # noqa:E501
             else:
                 self.code = json_res['code']
                 self.message = json_res['msg']
@@ -119,7 +119,10 @@ class ReuseHandlerException(Exception):
         self.handler = handler
 
     def __str__(self):
-        return err_msg('handler `%s` should not be used in more than one clients', self.handler)
+        return err_msg(
+            'handler `%s` should not be used in more than one clients',
+            self.handler
+        )
 
 
 class OrderBookFetchAbandonedException(Exception):
@@ -129,4 +132,8 @@ class OrderBookFetchAbandonedException(Exception):
         self.exception = exception
 
     def __str__(self):
-        return err_msg('orderbook for `%s` failed to fetch snapshot and fetching is abandoned by retry policy, reason: %s', self.symbol, self.reason)
+        return err_msg(
+            'orderbook for `%s` failed to fetch snapshot and fetching is abandoned by retry policy, reason: %s',  # noqa:E501
+            self.symbol,
+            self.reason
+        )

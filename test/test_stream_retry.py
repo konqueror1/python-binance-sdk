@@ -1,7 +1,7 @@
 import pytest
 import asyncio
 
-from aiohttp import web, WSMsgType
+from aiohttp import web
 
 from binance import Stream
 
