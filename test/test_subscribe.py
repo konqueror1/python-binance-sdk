@@ -8,9 +8,11 @@ from binance import Client, TickerHandlerBase, \
     InvalidSubTypeParamException, InvalidSubParamsException, \
     HandlerExceptionHandlerBase, UnsupportedSubTypeException
 
+
 @pytest.fixture
 def client():
     return Client('api_key').start()
+
 
 TICKER_RES = dict(
     data=dict(
@@ -18,6 +20,7 @@ TICKER_RES = dict(
         foo='bar'
     )
 )
+
 
 @pytest.mark.asyncio
 async def test_ticker_handler(client):
@@ -36,6 +39,7 @@ async def test_ticker_handler(client):
 
     assert TickerPrinter.DATA == TICKER_RES['data']
     assert isinstance(TickerPrinter.DF, pandas.DataFrame)
+
 
 @pytest.mark.asyncio
 async def test_handler_exception_handler(client):
@@ -57,9 +61,11 @@ async def test_handler_exception_handler(client):
 
     assert await f == exc
 
+
 def test_invalid_handler(client):
     with pytest.raises(InvalidHandlerException, match='invalid handler'):
         client.handler(1)
+
 
 @pytest.mark.asyncio
 async def test_invalid_subtype_symbol(client):
@@ -74,6 +80,7 @@ async def test_invalid_subtype_symbol(client):
 
     with pytest.raises(UnsupportedSubTypeException, match='subtype "unknown"'):
         await client.subscribe('unknown')
+
 
 @pytest.mark.asyncio
 async def test_client_handler(client):
@@ -93,6 +100,7 @@ async def test_client_handler(client):
     assert payload['s'] == 'BTCUSDT'
 
     await client.close()
+
 
 async def run_orderbook_handler(client, init_orderbook_first):
     f = asyncio.Future()
@@ -142,9 +150,11 @@ async def run_orderbook_handler(client, init_orderbook_first):
 
     await client.close()
 
+
 @pytest.mark.asyncio
 async def test_orderbook_handler_init_orderbook_ahead(client):
     await run_orderbook_handler(client, True)
+
 
 @pytest.mark.asyncio
 async def test_orderbook_handler_init_orderbook_after(client):

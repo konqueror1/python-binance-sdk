@@ -11,11 +11,11 @@ APIS = [
     # General Endpoints
 
     dict(
-        name   = 'ping',
-        path   = 'ping',
+        name='ping',
+        path='ping',
 
         # Support params, defaults to `True`
-        params = False,
+        params=False,
 
         # request method, defaults to 'get'
         # method = RequestMethod.GET
@@ -29,151 +29,152 @@ APIS = [
     ),
 
     dict(
-        name   = 'get_server_time',
-        path   = 'time',
-        params = False
+        name='get_server_time',
+        path='time',
+        params=False
     ),
 
     dict(
-        name   = 'get_exchange_info',
-        path   = 'exchangeInfo',
-        params = False
+        name='get_exchange_info',
+        path='exchangeInfo',
+        params=False
     ),
 
     # Market Data endpoints
 
     dict(
-        name = 'get_orderbook',
-        path = 'depth'
+        name='get_orderbook',
+        path='depth'
     ),
 
     dict(
-        name = 'get_recent_trades',
-        path = 'trades'
+        name='get_recent_trades',
+        path='trades'
     ),
 
     dict(
-        name = 'get_historical_trades',
-        path = 'historicalTrades',
-        security_type = SecurityType.MARKET_DATA
+        name='get_historical_trades',
+        path='historicalTrades',
+        security_type=SecurityType.MARKET_DATA
     ),
 
     dict(
-        name = 'get_aggregate_trades',
-        path = 'aggTrades'
+        name='get_aggregate_trades',
+        path='aggTrades'
     ),
 
     dict(
-        name = 'get_klines',
-        path = 'klines'
+        name='get_klines',
+        path='klines'
     ),
 
     dict(
-        name = 'get_average_price',
-        path = 'avgPrice'
+        name='get_average_price',
+        path='avgPrice'
     ),
 
     dict(
-        name = 'get_ticker',
-        path = 'ticker/24hr'
+        name='get_ticker',
+        path='ticker/24hr'
     ),
 
     dict(
-        name = 'get_ticker_price',
-        path = 'ticker/price'
+        name='get_ticker_price',
+        path='ticker/price'
     ),
 
     dict(
-        name = 'get_orderbook_ticker',
-        path = 'ticker/bookTicker'
+        name='get_orderbook_ticker',
+        path='ticker/bookTicker'
     ),
 
     # Account endpoints
 
     dict(
-        name = 'create_order',
-        path = 'order',
-        method = RequestMethod.POST,
-        security_type = SecurityType.TRADE
+        name='create_order',
+        path='order',
+        method=RequestMethod.POST,
+        security_type=SecurityType.TRADE
     ),
 
     dict(
-        name = 'create_test_order',
-        path = 'order/test',
-        method = RequestMethod.POST,
-        security_type = SecurityType.TRADE
+        name='create_test_order',
+        path='order/test',
+        method=RequestMethod.POST,
+        security_type=SecurityType.TRADE
     ),
 
     dict(
-        name = 'get_order',
-        path = 'order',
-        security_type = SecurityType.USER_DATA
+        name='get_order',
+        path='order',
+        security_type=SecurityType.USER_DATA
     ),
 
     dict(
-        name = 'cancel_order',
-        path = 'order',
-        method = RequestMethod.DELETE,
-        security_type = SecurityType.TRADE
+        name='cancel_order',
+        path='order',
+        method=RequestMethod.DELETE,
+        security_type=SecurityType.TRADE
     ),
 
     dict(
-        name = 'get_open_orders',
-        path = 'openOrders',
-        security_type = SecurityType.USER_DATA
+        name='get_open_orders',
+        path='openOrders',
+        security_type=SecurityType.USER_DATA
     ),
 
     dict(
-        name = 'get_all_orders',
-        path = 'allOrders',
-        security_type = SecurityType.USER_DATA
+        name='get_all_orders',
+        path='allOrders',
+        security_type=SecurityType.USER_DATA
     ),
 
     # Create a one-cancels-the-other order
     dict(
-        name = 'create_oco',
-        path = 'order/oco',
-        method = RequestMethod.POST,
-        security_type = SecurityType.TRADE
+        name='create_oco',
+        path='order/oco',
+        method=RequestMethod.POST,
+        security_type=SecurityType.TRADE
     ),
 
     dict(
-        name = 'cancel_oco',
-        path = 'orderList',
-        method = RequestMethod.DELETE,
-        security_type = SecurityType.NONE
+        name='cancel_oco',
+        path='orderList',
+        method=RequestMethod.DELETE,
+        security_type=SecurityType.NONE
     ),
 
     dict(
-        name = 'get_oco',
-        path = 'orderList',
-        security_type = SecurityType.USER_DATA
+        name='get_oco',
+        path='orderList',
+        security_type=SecurityType.USER_DATA
     ),
 
     dict(
-        name = 'get_all_oco',
-        path = 'allOrderList',
-        security_type = SecurityType.USER_DATA
+        name='get_all_oco',
+        path='allOrderList',
+        security_type=SecurityType.USER_DATA
     ),
 
     dict(
-        name = 'get_open_oco',
-        path = 'openOrderList',
-        security_type = SecurityType.USER_DATA
+        name='get_open_oco',
+        path='openOrderList',
+        security_type=SecurityType.USER_DATA
     ),
 
     dict(
-        name = 'get_account',
-        path = 'account',
-        security_type = SecurityType.USER_DATA
+        name='get_account',
+        path='account',
+        security_type=SecurityType.USER_DATA
     ),
 
     dict(
-        name = 'get_my_trade',
-        path = 'myTrades',
-        security_type = SecurityType.USER_DATA
+        name='get_my_trade',
+        path='myTrades',
+        security_type=SecurityType.USER_DATA
     )
 ]
+
 
 def define_getter(
     Target,
@@ -216,6 +217,7 @@ def define_getter(
 
 # pylint: disable=no-member
 
+
 class RestAPIGetters:
     def _rest_uri(self, path, version=REST_API_VERSION):
         return self._api_host + '/api/' + version + '/' + path
@@ -226,7 +228,7 @@ class RestAPIGetters:
         Returns:
             dict: An empty dict `{}`
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_server_time(self):
         """Tests connectivity to the Rest API and gets the current server time.
@@ -236,7 +238,7 @@ class RestAPIGetters:
 
                 {"serverTime": 1499827319559}
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_exchange_info(self):
         """Gets Current exchange trading rules and symbol information.
@@ -289,7 +291,7 @@ class RestAPIGetters:
                     ]
                 }
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     # Market Data endpoints
 
@@ -319,7 +321,7 @@ class RestAPIGetters:
                     ]
                 }
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_recent_trades(self, **kwargs):
         """Gets recent trades.
@@ -345,7 +347,7 @@ class RestAPIGetters:
                     # ...
                 ]
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_historical_trades(self, **kwargs):
         """Get older trades.
@@ -372,7 +374,7 @@ class RestAPIGetters:
                     # ...
                 ]
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_aggregate_trades(self, **kwargs):
         """Gets compressed, aggregate trades. Trades that fill at the time, from the same order, with the same price will have the quantity aggregated.
@@ -403,7 +405,7 @@ class RestAPIGetters:
                     }
                 ]
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_klines(self, **kwargs):
         """Gets kline/candlestick bars for a symbol. Klines are uniquely identified by their open time.
@@ -437,7 +439,7 @@ class RestAPIGetters:
                     ]
                 ]
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_average_price(self, **kwargs):
         """Gets current average price for a symbol.
@@ -453,7 +455,7 @@ class RestAPIGetters:
                     'price': '9.35751834'
                 }
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_ticker(self, **kwargs):
         """Gets 24 hour rolling window price change statistics. Careful when accessing this with no symbol.
@@ -515,7 +517,7 @@ class RestAPIGetters:
                 ]
 
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_ticker_price(self):
         """Gets latest price for a symbol or symbols.
@@ -546,11 +548,11 @@ class RestAPIGetters:
                     }
                 ]
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     dict(
-        name = 'get_orderbook_ticker',
-        path = 'ticker/bookTicker'
+        name='get_orderbook_ticker',
+        path='ticker/bookTicker'
     ),
 
     def get_orderbook_ticker(self):
@@ -592,7 +594,7 @@ class RestAPIGetters:
                     }
                 ]
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     # Account endpoints
 
@@ -688,14 +690,14 @@ class RestAPIGetters:
                     ]
                 }
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def create_test_order(self, **kwargs):
         """Tests new order creation and signature/recvWindow long. Creates and validates a new order but does not send it into the matching engine.
 
         Which has the same parameters as `client.create_order()`
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_order(self, **kwargs):
         """Checks an order's status.
@@ -734,7 +736,7 @@ class RestAPIGetters:
                     'origQuoteOrderQty': '0.000000'
                 }
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def cancel_order(self, **kwargs):
         """Cancel an active order.
@@ -769,7 +771,7 @@ class RestAPIGetters:
                 }
 
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_open_orders(self, **kwargs):
         """Gets all open orders on a symbol. Careful when accessing this with no symbol.
@@ -808,7 +810,7 @@ class RestAPIGetters:
                 ]
 
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_all_orders(self, **kwargs):
         """Gets all account orders, either active, or canceled, or filled.
@@ -851,7 +853,7 @@ class RestAPIGetters:
                     }
                 ]
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def create_oco(self, **kwargs):
         """Sends in a new one-cancels-the-other order
@@ -939,7 +941,7 @@ class RestAPIGetters:
                     ]
                 }
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def cancel_oco(self, **kwargs):
         """Cancels an entire Order List
@@ -1016,7 +1018,7 @@ class RestAPIGetters:
                     ]
                 }
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_oco(self, **kwargs):
         """Retrieves a specific OCO based on provided optional parameters.
@@ -1057,7 +1059,7 @@ class RestAPIGetters:
                 }
 
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_all_oco(self, **kwargs):
         """Retrieves all OCO based on provided optional parameters.
@@ -1120,12 +1122,12 @@ class RestAPIGetters:
                     }
                 ]
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     dict(
-        name = 'get_open_oco',
-        path = 'openOrderList',
-        security_type = SecurityType.USER_DATA
+        name='get_open_oco',
+        path='openOrderList',
+        security_type=SecurityType.USER_DATA
     ),
 
     def get_open_oco(self, **kwargs):
@@ -1164,7 +1166,7 @@ class RestAPIGetters:
                     }
                 ]
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_account(self, **kwargs):
         """Gets current account information.
@@ -1202,7 +1204,7 @@ class RestAPIGetters:
                     ]
                 }
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_my_trade(self, **kwargs):
         """Gets trades for a specific account and symbol.
@@ -1240,7 +1242,7 @@ class RestAPIGetters:
                 ]
 
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     # User data stream endpoints
 
@@ -1252,7 +1254,7 @@ class RestAPIGetters:
         """
         res = await self.post(
             self._rest_uri('userDataStream'),
-            security_type = SecurityType.USER_STREAM
+            security_type=SecurityType.USER_STREAM
         )
         return res['listenKey']
 
@@ -1264,8 +1266,8 @@ class RestAPIGetters:
         """
         return self.put(
             self._rest_uri('userDataStream'),
-            security_type = SecurityType.USER_STREAM,
-            listenKey = listen_key
+            security_type=SecurityType.USER_STREAM,
+            listenKey=listen_key
         )
 
     def close_listen_key(self, listen_key: str):
@@ -1276,9 +1278,10 @@ class RestAPIGetters:
         """
         return self.delete(
             self._rest_uri('userDataStream'),
-            security_type = SecurityType.USER_STREAM,
-            listenKey = listen_key
+            security_type=SecurityType.USER_STREAM,
+            listenKey=listen_key
         )
+
 
 for getter_setting in APIS:
     define_getter(RestAPIGetters, **getter_setting)

@@ -98,6 +98,7 @@ FREE_CASES = [
 #         return CallbackResult(status=200)
 #     return real_callback
 
+
 def print_str(name, d):
     s = json_stringify(d)
 
@@ -106,6 +107,7 @@ def print_str(name, d):
         print(name, s[:MAX_PRINT], 'and %s more' % (length - MAX_PRINT))
     else:
         print(name, s)
+
 
 @pytest.mark.asyncio
 async def test_free_apis():
@@ -136,8 +138,3 @@ async def test_free_apis():
     #         m.get(pattern, callback=callback('get'), repeat=True)
 
     #     await go()
-
-
-
-
-

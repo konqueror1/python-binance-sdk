@@ -6,6 +6,7 @@ from .handler_context import HandlerContext
 
 # pylint: disable=no-member
 
+
 class SubscriptionManager:
     def start(self):
         """Starts receiving messages.

@@ -41,6 +41,7 @@ from binance.common.constants import (
 
 # pylint: disable=no-member
 
+
 def sort_params(data):
     """
     Convert params to list with signature as last element
@@ -61,8 +62,10 @@ def sort_params(data):
 
     return params
 
+
 KEY_REQUEST_PARAMS = 'requests_params'
 KEY_FORCE_PARAMS = 'force_params'
+
 
 class ClientBase:
     def _init_api_session(self, need_api_key):
@@ -92,7 +95,7 @@ class ClientBase:
         kwargs = dict(
             # set default requests timeout
             # TODO: no hard coding
-            timeout = 10
+            timeout=10
         )
 
         # add global requests params for aiohttp
@@ -144,11 +147,11 @@ class ClientBase:
 
     # self._request('get', uri, symbol='BTCUSDT')
     async def _request(self,
-        method,
-        uri,
-        security_type=SecurityType.NONE,
-        **kwargs
-    ):
+                       method,
+                       uri,
+                       security_type=SecurityType.NONE,
+                       **kwargs
+                       ):
         need_api_key, need_signed = security_type
 
         if need_api_key and not self._api_key:

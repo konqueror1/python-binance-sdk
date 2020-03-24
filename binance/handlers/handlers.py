@@ -15,10 +15,12 @@ __all__ = [
     'AllMarketTickersHandlerBase'
 ]
 
+
 class HandlerExceptionHandlerBase(HandlerBase):
     def receive(self, e):
         traceback.print_exc()
         return e
+
 
 BASE_TRADE_COLUMNS_MAP = {
     **STREAM_TYPE_MAP,
@@ -39,9 +41,11 @@ TRADE_COLUMNS_MAP = {
 
 TRADE_COLUMNS = TRADE_COLUMNS_MAP.keys()
 
+
 class TradeHandlerBase(HandlerBase):
     COLUMNS_MAP = TRADE_COLUMNS_MAP
     COLUMNS = TRADE_COLUMNS
+
 
 AGG_TRADE_COLUMNS_MAP = {
     **BASE_TRADE_COLUMNS_MAP,
@@ -52,9 +56,11 @@ AGG_TRADE_COLUMNS_MAP = {
 
 AGG_TRADE_COLUMNS = AGG_TRADE_COLUMNS_MAP
 
+
 class AggTradeHandlerBase(HandlerBase):
     COLUMNS_MAP = AGG_TRADE_COLUMNS_MAP
     COLUMNS = AGG_TRADE_COLUMNS
+
 
 KLINE_COLUMNS_MAP = {
     **STREAM_TYPE_MAP,
@@ -76,6 +82,7 @@ KLINE_COLUMNS_MAP = {
 
 KLINE_COLUMNS = KLINE_COLUMNS_MAP.keys()
 
+
 class KlineHandlerBase(HandlerBase):
     COLUMNS_MAP = KLINE_COLUMNS_MAP
     COLUMNS = KLINE_COLUMNS
@@ -85,6 +92,7 @@ class KlineHandlerBase(HandlerBase):
         k['E'] = payload['E']
 
         return super()._receive(k)
+
 
 MINI_TICKER_COLUMNS_MAP = {
     **STREAM_TYPE_MAP,
@@ -97,9 +105,11 @@ MINI_TICKER_COLUMNS_MAP = {
 
 MINI_TICKER_COLUMNS = MINI_TICKER_COLUMNS_MAP.keys()
 
+
 class MiniTickerHandlerBase(HandlerBase):
     COLUMNS_MAP = MINI_TICKER_COLUMNS_MAP
     COLUMNS = MINI_TICKER_COLUMNS
+
 
 TICKER_COLUMNS_MAP = {
     **MINI_TICKER_COLUMNS_MAP,
@@ -119,9 +129,11 @@ TICKER_COLUMNS_MAP = {
 
 TICKER_COLUMNS = TICKER_COLUMNS_MAP.keys()
 
+
 class TickerHandlerBase(HandlerBase):
     COLUMNS_MAP = TICKER_COLUMNS_MAP
     COLUMNS = TICKER_COLUMNS
+
 
 class AllMarketMiniTickersHandlerBase(HandlerBase):
     COLUMNS_MAP = MINI_TICKER_COLUMNS_MAP
@@ -130,6 +142,7 @@ class AllMarketMiniTickersHandlerBase(HandlerBase):
     def _receive(self, payload):
         return super()._receive(
             payload, None)
+
 
 class AllMarketTickersHandlerBase(HandlerBase):
     COLUMNS_MAP = TICKER_COLUMNS_MAP

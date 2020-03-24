@@ -15,15 +15,16 @@ KEY_RESULT = 'result'
 # TODO: handle error code
 # KEY_CODE = 'code'
 
+
 class StreamBase(ABC):
     def __init__(self,
-        uri,
-        on_message,
-        # We redundant the default value here,
-        #   because `binance.Stream` is also a public class
-        retry_policy=DEFAULT_RETRY_POLICY,
-        timeout=DEFAULT_STREAM_TIMEOUT,
-    ):
+                 uri,
+                 on_message,
+                 # We redundant the default value here,
+                 #   because `binance.Stream` is also a public class
+                 retry_policy=DEFAULT_RETRY_POLICY,
+                 timeout=DEFAULT_STREAM_TIMEOUT,
+                 ):
         self._on_message = on_message
         self._retry_policy = retry_policy
         self._timeout = timeout

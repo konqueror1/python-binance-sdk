@@ -9,6 +9,7 @@ from binance.common.exceptions import (
 
 from binance.common.utils import make_list, wrap_coroutine
 
+
 class HandlerContext:
     PROCESSORS = PROCESSORS
 

@@ -15,95 +15,96 @@ APIS = [
 
     # see rest.py
     dict(
-        name = 'withdraw',
-        path = 'withdraw',
-        method = RequestMethod.POST,
-        security_type = SecurityType.TRADE
+        name='withdraw',
+        path='withdraw',
+        method=RequestMethod.POST,
+        security_type=SecurityType.TRADE
     ),
 
     dict(
-        name = 'get_deposit_history',
-        path = 'depositHistory'
+        name='get_deposit_history',
+        path='depositHistory'
     ),
 
     dict(
-        name = 'get_withdraw_history',
-        path = 'withdrawHistory'
+        name='get_withdraw_history',
+        path='withdrawHistory'
     ),
 
     dict(
-        name = 'get_deposit_address',
-        path = 'depositAddress'
+        name='get_deposit_address',
+        path='depositAddress'
     ),
 
     dict(
-        name = 'get_account_status',
-        path = 'accountStatus'
+        name='get_account_status',
+        path='accountStatus'
     ),
 
     dict(
-        name   = 'get_system_status',
-        path   = 'systemStatus',
-        params = False,
-        security_type = SecurityType.NONE
+        name='get_system_status',
+        path='systemStatus',
+        params=False,
+        security_type=SecurityType.NONE
     ),
 
     dict(
-        name = 'get_account_api_trading_status',
-        path = 'apiTradingStatus'
+        name='get_account_api_trading_status',
+        path='apiTradingStatus'
     ),
 
     dict(
-        name = 'get_dust_log',
-        path = 'userAssetDribbletLog'
+        name='get_dust_log',
+        path='userAssetDribbletLog'
     ),
 
     dict(
-        name = 'get_trade_fee',
-        path = 'tradeFee'
+        name='get_trade_fee',
+        path='tradeFee'
     ),
 
     dict(
-        name = 'get_asset_detail',
-        path = 'assetDetail'
+        name='get_asset_detail',
+        path='assetDetail'
     ),
 
     dict(
-        name = 'get_sub_accounts',
-        path = 'sub-account/list'
+        name='get_sub_accounts',
+        path='sub-account/list'
     ),
 
     dict(
-        name = 'get_sub_account_transfer_history',
-        path = 'sub-account/transfer/history'
+        name='get_sub_account_transfer_history',
+        path='sub-account/transfer/history'
     ),
 
     dict(
-        name = 'sub_account_transfer',
-        path = 'sub-account/transfer',
-        method = RequestMethod.POST,
-        security_type = SecurityType.TRADE
+        name='sub_account_transfer',
+        path='sub-account/transfer',
+        method=RequestMethod.POST,
+        security_type=SecurityType.TRADE
     ),
 
     dict(
-        name = 'get_sub_account_assets',
-        path = 'sub-account/assets'
+        name='get_sub_account_assets',
+        path='sub-account/assets'
     ),
 
     dict(
-        name = 'dust_transfer',
-        path = 'asset/dust',
-        prefix = PREFIX_SAPI,
-        method = RequestMethod.POST,
-        security_type = SecurityType.TRADE
+        name='dust_transfer',
+        path='asset/dust',
+        prefix=PREFIX_SAPI,
+        method=RequestMethod.POST,
+        security_type=SecurityType.TRADE
     ),
 
     dict(
-        name = 'get_assert_dividend_record',
-        path = 'asset/assetDividend',
-        prefix = PREFIX_SAPI
+        name='get_assert_dividend_record',
+        path='asset/assetDividend',
+        prefix=PREFIX_SAPI
     )
 ]
+
 
 def define_getter(
     Target,
@@ -135,6 +136,7 @@ def define_getter(
 
 # pylint: disable=no-member
 
+
 class WapiAPIGetters:
     def _wapi_uri(self, path, version, prefix=PREFIX_WAPI):
         return self._api_host + prefix + version + '/' + path + '.html'
@@ -164,7 +166,7 @@ class WapiAPIGetters:
                 }
 
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_deposit_history(self, **kwargs):
         """Fetches deposit history.
@@ -209,7 +211,7 @@ class WapiAPIGetters:
                     'success': True
                 }
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_withdraw_history(self, **kwargs):
         """Fetches withdraw history.
@@ -252,7 +254,7 @@ class WapiAPIGetters:
                     'success': True
                 }
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_deposit_address(self, **kwargs):
         """Fetches deposit address.
@@ -275,7 +277,7 @@ class WapiAPIGetters:
                     'asset': 'BNB'
                 }
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_account_status(self, **kwargs):
         """Fetches account status detail.
@@ -295,7 +297,7 @@ class WapiAPIGetters:
                     ]
                 }
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_system_status(self):
         """Fetches system status.
@@ -308,7 +310,7 @@ class WapiAPIGetters:
                     'msg': 'normal' # normal or system maintenance
                 }
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_account_api_trading_status(self, **kwargs):
         """Fetches account api trading status detail.
@@ -359,7 +361,7 @@ class WapiAPIGetters:
                     }
                 }
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_dust_log(self, **kwargs):
         """Fetches small amounts of assets exchanged BNB records.
@@ -432,7 +434,7 @@ class WapiAPIGetters:
                     }
                 }
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_trade_fee(self, **kwargs):
         """Fetches trade fee.
@@ -458,7 +460,7 @@ class WapiAPIGetters:
                     'success': True
                 }
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_asset_detail(self, **kwargs):
         """Fetches asset detail.
@@ -489,7 +491,7 @@ class WapiAPIGetters:
                     }
                 }
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_sub_accounts(self, **kwargs):
         """Fetches sub account list.
@@ -527,7 +529,7 @@ class WapiAPIGetters:
                     ]
                 }
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_sub_account_transfer_history(self, **kwargs):
         """Fetches transfer history list
@@ -564,7 +566,7 @@ class WapiAPIGetters:
                     ]
                 }
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def sub_account_transfer(self, **kwargs):
         """Executes sub-account transfer
@@ -585,7 +587,7 @@ class WapiAPIGetters:
                     'txnId': '2966662589'
                 }
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_sub_account_assets(self, **kwargs):
         """Fetches sub-account assets
@@ -615,7 +617,7 @@ class WapiAPIGetters:
                     ]
                 }
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def dust_transfer(self, **kwargs):
         """Converts dust assets to BNB.
@@ -651,7 +653,7 @@ class WapiAPIGetters:
                     ]
                 }
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
 
     def get_assert_dividend_record(self, **kwargs):
         """Gets asset dividend record.
@@ -686,7 +688,8 @@ class WapiAPIGetters:
                     'total': 2
                 }
         """
-        pass # pragma: no cover
+        pass  # pragma: no cover
+
 
 for getter_setting in APIS:
     define_getter(WapiAPIGetters, **getter_setting)

@@ -39,8 +39,10 @@ SUBTYPE_VALUE_LIST = [
     'user'
 ]
 
+
 class SubType:
     pass
+
 
 def merge_attr(target, props, values=None):
     values = values or props
@@ -48,6 +50,7 @@ def merge_attr(target, props, values=None):
     for i in range(len(props)):
         k, v = props[i], values[i]
         setattr(target, k, v)
+
 
 merge_attr(SubType, SUBTYPE_PROP_LIST, SUBTYPE_VALUE_LIST)
 
@@ -93,8 +96,10 @@ KLINE_INTERVAL_VALUE_LIST = [
     '1M'
 ]
 
+
 class KlineInterval:
     pass
+
 
 merge_attr(KlineInterval, KLINE_INVERVAL_PROP_LIST, KLINE_INTERVAL_VALUE_LIST)
 
@@ -111,6 +116,8 @@ MAX_RETRIES_BEFORE_RESET = 10
 # If the network connection fails,
 #   we increase the delay by 100ms per failure
 #   and reset the retry counter after 10 failures
+
+
 def DEFAULT_RETRY_POLICY(retries: int):
     delay = retries * ATOM_RETRY_DELAY
     reset = retries >= MAX_RETRIES_BEFORE_RESET
@@ -118,6 +125,7 @@ def DEFAULT_RETRY_POLICY(retries: int):
 
 # Streams
 # ==================================================
+
 
 STREAM_HOST = 'wss://stream.binance.com'
 
@@ -149,6 +157,7 @@ ATOM = {}
 # APIs
 # ==================================================
 
+
 class SecurityType:
     # {TYPE} = (NEED_API_KEY, NEED_SIGNATURE)
     NONE = (False, False)
@@ -157,15 +166,18 @@ class SecurityType:
     USER_STREAM = (True, False)
     MARKET_DATA = (True, False)
 
+
 class RequestMethod:
     GET = 'get'
     POST = 'post'
     PUT = 'put'
     DELETE = 'delete'
 
+
 class OrderSide:
     BUY = 'BUY'
     SELL = 'SELL'
+
 
 class OrderType:
     LIMIT = 'LIMIT'
@@ -176,38 +188,20 @@ class OrderType:
     TAKE_PROFIT_LIMIT = 'TAKE_PROFIT_LIMIT'
     LIMIT_MAKER = 'LIMIT_MAKER'
 
+
 class OrderRespType:
     ACK = 'ACK'
     RESULT = 'RESULT'
     FULL = 'FULL'
+
 
 class TimeInForce:
     GTC = 'GTC'
     IOC = 'IOC'
     FOK = 'FOK'
 
+
 HEADER_API_KEY = 'X-MBX-APIKEY'
 
 REST_API_VERSION = 'v3'
 REST_API_HOST = 'https://api.binance.com'
-
-# WEBSITE_HOST = 'https://www.binance.com'
-
-# Binance now supports default 443 port for websockets
-
-
-# TIME_IN_FORCE_GTC = 'GTC'
-
-
-# SIDE_BUY = 'BUY'
-# SIDE_SELL = 'SELL'
-
-# ORDER_TYPE_LIMIT = 'LIMIT'
-# ORDER_TYPE_MARKET = 'MARKET'
-
-# TIME_IN_FORCE_GTC = 'GTC'  # Good till cancelled
-# TIME_IN_FORCE_IOC = 'IOC'  # Immediate or cancel
-# TIME_IN_FORCE_FOK = 'FOK'  # Fill or kill
-
-# For accessing the data returned by Client.aggregate_trades().
-# AGG_ID = 'a'

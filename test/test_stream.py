@@ -4,6 +4,7 @@ import asyncio
 from binance import Stream, StreamDisconnectedException
 from binance.common.constants import STREAM_HOST
 
+
 async def run_stream():
     f = asyncio.Future()
 
@@ -28,12 +29,15 @@ async def run_stream():
     print('before close')
     await stream.close()
 
+
 @pytest.mark.asyncio
 async def test_binance_stream():
     await run_stream()
 
+
 def on_message():
     pass
+
 
 @pytest.mark.asyncio
 async def test_stream_never_connect():
@@ -42,6 +46,7 @@ async def test_stream_never_connect():
             STREAM_HOST + '/stream',
             on_message
         ).send({})
+
 
 @pytest.mark.asyncio
 async def test_stream_close_before_connect():

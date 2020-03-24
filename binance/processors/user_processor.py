@@ -4,6 +4,7 @@ from binance.common.constants import SubType
 
 from .base import ProcessorBase
 
+
 class UserProcessor(ProcessorBase):
     # HANDLER = UserHandlerBase
     SUB_TYPE = SubType.USER

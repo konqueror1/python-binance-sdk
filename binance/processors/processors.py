@@ -11,8 +11,10 @@ from binance.common.utils import normalize_symbol
 
 from .base import ProcessorBase
 
+
 class ExceptionProcessor(ProcessorBase):
     HANDLER = HandlerExceptionHandlerBase
+
 
 class KlineProcessor(ProcessorBase):
     HANDLER = KlineHandlerBase
@@ -37,28 +39,34 @@ class KlineProcessor(ProcessorBase):
 
         return normalize_symbol(symbol) + '@' + KLINE_TYPE_PREFIX + interval
 
+
 class TradeProcessor(ProcessorBase):
     HANDLER = TradeHandlerBase
     SUB_TYPE = SubType.TRADE
 
+
 class AggTradeProcessor(ProcessorBase):
     HANDLER = AggTradeHandlerBase
     SUB_TYPE = SubType.AGG_TRADE
+
 
 class OrderBookProcessor(ProcessorBase):
     HANDLER = OrderBookHandlerBase
     SUB_TYPE = SubType.ORDER_BOOK
     PAYLOAD_TYPE = 'depthUpdate'
 
+
 class MiniTickerProcessor(ProcessorBase):
     HANDLER = MiniTickerHandlerBase
     SUB_TYPE = SubType.MINI_TICKER
     PAYLOAD_TYPE = '24hrMiniTicker'
 
+
 class TickerProcessor(ProcessorBase):
     HANDLER = TickerHandlerBase
     SUB_TYPE = SubType.TICKER
     PAYLOAD_TYPE = '24hrTicker'
+
 
 class AllMarketMiniTickersProcessor(ProcessorBase):
     HANDLER = AllMarketMiniTickersHandlerBase
@@ -68,7 +76,7 @@ class AllMarketMiniTickersProcessor(ProcessorBase):
     def is_message_type(self, msg):
         stream_type = msg.get(KEY_STREAM_TYPE)
         if stream_type == None or \
-            stream_type.startswith(self.STREAM_TYPE_PREFIX) == False:
+                stream_type.startswith(self.STREAM_TYPE_PREFIX) == False:
             return False, None
 
         return True, msg.get(KEY_PAYLOAD)
@@ -80,6 +88,7 @@ class AllMarketMiniTickersProcessor(ProcessorBase):
             interval = args[0]
 
         return self.STREAM_TYPE_PREFIX + '@%sms' % interval
+
 
 class AllMarketTickersProcessor(AllMarketMiniTickersProcessor):
     HANDLER = AllMarketTickersHandlerBase

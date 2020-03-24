@@ -7,6 +7,7 @@ from binance import Stream
 
 PORT = 9081
 
+
 class Server:
     def __init__(self):
         self._started = False
@@ -59,6 +60,7 @@ class Server:
         await self._handle(ws)
 
         return ws
+
 
 @pytest.mark.asyncio
 async def test_stream_timeout_disconnect_reconnect():

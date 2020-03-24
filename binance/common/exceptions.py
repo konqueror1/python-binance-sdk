@@ -18,6 +18,7 @@ __all__ = [
     'OrderBookFetchAbandonedException'
 ]
 
+
 class StreamDisconnectedException(Exception):
     def __init__(self, uri):
         self.uri = uri
@@ -25,6 +26,7 @@ class StreamDisconnectedException(Exception):
     def __str__(self):
         return err_msg(
             'stream "%s" is never connected or is abandoned after too many retries according to the `retry_policy`, run `stream.connect()`', self.uri)
+
 
 class APIKeyNotDefinedException(Exception):
     def __init__(self, url):
@@ -34,6 +36,7 @@ class APIKeyNotDefinedException(Exception):
         return err_msg(
             'api_key is required for requesting "%s"', self.url)
 
+
 class APISecretNotDefinedException(Exception):
     def __init__(self, url):
         self.url = url
@@ -41,6 +44,7 @@ class APISecretNotDefinedException(Exception):
     def __str__(self):
         return err_msg(
             'api_secret is required for requesting "%s"', self.url)
+
 
 class StatusException(Exception):
     def __init__(self, response, text):
@@ -62,7 +66,8 @@ class StatusException(Exception):
 
     def __str__(self):  # pragma: no cover
         return err_msg('response error for "%s", status %s, code %s: %s',
-            self.response.url, self.status, self.code, self.message)
+                       self.response.url, self.status, self.code, self.message)
+
 
 class InvalidResponseException(Exception):
     def __init__(self, response, text):
@@ -71,7 +76,8 @@ class InvalidResponseException(Exception):
 
     def __str__(self):
         return err_msg('invalid response for "%s": %s',
-            self.response.url, self.response_text)
+                       self.response.url, self.response_text)
+
 
 class InvalidSubParamsException(Exception):
     def __init__(self, message):
@@ -80,12 +86,14 @@ class InvalidSubParamsException(Exception):
     def __str__(self):
         return err_msg('invalid subscribe params: %s', self.message)
 
+
 class UnsupportedSubTypeException(Exception):
     def __init__(self, subtype):
         self.subtype = subtype
 
     def __str__(self):
         return err_msg('subtype "%s" is not supported', self.subtype)
+
 
 class InvalidSubTypeParamException(Exception):
     def __init__(self, subtype, param_name, reason):
@@ -95,7 +103,8 @@ class InvalidSubTypeParamException(Exception):
 
     def __str__(self):
         return err_msg('invalid param `%s` for subtype "%s", %s',
-            self.param_name, self.subtype, self.reason)
+                       self.param_name, self.subtype, self.reason)
+
 
 class InvalidHandlerException(Exception):
     def __init__(self, handler):
@@ -104,12 +113,14 @@ class InvalidHandlerException(Exception):
     def __str__(self):
         return err_msg('invalid handler `%s`', self.handler)
 
+
 class ReuseHandlerException(Exception):
     def __init__(self, handler):
         self.handler = handler
 
     def __str__(self):
         return err_msg('handler `%s` should not be used in more than one clients', self.handler)
+
 
 class OrderBookFetchAbandonedException(Exception):
     def __init__(self, symbol, reason, exception=None):
@@ -119,4 +130,3 @@ class OrderBookFetchAbandonedException(Exception):
 
     def __str__(self):
         return err_msg('orderbook for `%s` failed to fetch snapshot and fetching is abandoned by retry policy, reason: %s', self.symbol, self.reason)
-

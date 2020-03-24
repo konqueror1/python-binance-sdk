@@ -23,21 +23,24 @@ ORDER_BOOK_COLUMNS_MAP = {
 
 ORDER_BOOK_COLUMNS = ORDER_BOOK_COLUMNS_MAP.keys()
 
+
 def create_depth_df(l):
     return pd.DataFrame([
         {'price': x[0], 'quantity': x[1]} for x in l
     ])
 
+
 METHOD_NAME_RECEIVE = 'receive'
+
 
 class OrderBookHandlerBase(HandlerBase):
     COLUMNS_MAP = ORDER_BOOK_COLUMNS_MAP
     COLUMNS = ORDER_BOOK_COLUMNS
 
     def __init__(self,
-        limit=DEFAULT_DEPTH_LIMIT,
-        retry_policy=DEFAULT_RETRY_POLICY
-    ):
+                 limit=DEFAULT_DEPTH_LIMIT,
+                 retry_policy=DEFAULT_RETRY_POLICY
+                 ):
         super().__init__()
 
         self._limit = limit
@@ -76,9 +79,9 @@ class OrderBookHandlerBase(HandlerBase):
             return self._orderbooks[symbol]
 
         orderbook = OrderBook(symbol,
-            limit=self._limit,
-            retry_policy=self._retry_policy
-        )
+                              limit=self._limit,
+                              retry_policy=self._retry_policy
+                              )
 
         if self._client:
             orderbook.set_client(self._client)

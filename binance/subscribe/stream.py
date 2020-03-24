@@ -2,6 +2,7 @@ from binance.common.utils import normalize_symbol
 
 from .stream_base import StreamBase
 
+
 class Stream(StreamBase):
     def __init__(self, *arg, **kwargs):
         super().__init__(*arg, **kwargs)

@@ -10,6 +10,7 @@ from binance import (
     APISecretNotDefinedException
 )
 
+
 @pytest.mark.asyncio
 async def test_no_secret():
     client = Client('api_key')
@@ -18,12 +19,14 @@ async def test_no_secret():
         with pytest.raises(APISecretNotDefinedException, match='api_secret'):
             await getattr(client, method)('/foo', security_type=SecurityType.USER_DATA)
 
+
 @pytest.mark.asyncio
 async def test_no_key():
     client = Client()
 
     with pytest.raises(APIKeyNotDefinedException, match='api_key'):
         await client.get('/foo', security_type=SecurityType.USER_DATA)
+
 
 @pytest.mark.asyncio
 async def test_invalid_json():
@@ -36,6 +39,7 @@ async def test_invalid_json():
             client = Client('api_key')
             await client.get_server_time()
 
+
 @pytest.mark.asyncio
 async def test_api_exception():
     """Test Status Exception"""
@@ -46,6 +50,7 @@ async def test_api_exception():
 
             client = Client('api_key')
             await client.get_server_time()
+
 
 @pytest.mark.asyncio
 async def test_api_exception_invalid_json():

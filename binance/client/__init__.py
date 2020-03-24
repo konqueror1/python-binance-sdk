@@ -8,6 +8,7 @@ from binance.common.constants import (
 
 from .base import ClientBase
 
+
 class Client(
     ClientBase,
     RestAPIGetters,

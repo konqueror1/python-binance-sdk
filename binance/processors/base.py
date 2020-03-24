@@ -7,6 +7,7 @@ from binance.common.exceptions import (
 from binance.common.utils import normalize_symbol
 from binance.common.constants import ATOM, KEY_PAYLOAD, KEY_PAYLOAD_TYPE
 
+
 class ProcessorBase:
     # The handler class
     HANDLER = None
@@ -44,8 +45,8 @@ class ProcessorBase:
         payload = msg.get(KEY_PAYLOAD)
 
         if payload != None and \
-            type(payload) is dict and \
-            payload.get(KEY_PAYLOAD_TYPE) == self.PAYLOAD_TYPE:
+                type(payload) is dict and \
+                payload.get(KEY_PAYLOAD_TYPE) == self.PAYLOAD_TYPE:
             return True, payload
 
         return False, None

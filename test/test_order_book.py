@@ -5,16 +5,18 @@ from aioresponses import aioresponses
 
 from binance import Client, OrderBook
 
+
 def test_order_book_no_client():
     orderbook = OrderBook('BTCUSDT')
     assert not orderbook._fetching
+
 
 @pytest.mark.asyncio
 async def test_order_book():
     with aioresponses() as m:
         a00, b00, b01, a10 = [100, 10], [99, 100], [98, 2], [101, 3]
-        asks=[a00]
-        bids=[b00, b01]
+        asks = [a00]
+        bids = [b00, b01]
         bids_sort = [b01, b00]
 
         asks1 = [a10, a00]

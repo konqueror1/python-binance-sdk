@@ -4,6 +4,7 @@ from binance.common.exceptions import ReuseHandlerException
 
 pd = None
 
+
 class HandlerBase:
     """The handler class to receive stream messages.
 
@@ -37,6 +38,7 @@ class HandlerBase:
     def receiveDispatch(self, payload):
         return self.receive(payload)
 
+
 try:
     pd = importlib.import_module('pandas')
     HandlerBase.receive = lambda self, msg: self._receive(msg)
@@ -58,7 +60,7 @@ try:
         pandas.DataFrame: the DataFrame converted from `msg` with columns renamed.
     """
 
-except ModuleNotFoundError: # pragma: no cover
+except ModuleNotFoundError:  # pragma: no cover
     # If pandas is not installed
     HandlerBase.receive = lambda self, msg: msg
 

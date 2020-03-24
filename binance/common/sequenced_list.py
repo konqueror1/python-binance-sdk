@@ -1,10 +1,12 @@
 import bisect
 
+
 class SequencedList(list):
     """
     Sequenced list to maintain asks or bids.
     Each item of the list should be a tuple of `(price, quantity)`
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
