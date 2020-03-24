@@ -3,10 +3,21 @@ import asyncio
 
 import pandas
 
-from binance import Client, TickerHandlerBase, \
-    InvalidHandlerException, SubType, OrderBookHandlerBase, \
-    InvalidSubTypeParamException, InvalidSubParamsException, \
-    HandlerExceptionHandlerBase, UnsupportedSubTypeException
+from binance import (
+    Client,
+    SubType,
+    KlineInterval,
+
+    TickerHandlerBase,
+    KlineHandlerBase,
+
+    InvalidHandlerException,
+    OrderBookHandlerBase,
+    InvalidSubTypeParamException,
+    InvalidSubParamsException,
+    HandlerExceptionHandlerBase,
+    UnsupportedSubTypeException
+)
 
 
 @pytest.fixture
@@ -97,6 +108,26 @@ async def test_client_handler(client):
     payload = await f
 
     assert payload['e'] == '24hrTicker'
+    assert payload['s'] == 'BTCUSDT'
+
+    await client.close()
+
+
+@pytest.mark.asyncio
+async def test_client_kline_handler(client):
+    f = asyncio.Future()
+
+    class KlineHandler(KlineHandlerBase):
+        # async receiver
+        async def receive(self, res):
+            f.set_result(res)
+
+    client.handler(KlineHandler())
+    await client.subscribe(SubType.KLINE, 'BTCUSDT', KlineInterval.KLINE_DAY)
+
+    payload = await f
+
+    assert payload['e'] == 'kline'
     assert payload['s'] == 'BTCUSDT'
 
     await client.close()

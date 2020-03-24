@@ -4,15 +4,11 @@ import inspect
 from .constants import ERROR_PREFIX
 
 
-# TODO: make it simpler
-def make_list(l):
-    ret = []
-    if not l:
-        return ret
+def make_list(subject):
+    if not subject:
+        return []
 
-    tmp = l if isinstance(l, list) else [l]
-    [ret.append(x) for x in tmp if x not in ret]
-    return ret
+    return subject if isinstance(subject, list) else [subject]
 
 
 def err_msg(string, *args):

@@ -1,7 +1,12 @@
 import asyncio
+import itertools
 
 from binance.processors import PROCESSORS, ExceptionProcessor
-from binance.common.constants import RET_OK, RET_ERROR, ATOM
+from binance.common.constants import (
+    RET_OK,
+    RET_ERROR,
+    SubType
+)
 from binance.common.exceptions import (
     InvalidSubParamsException,
     UnsupportedSubTypeException
@@ -39,7 +44,7 @@ class HandlerContext:
 
     # client.subscribe(subtypes, params)
     # -> client.subscribe(
-    #   [SubType.TICKER, SubType.KLINE_DAY],
+    #   [SubType.TICKER, SubType.ORDER_BOOK],
     #   ['BTCUSDT', 'BNBUSDT']
     # )
 
@@ -48,27 +53,45 @@ class HandlerContext:
     #       (SubType.TICKER, 'BNBUSDT)
     # )
     async def subscribe_params(self, subscribe, *args):
+        # Subs is a Tuple[tuple]
         subs = args if type(args[0]) is tuple else (args,)
         tasks = []
 
         for subtype_param in subs:
+            length = len(subtype_param)
+            prefix = None
+
             # subtype without params
-            # ('allMarketMiniTickers')
-            if len(subtype_param) == 1:
-                subtypes = make_list(subtype_param[0])
-                params = [ATOM]
+            # ('allMarketMiniTickers',)
+            if length == 1:
+                args_iter = itertools.product(make_list(subtype_param[0]))
             # ('trade', 'BNBUSDT')
             # (['trade'], ['BNBUSDT'])
-            elif len(subtype_param) == 2:
-                subtypes = make_list(subtype_param[0])
-                params = make_list(subtype_param[1])
+            elif length == 2:
+                args_iter = itertools.product(
+                    make_list(subtype_param[0]),
+                    make_list(subtype_param[1])
+                )
+
+            # Only kline has three args for now
+            elif length == 3 and subtype_param[0] == SubType.KLINE:
+                prefix = SubType.KLINE
+                args_iter = itertools.product(
+                    make_list(subtype_param[1]),
+                    make_list(subtype_param[2])
+                )
+
             else:
                 raise InvalidSubParamsException('please check the document')
 
-            for subtype in subtypes:
-                for param in params:
-                    a = (subtype, param) if param != ATOM else (subtype,)
-                    tasks.append(self._subscribe_param(subscribe, *a))
+            for partial_args in args_iter:
+                tasks.append(
+                    self._subscribe_param(
+                        subscribe, *partial_args
+                    ) if prefix is None else self._subscribe_param(
+                        subscribe, prefix, *partial_args
+                    )
+                )
 
         return await asyncio.gather(*tasks)
 
