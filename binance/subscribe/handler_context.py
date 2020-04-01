@@ -12,7 +12,10 @@ from binance.common.exceptions import (
     UnsupportedSubTypeException
 )
 
-from binance.common.utils import make_list, wrap_coroutine
+from binance.common.utils import (
+    make_list,
+    wrap_coroutine
+)
 
 
 class HandlerContext:
@@ -99,7 +102,10 @@ class HandlerContext:
         processor = self._get_processor(args[0])
         return await wrap_coroutine(processor.subscribe_param(subscribe, *args))
 
-    def _get_processor(self, subtype):
+    def _get_processor(
+        self,
+        subtype: SubType
+    ):
         processor = self._processor_cache.get(subtype)
         if processor:
             return processor

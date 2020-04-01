@@ -2,10 +2,10 @@ import asyncio
 
 from binance.common.constants import SubType
 
-from .base import ProcessorBase
+from .base import Processor
 
 
-class UserProcessor(ProcessorBase):
+class UserProcessor(Processor):
     # HANDLER = UserHandlerBase
     SUB_TYPE = SubType.USER
 

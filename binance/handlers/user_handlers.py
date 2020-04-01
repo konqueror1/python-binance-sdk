@@ -1,21 +1,21 @@
-from .handlers import HandlerBase
+from .handlers import Handler
 
 
-class AccountInfoHandlerBase(HandlerBase):
+class AccountInfoHandlerBase(Handler):
     pass
 
 
-class AccountPositionHandlerBase(HandlerBase):
+class AccountPositionHandlerBase(Handler):
     pass
 
 
-class BalanceUpdateHandlerBase(HandlerBase):
+class BalanceUpdateHandlerBase(Handler):
     pass
 
 
-class OrderUpdateHandlerBase(HandlerBase):
+class OrderUpdateHandlerBase(Handler):
     pass
 
 
-class OrderListStatusHandlerBase(HandlerBase):
+class OrderListStatusHandlerBase(Handler):
     pass

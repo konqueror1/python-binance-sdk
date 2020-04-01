@@ -1,20 +1,22 @@
 from binance.handlers import *
 from binance.common.constants import (
-    SubType, KlineInterval,
+    SubType,
+    KlineInterval,
     KLINE_TYPE_PREFIX,
-    KEY_STREAM_TYPE, KEY_PAYLOAD
+    KEY_STREAM_TYPE,
+    KEY_PAYLOAD
 )
 from binance.common.exceptions import InvalidSubTypeParamException
 from binance.common.utils import normalize_symbol
 
-from .base import ProcessorBase
+from .base import Processor
 
 
-class ExceptionProcessor(ProcessorBase):
+class ExceptionProcessor(Processor):
     HANDLER = HandlerExceptionHandlerBase
 
 
-class KlineProcessor(ProcessorBase):
+class KlineProcessor(Processor):
     HANDLER = KlineHandlerBase
     SUB_TYPE = SubType.KLINE
 
@@ -38,35 +40,35 @@ class KlineProcessor(ProcessorBase):
         return f'{normalize_symbol(symbol)}@{KLINE_TYPE_PREFIX}{interval}'
 
 
-class TradeProcessor(ProcessorBase):
+class TradeProcessor(Processor):
     HANDLER = TradeHandlerBase
     SUB_TYPE = SubType.TRADE
 
 
-class AggTradeProcessor(ProcessorBase):
+class AggTradeProcessor(Processor):
     HANDLER = AggTradeHandlerBase
     SUB_TYPE = SubType.AGG_TRADE
 
 
-class OrderBookProcessor(ProcessorBase):
+class OrderBookProcessor(Processor):
     HANDLER = OrderBookHandlerBase
     SUB_TYPE = SubType.ORDER_BOOK
     PAYLOAD_TYPE = 'depthUpdate'
 
 
-class MiniTickerProcessor(ProcessorBase):
+class MiniTickerProcessor(Processor):
     HANDLER = MiniTickerHandlerBase
     SUB_TYPE = SubType.MINI_TICKER
     PAYLOAD_TYPE = '24hrMiniTicker'
 
 
-class TickerProcessor(ProcessorBase):
+class TickerProcessor(Processor):
     HANDLER = TickerHandlerBase
     SUB_TYPE = SubType.TICKER
     PAYLOAD_TYPE = '24hrTicker'
 
 
-class AllMarketMiniTickersProcessor(ProcessorBase):
+class AllMarketMiniTickersProcessor(Processor):
     HANDLER = AllMarketMiniTickersHandlerBase
     SUB_TYPE = SubType.ALL_MARKET_MINI_TICKERS
     STREAM_TYPE_PREFIX = '!miniTicker@arr'

@@ -1,7 +1,8 @@
 files = binance test *.py
+test_target = *
 
 test:
-	pytest -s -v test/test_*.py --doctest-modules --cov binance --cov-config=.coveragerc --cov-report term-missing
+	pytest -s -v test/test_$(test_target).py --doctest-modules --cov binance --cov-config=.coveragerc --cov-report term-missing
 
 install:
 	pip install -r requirements.txt -r test-requirements.txt

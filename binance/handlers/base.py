@@ -5,7 +5,7 @@ from typing import (
 from binance.common.exceptions import ReuseHandlerException
 
 
-class HandlerBase:
+class Handler:
     """The handler class to receive stream messages.
 
     Most usually, except `OrderBookHandlerBase`, we need to override the `receive()` method::
@@ -52,10 +52,10 @@ try:
             res, columns=self.COLUMNS, index=index
         ).rename(columns=self.COLUMNS_MAP)
 
-    HandlerBase._receive = _receive
-    HandlerBase.receive = lambda self, msg: self._receive(msg)
+    Handler._receive = _receive
+    Handler.receive = lambda self, msg: self._receive(msg)
 
-    HandlerBase.receive.__doc__ = """Receives a single message from the stream.
+    Handler.receive.__doc__ = """Receives a single message from the stream.
 
     This method is usually invoked by subclass::
 
@@ -74,7 +74,7 @@ try:
 
 except ModuleNotFoundError:  # pragma: no cover
     # If pandas is not installed
-    HandlerBase.receive = lambda self, msg: msg
+    Handler.receive = lambda self, msg: msg
 
-    HandlerBase.receive.__doc__ = """Most usually, you do not need to call this method.
+    Handler.receive.__doc__ = """Most usually, you do not need to call this method.
     """

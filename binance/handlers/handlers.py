@@ -2,7 +2,7 @@ import traceback
 
 from binance.common.constants import STREAM_TYPE_MAP, STREAM_OHLC_MAP
 
-from .base import HandlerBase
+from .base import Handler
 
 __all__ = [
     'HandlerExceptionHandlerBase',
@@ -16,7 +16,7 @@ __all__ = [
 ]
 
 
-class HandlerExceptionHandlerBase(HandlerBase):
+class HandlerExceptionHandlerBase(Handler):
     def receive(self, e):
         traceback.print_exc()
         return e
@@ -42,7 +42,7 @@ TRADE_COLUMNS_MAP = {
 TRADE_COLUMNS = TRADE_COLUMNS_MAP.keys()
 
 
-class TradeHandlerBase(HandlerBase):
+class TradeHandlerBase(Handler):
     COLUMNS_MAP = TRADE_COLUMNS_MAP
     COLUMNS = TRADE_COLUMNS
 
@@ -57,7 +57,7 @@ AGG_TRADE_COLUMNS_MAP = {
 AGG_TRADE_COLUMNS = AGG_TRADE_COLUMNS_MAP
 
 
-class AggTradeHandlerBase(HandlerBase):
+class AggTradeHandlerBase(Handler):
     COLUMNS_MAP = AGG_TRADE_COLUMNS_MAP
     COLUMNS = AGG_TRADE_COLUMNS
 
@@ -83,7 +83,7 @@ KLINE_COLUMNS_MAP = {
 KLINE_COLUMNS = KLINE_COLUMNS_MAP.keys()
 
 
-class KlineHandlerBase(HandlerBase):
+class KlineHandlerBase(Handler):
     COLUMNS_MAP = KLINE_COLUMNS_MAP
     COLUMNS = KLINE_COLUMNS
 
@@ -106,7 +106,7 @@ MINI_TICKER_COLUMNS_MAP = {
 MINI_TICKER_COLUMNS = MINI_TICKER_COLUMNS_MAP.keys()
 
 
-class MiniTickerHandlerBase(HandlerBase):
+class MiniTickerHandlerBase(Handler):
     COLUMNS_MAP = MINI_TICKER_COLUMNS_MAP
     COLUMNS = MINI_TICKER_COLUMNS
 
@@ -130,12 +130,12 @@ TICKER_COLUMNS_MAP = {
 TICKER_COLUMNS = TICKER_COLUMNS_MAP.keys()
 
 
-class TickerHandlerBase(HandlerBase):
+class TickerHandlerBase(Handler):
     COLUMNS_MAP = TICKER_COLUMNS_MAP
     COLUMNS = TICKER_COLUMNS
 
 
-class AllMarketMiniTickersHandlerBase(HandlerBase):
+class AllMarketMiniTickersHandlerBase(Handler):
     COLUMNS_MAP = MINI_TICKER_COLUMNS_MAP
     COLUMNS = MINI_TICKER_COLUMNS
 
@@ -144,7 +144,7 @@ class AllMarketMiniTickersHandlerBase(HandlerBase):
             payload, None)
 
 
-class AllMarketTickersHandlerBase(HandlerBase):
+class AllMarketTickersHandlerBase(Handler):
     COLUMNS_MAP = TICKER_COLUMNS_MAP
     COLUMNS = TICKER_COLUMNS
 

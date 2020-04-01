@@ -3,7 +3,7 @@ from binance.common.constants import (
 )
 from binance.common.utils import normalize_symbol, wrap_coroutine
 
-from .base import HandlerBase, pd
+from .base import Handler, pd
 from .orderbook import (
     OrderBook,
     KEY_FIRST_UPDATE_ID, KEY_LAST_UPDATE_ID, KEY_BIDS, KEY_ASKS
@@ -31,7 +31,7 @@ def create_depth_df(l):
 METHOD_NAME_RECEIVE = 'receive'
 
 
-class OrderBookHandlerBase(HandlerBase):
+class OrderBookHandlerBase(Handler):
     COLUMNS_MAP = ORDER_BOOK_COLUMNS_MAP
     COLUMNS = ORDER_BOOK_COLUMNS
 
