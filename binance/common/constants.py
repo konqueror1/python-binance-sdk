@@ -53,8 +53,6 @@ class KlineInterval(Enum):
     MONTH = '1M'
 
 
-RET_OK = 0
-RET_ERROR = -1
 ERROR_PREFIX = '[BinanceSDK] '
 
 # RetryPolicy

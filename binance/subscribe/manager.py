@@ -1,4 +1,4 @@
-from binance.common.constants import RET_OK, DEFAULT_STREAM_CLOSE_CODE
+from binance.common.constants import DEFAULT_STREAM_CLOSE_CODE
 from binance.common.exceptions import InvalidHandlerException
 
 from .stream import Stream
@@ -101,9 +101,7 @@ class SubscriptionManager:
         ctx = self._get_handler_ctx()
 
         for handler in handlers:
-            ret = ctx.set_handler(handler)
-
-            if ret != RET_OK:
+            if not ctx.set_handler(handler):
                 raise InvalidHandlerException(handler)
 
         return self

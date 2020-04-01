@@ -3,8 +3,6 @@ import itertools
 
 from binance.processors import PROCESSORS, ExceptionProcessor
 from binance.common.constants import (
-    RET_OK,
-    RET_ERROR,
     SubType
 )
 from binance.common.exceptions import (
@@ -23,21 +21,23 @@ class HandlerContext:
 
     def __init__(self, client):
         self._handler_table = {}
-        self._processors = [Factory(client) for Factory in self.PROCESSORS]
+        self._all_processors = [Factory(client) for Factory in self.PROCESSORS]
+        self._processors = set()
         self._processor_cache = {}
         self._exception_processor = ExceptionProcessor(client)
 
-    def set_handler(self, handler):
+    def set_handler(self, handler) -> bool:
         if self._exception_processor.is_handler_type(handler):
             self._exception_processor.add_handler(handler)
-            return RET_OK
+            return True
 
-        for processor in self._processors:
+        for processor in self._all_processors:
             if processor.is_handler_type(handler):
+                self._processors.add(processor)
                 processor.add_handler(handler)
-                return RET_OK
+                return True
 
-        return RET_ERROR
+        return False
 
     # client.subscribe(subtype_needs_no_param_or_has_default_param)
     # -> client.subscribe(SubType.ALL_MARKET_MINI_TICKERS)
@@ -110,7 +110,7 @@ class HandlerContext:
         if processor:
             return processor
 
-        for p in self._processors:
+        for p in self._all_processors:
             if p.is_subtype(subtype):
                 self._processor_cache[subtype] = p
                 return p
