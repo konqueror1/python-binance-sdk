@@ -1,31 +1,13 @@
-# MIT License
-
-# Copyright (c) 2017 sammchardy
-
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-
 import aiohttp
 import asyncio
 import hashlib
 import hmac
 import time
 from operator import itemgetter
+from typing import (
+    List,
+    Dict
+)
 
 from binance.common.exceptions import (
     APIKeyNotDefinedException,
@@ -36,13 +18,14 @@ from binance.common.exceptions import (
 
 from binance.common.constants import (
     HEADER_API_KEY,
-    SecurityType
+    SecurityType,
+    RequestMethod
 )
 
 # pylint: disable=no-member
 
 
-def sort_params(data):
+def sort_params(data: dict) -> List[str]:
     """
     Convert params to list with signature as last element
     """
@@ -54,6 +37,7 @@ def sort_params(data):
             has_signature = True
         else:
             params.append((key, str(value)))
+
     # sort parameters by key
     params.sort(key=itemgetter(0))
 
@@ -68,7 +52,10 @@ KEY_FORCE_PARAMS = 'force_params'
 
 
 class ClientBase:
-    def _init_api_session(self, need_api_key):
+    def _init_api_session(
+        self,
+        need_api_key: bool
+    ):
         loop = asyncio.get_event_loop()
         headers = self._get_headers(need_api_key)
 
@@ -78,7 +65,10 @@ class ClientBase:
         )
         return session
 
-    def _get_headers(self, need_api_key):
+    def _get_headers(
+        self,
+        need_api_key: bool
+    ) -> Dict[str, str]:
         headers = {
             'Accept': 'application/json',
             'User-Agent': 'binance-sdk'
@@ -89,7 +79,12 @@ class ClientBase:
 
         return headers
 
-    def _get_request_kwargs(self, method, need_signed, **data):
+    def _get_request_kwargs(
+        self,
+        method: RequestMethod,
+        need_signed: bool,
+        **data
+    ) -> dict:
         # Usually, `data` is the data param for aiohttp
 
         kwargs = dict(
@@ -121,14 +116,21 @@ class ClientBase:
         sorted_data = sort_params(data)
 
         kwargs[
-            'params' if force_params or method == 'get' else 'data'
+            'params' if force_params or method == RequestMethod.GET else 'data'
         ] = sorted_data
 
         return kwargs
 
-    def _generate_signature(self, data):
+    def _generate_signature(
+        self,
+        data: dict
+    ) -> str:
         ordered_data = sort_params(data)
-        query_string = '&'.join(["{}={}".format(d[0], d[1]) for d in ordered_data])
+
+        query_string = '&'.join([
+            f'{key}={value}'
+            for key, value in ordered_data
+        ])
 
         m = hmac.new(
             self._api_secret.encode('utf-8'),
@@ -146,13 +148,14 @@ class ClientBase:
             raise InvalidResponseException(response, await response.text())
 
     # self._request('get', uri, symbol='BTCUSDT')
-    async def _request(self,
-                       method,
-                       uri,
-                       security_type=SecurityType.NONE,
-                       **kwargs
-                       ):
-        need_api_key, need_signed = security_type
+    async def _request(
+        self,
+        method: RequestMethod,
+        uri: str,
+        security_type: SecurityType = SecurityType.NONE,
+        **kwargs
+    ):
+        need_api_key, need_signed = security_type.value
 
         if need_api_key and not self._api_key:
             raise APIKeyNotDefinedException(uri)
@@ -164,7 +167,9 @@ class ClientBase:
             method, need_signed, **kwargs)
 
         async with self._init_api_session(need_api_key) as session:
-            async with getattr(session, method)(uri, **req_kwargs) as response:
+            async with getattr(
+                session, method.value
+            )(uri, **req_kwargs) as response:
                 return await self._handle_response(response)
 
     def get(self, uri, **kwargs):
@@ -172,7 +177,7 @@ class ClientBase:
 
         For details, see `client.post(uri, **kwargs)`
         """
-        return self._request('get', uri, **kwargs)
+        return self._request(RequestMethod.GET, uri, **kwargs)
 
     def post(self, uri, **kwargs):
         """Sends a POST request.
@@ -193,18 +198,18 @@ class ClientBase:
             APIKeyNotDefinedException: If the API endpoint requires a valid api key, but the api key is not defined for the client.
             APISecretNotDefinedException: If the API endpoint requires a valid signature, but the api secret is not defined for the client.
         """
-        return self._request('post', uri, **kwargs)
+        return self._request(RequestMethod.POST, uri, **kwargs)
 
     def put(self, uri, **kwargs):
         """Sends a PUT request.
 
         For details, see `client.post(uri, **kwargs)`
         """
-        return self._request('put', uri, **kwargs)
+        return self._request(RequestMethod.PUT, uri, **kwargs)
 
     def delete(self, uri, **kwargs):
         """Sends a DELETE request.
 
         For details, see `client.post(uri, **kwargs)`
         """
-        return self._request('delete', uri, **kwargs)
+        return self._request(RequestMethod.DELETE, uri, **kwargs)

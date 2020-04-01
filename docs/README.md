@@ -200,7 +200,7 @@ await client.subscribe(SubType.ALL_MARKET_MINI_TICKERS, 3000)
 
 # Subcribe to multiple types
 await client.subscribe(
-    (SubType.KLINE, 'BTC_USDT', KlineInterval.KLINE_DAY),
+    (SubType.KLINE, 'BTC_USDT', KlineInterval.DAY),
     (SubType.TICKER, 'BNBUSDT'),
     (
         [

@@ -1,7 +1,7 @@
 from binance.handlers import *
 from binance.common.constants import (
-    SubType,
-    KLINE_TYPE_PREFIX, KLINE_INTERVAL_VALUE_LIST,
+    SubType, KlineInterval,
+    KLINE_TYPE_PREFIX,
     KEY_STREAM_TYPE, KEY_PAYLOAD
 )
 from binance.common.exceptions import InvalidSubTypeParamException
@@ -31,11 +31,11 @@ class KlineProcessor(ProcessorBase):
             raise InvalidSubTypeParamException(
                 t, 'symbol', 'string expected but got `%s`' % symbol)
 
-        if interval not in KLINE_INTERVAL_VALUE_LIST:
+        if interval not in KlineInterval:
             raise InvalidSubTypeParamException(
                 t, 'interval', '`KlineInterval` enum expected but got `%s`' % symbol)
 
-        return normalize_symbol(symbol) + '@' + KLINE_TYPE_PREFIX + interval
+        return f'{normalize_symbol(symbol)}@{KLINE_TYPE_PREFIX}{interval}'
 
 
 class TradeProcessor(ProcessorBase):
@@ -85,7 +85,7 @@ class AllMarketMiniTickersProcessor(ProcessorBase):
         else:
             interval = args[0]
 
-        return self.STREAM_TYPE_PREFIX + '@%sms' % interval
+        return f'{self.STREAM_TYPE_PREFIX}@{interval}ms'
 
 
 class AllMarketTickersProcessor(AllMarketMiniTickersProcessor):

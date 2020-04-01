@@ -36,7 +36,7 @@ class ProcessorBase:
             raise InvalidSubTypeParamException(
                 t, 'symbol', 'string expected but got `%s`' % symbol)
 
-        return normalize_symbol(symbol) + '@' + t
+        return f'{normalize_symbol(symbol)}@{t}'
 
     def is_handler_type(self, handler):
         return isinstance(handler, self.HANDLER)

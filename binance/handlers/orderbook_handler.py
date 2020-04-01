@@ -35,10 +35,11 @@ class OrderBookHandlerBase(HandlerBase):
     COLUMNS_MAP = ORDER_BOOK_COLUMNS_MAP
     COLUMNS = ORDER_BOOK_COLUMNS
 
-    def __init__(self,
-                 limit=DEFAULT_DEPTH_LIMIT,
-                 retry_policy=DEFAULT_RETRY_POLICY
-                 ):
+    def __init__(
+        self,
+        limit=DEFAULT_DEPTH_LIMIT,
+        retry_policy=DEFAULT_RETRY_POLICY
+    ):
         super().__init__()
 
         self._limit = limit

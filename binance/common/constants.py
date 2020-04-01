@@ -1,3 +1,5 @@
+from enum import Enum as _Enum
+
 __all__ = (
     'SubType',
     'KlineInterval',
@@ -9,99 +11,47 @@ __all__ = (
 
 KLINE_TYPE_PREFIX = 'kline_'
 
-SUBTYPE_PROP_LIST = [
-    'KLINE',
 
-    'TRADE',
-    'AGG_TRADE',
-    'MINI_TICKER',
-    'TICKER',
-    'ORDER_BOOK',
-
-    'ALL_MARKET_MINI_TICKERS',
-    'ALL_MARKET_TICKERS',
-
-    'USER'
-]
-
-SUBTYPE_VALUE_LIST = [
-    'kline',
-
-    'trade',
-    'aggTrade',
-    'miniTicker',
-    'ticker',
-    'depth',
-
-    'allMarketMiniTickers',
-    'allMarketTickers',
-
-    'user'
-]
+class Enum(_Enum):
+    def __str__(self):
+        return self.value
 
 
-class SubType:
-    pass
+class SubType(Enum):
+    KLINE = 'kline'
+
+    TRADE = 'trade'
+    AGG_TRADE = 'aggTrade'
+    MINI_TICKER = 'miniTicker'
+    TICKER = 'ticker'
+    ORDER_BOOK = 'depth'
+
+    ALL_MARKET_MINI_TICKERS = 'allMarketMiniTickers'
+    ALL_MARKET_TICKERS = 'allMarketTickers'
+
+    USER = 'user'
 
 
-def merge_attr(target, props, values=None):
-    values = values or props
+class KlineInterval(Enum):
+    M1 = '1m'
+    M3 = '3m'
+    M5 = '5m'
+    M15 = '15m'
+    M30 = '30m'
 
-    for i in range(len(props)):
-        k, v = props[i], values[i]
-        setattr(target, k, v)
+    H = '1h'
+    H2 = '2h'
+    H4 = '4h'
+    H6 = '6h'
+    H8 = '8h'
+    H12 = '12h'
 
+    DAY = '1d'
+    DAY3 = '3d'
 
-merge_attr(SubType, SUBTYPE_PROP_LIST, SUBTYPE_VALUE_LIST)
+    WEEK = '1w'
+    MONTH = '1M'
 
-KLINE_INVERVAL_PROP_LIST = [
-    'KLINE_1M',
-    'KLINE_3M',
-    'KLINE_5M',
-    'KLINE_15M',
-    'KLINE_30M',
-
-    'KLINE_1H',
-    'KLINE_2H',
-    'KLINE_4H',
-    'KLINE_6H',
-    'KLINE_8H',
-    'KLINE_12H',
-
-    'KLINE_DAY',
-    'KLINE_3DAY',
-
-    'KLINE_WEEK',
-    'KLINE_MONTH'
-]
-
-KLINE_INTERVAL_VALUE_LIST = [
-    '1m',
-    '3m',
-    '5m',
-    '15m',
-    '30m',
-
-    '1h',
-    '2h',
-    '4h',
-    '6h',
-    '8h',
-    '12h',
-
-    '1d',
-    '3d',
-
-    '1w',
-    '1M'
-]
-
-
-class KlineInterval:
-    pass
-
-
-merge_attr(KlineInterval, KLINE_INVERVAL_PROP_LIST, KLINE_INTERVAL_VALUE_LIST)
 
 RET_OK = 0
 RET_ERROR = -1
@@ -158,7 +108,7 @@ ATOM = {}
 # ==================================================
 
 
-class SecurityType:
+class SecurityType(Enum):
     # {TYPE} = (NEED_API_KEY, NEED_SIGNATURE)
     NONE = (False, False)
     TRADE = (True, True)
@@ -167,19 +117,19 @@ class SecurityType:
     MARKET_DATA = (True, False)
 
 
-class RequestMethod:
+class RequestMethod(Enum):
     GET = 'get'
     POST = 'post'
     PUT = 'put'
     DELETE = 'delete'
 
 
-class OrderSide:
+class OrderSide(Enum):
     BUY = 'BUY'
     SELL = 'SELL'
 
 
-class OrderType:
+class OrderType(Enum):
     LIMIT = 'LIMIT'
     MARKET = 'MARKET'
     STOP_LOSS = 'STOP_LOSS'
@@ -189,13 +139,13 @@ class OrderType:
     LIMIT_MAKER = 'LIMIT_MAKER'
 
 
-class OrderRespType:
+class OrderRespType(Enum):
     ACK = 'ACK'
     RESULT = 'RESULT'
     FULL = 'FULL'
 
 
-class TimeInForce:
+class TimeInForce(Enum):
     GTC = 'GTC'
     IOC = 'IOC'
     FOK = 'FOK'
