@@ -35,7 +35,20 @@ class Processor:
         if self.PAYLOAD_TYPE == ATOM and self.SUB_TYPE is not None:
             self.PAYLOAD_TYPE = self.SUB_TYPE.value
 
-    def subscribe_param(self, subscribe, t, *args):
+    def supports_subtype(
+        self,
+        t: SubType
+    ) -> bool:
+        return t == self.SUB_TYPE
+
+    # -----------------------------------------------
+
+    def subscribe_param(
+        self,
+        subscribe: bool,
+        t: SubType,
+        *args
+    ) -> str:
         if len(args) == 0:
             raise InvalidSubTypeParamException(
                 t, 'symbol', 'string expected but not specified')
@@ -48,7 +61,7 @@ class Processor:
 
         return f'{normalize_symbol(symbol)}@{t}'
 
-    def is_handler_type(
+    def supports_handler(
         self,
         handler: Handler
     ) -> bool:
@@ -64,12 +77,6 @@ class Processor:
 
         return False, None
 
-    def is_subtype(
-        self,
-        t: SubType
-    ) -> bool:
-        return t == self.SUB_TYPE
-
     def add_handler(
         self,
         handler: Handler
@@ -80,7 +87,10 @@ class Processor:
 
             self._handlers.add(handler)
 
-    async def dispatch(self, payload) -> None:
+    async def dispatch(
+        self,
+        payload
+    ) -> None:
         coro = []
 
         for handler in self._handlers:

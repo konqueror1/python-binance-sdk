@@ -1,15 +1,36 @@
 import asyncio
 
-from binance.common.constants import SubType
+from binance.common.constants import (
+    SubType,
+    KEY_PAYLOAD,
+    KEY_PAYLOAD_TYPE
+)
+
+from binance.handlers.user_handlers import *
 
 from .base import Processor
 
 
 class UserProcessor(Processor):
-    # HANDLER = UserHandlerBase
     SUB_TYPE = SubType.USER
 
     KEEP_ALIVE_INTERVAL = 60 * 30
+
+    PAYLOAD_TYPES = (
+        'outboundAccountInfo',
+        'outboundAccountPosition',
+        'balanceUpdate',
+        'executionReport',
+        'listStatus'
+    )
+
+    HANDLERS = (
+        AccountInfoHandlerBase,
+        AccountPositionHandlerBase,
+        BalanceUpdateHandlerBase,
+        OrderUpdateHandlerBase,
+        OrderListStatusHandlerBase
+    )
 
     def __init__(self, *args):
         super().__init__(*args)
@@ -17,11 +38,14 @@ class UserProcessor(Processor):
         self._listen_key = None
         self._keep_alive_task = None
 
+        self._handlers = {}
+
     async def subscribe_param(self, subscribe, t):
         if not subscribe:
             key = self._listen_key
             await self._close_stream()
             self._listen_key = None
+
             return key
 
         key = await self._client.get_listen_key()
@@ -50,3 +74,58 @@ class UserProcessor(Processor):
     async def _close_stream(self):
         self._stop_keep_alive()
         await self._client.close_listen_key(self._listen_key)
+
+    def is_message_type(self, payload):
+        if payload.get(KEY_PAYLOAD_TYPE) in self.PAYLOAD_TYPES:
+            return True, payload
+
+        return False, None
+
+    def supports_handler(
+        self,
+        handler: Handler
+    ) -> bool:
+        return isinstance(handler, self.HANDLERS)
+
+    def add_handler(
+        self,
+        handler: Handler
+    ) -> None:
+        for i, HandlerBase in enumerate(self.HANDLERS):
+            if isinstance(handler, HandlerBase):
+                payload_type = self.PAYLOAD_TYPES[i]
+
+                self._add_handler(payload_type, handler)
+
+    def _add_handler(
+        self,
+        payload_type,
+        handler
+    ):
+        handlers = self._handlers.get(payload_type)
+
+        if handlers is None:
+            handlers = set()
+            self._handlers[payload_type] = handlers
+
+        if handler not in handlers:
+            # set the client to handler
+            handler.set_client(self._client)
+
+            handlers.add(handler)
+
+    async def dispatch(self, payload) -> None:
+        handlers = self._handlers.get(payload_type)
+
+        if handlers is None:
+            return
+
+        coro = []
+
+        for handler in handlers:
+            ret = handler.receiveDispatch(payload)
+            if inspect.iscoroutine(ret):
+                coro.append(ret)
+
+        if len(coro) > 0:
+            await asyncio.gather(*coro)

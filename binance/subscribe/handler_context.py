@@ -27,12 +27,12 @@ class HandlerContext:
         self._exception_processor = ExceptionProcessor(client)
 
     def set_handler(self, handler) -> bool:
-        if self._exception_processor.is_handler_type(handler):
+        if self._exception_processor.supports_handler(handler):
             self._exception_processor.add_handler(handler)
             return True
 
         for processor in self._all_processors:
-            if processor.is_handler_type(handler):
+            if processor.supports_handler(handler):
                 self._processors.add(processor)
                 processor.add_handler(handler)
                 return True
@@ -111,7 +111,7 @@ class HandlerContext:
             return processor
 
         for p in self._all_processors:
-            if p.is_subtype(subtype):
+            if p.supports_subtype(subtype):
                 self._processor_cache[subtype] = p
                 return p
 

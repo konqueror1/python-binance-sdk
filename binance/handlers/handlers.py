@@ -4,7 +4,7 @@ from binance.common.constants import STREAM_TYPE_MAP, STREAM_OHLC_MAP
 
 from .base import Handler
 
-__all__ = [
+__all__ = (
     'HandlerExceptionHandlerBase',
     'TradeHandlerBase',
     'AggTradeHandlerBase',
@@ -13,7 +13,7 @@ __all__ = [
     'TickerHandlerBase',
     'AllMarketMiniTickersHandlerBase',
     'AllMarketTickersHandlerBase'
-]
+)
 
 
 class HandlerExceptionHandlerBase(Handler):
