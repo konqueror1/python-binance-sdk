@@ -2,11 +2,11 @@ import asyncio
 
 from binance.common.constants import (
     SubType,
-    KEY_PAYLOAD,
     KEY_PAYLOAD_TYPE
 )
 
 from binance.handlers.user_handlers import *
+from binance.handlers.base import Handler
 
 from .base import Processor
 

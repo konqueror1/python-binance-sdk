@@ -10,21 +10,26 @@ __all__ = (
 )
 
 
-class AccountInfoHandlerBase(Handler):
+class SimpleHandler(Handler):
+    def receive(self, msg):
+        return msg
+
+
+class AccountInfoHandlerBase(SimpleHandler):
     pass
 
 
-class AccountPositionHandlerBase(Handler):
+class AccountPositionHandlerBase(SimpleHandler):
     pass
 
 
-class BalanceUpdateHandlerBase(Handler):
+class BalanceUpdateHandlerBase(SimpleHandler):
     pass
 
 
-class OrderUpdateHandlerBase(Handler):
+class OrderUpdateHandlerBase(SimpleHandler):
     pass
 
 
-class OrderListStatusHandlerBase(Handler):
+class OrderListStatusHandlerBase(SimpleHandler):
     pass
