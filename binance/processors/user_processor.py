@@ -115,6 +115,7 @@ class UserProcessor(Processor):
             handlers.add(handler)
 
     async def dispatch(self, payload) -> None:
+        payload_type = payload.get(KEY_PAYLOAD_TYPE)
         handlers = self._handlers.get(payload_type)
 
         if handlers is None:

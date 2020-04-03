@@ -7,7 +7,10 @@ import logging
 from binance.common.utils import json_stringify
 from binance.common.exceptions import StreamDisconnectedException
 from binance.common.constants import (
-    DEFAULT_RETRY_POLICY, DEFAULT_STREAM_TIMEOUT, DEFAULT_STREAM_CLOSE_CODE
+    DEFAULT_RETRY_POLICY,
+    DEFAULT_STREAM_TIMEOUT,
+    DEFAULT_STREAM_CLOSE_CODE,
+    ERROR_PREFIX
 )
 
 
@@ -86,8 +89,14 @@ class StreamBase(ABC):
         else:
             try:
                 parsed = json.loads(msg)
-            except ValueError:
-                # TODO: logger
+            except ValueError as e:
+                logger.error(
+                    '%sstream message "%s" is an invalid JSON: reason: %s',
+                    ERROR_PREFIX,
+                    msg,
+                    e
+                )
+
                 pass
             else:
                 await self._handle_message(parsed)
@@ -141,11 +150,11 @@ class StreamBase(ABC):
 
     @abstractmethod
     async def _before_reconnect(self):
-        pass
+        pass  # pragma: no-cover
 
     @abstractmethod
     def _after_close(self):
-        pass
+        pass  # pragma: no-cover
 
     async def close(self, code=DEFAULT_STREAM_CLOSE_CODE):
         if not self._conn_task:
@@ -175,7 +184,11 @@ class StreamBase(ABC):
             # - socket is closed
             await asyncio.wait(tasks)
         except Exception as e:
-            logger.error('close tasks error: %s', e)
+            logger.error(
+                '%sclose tasks error: %s',
+                ERROR_PREFIX,
+                e
+            )
 
         self._socket = None
         self._closing = False

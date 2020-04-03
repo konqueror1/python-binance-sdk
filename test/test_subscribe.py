@@ -50,6 +50,7 @@ async def test_ticker_handler(client):
 
     assert TickerPrinter.DATA == TICKER_RES['data']
     assert isinstance(TickerPrinter.DF, pandas.DataFrame)
+    await client.close()
 
 
 @pytest.mark.asyncio
@@ -71,6 +72,7 @@ async def test_handler_exception_handler(client):
     await client._receive(TICKER_RES)
 
     assert await f == exc
+    await client.close()
 
 
 def test_invalid_handler(client):
@@ -191,10 +193,7 @@ async def test_orderbook_handler_init_orderbook_ahead(client):
 async def test_orderbook_handler_init_orderbook_after(client):
     await run_orderbook_handler(client, False)
 
+
 # TODO
 # stop()
 # subscribe overloading
-# dev: user handler
-# stream reconnect, exceptions, abandon
-# all market ticker/mini ticker handlers
-# orderbook staled payload, invalid item in pending queue

@@ -1,7 +1,18 @@
 import asyncio
 import itertools
+from typing import (
+    List,
+    Set,
+    Dict
+)
 
-from binance.processors import PROCESSORS, ExceptionProcessor
+from binance.processors import (
+    PROCESSORS,
+    ExceptionProcessor
+)
+
+from binance.processors.base import Processor
+
 from binance.common.constants import (
     SubType
 )
@@ -18,6 +29,15 @@ from binance.common.utils import (
 
 class HandlerContext:
     PROCESSORS = PROCESSORS
+
+    # all supported processors
+    _all_processors: List[Processor]
+
+    # processors that current used
+    _processors: Set[Processor]
+
+    # The map of payload_type -> processor
+    _processor_cache: Dict[str, Processor]
 
     def __init__(self, client):
         self._handler_table = {}

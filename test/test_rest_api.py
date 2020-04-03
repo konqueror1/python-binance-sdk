@@ -1,15 +1,13 @@
 import pytest
-import os
+# import os
 
 # pylint: disable=no-member
 
 from binance import Client, KlineInterval
-from binance.common.utils import json_stringify
 
+from .common import print_json
 
 mock = False
-api_key = os.environ.get('BNC_API_KEY', 'api_key')
-MAX_PRINT = 150
 
 FREE_CASES = [
     dict(
@@ -95,16 +93,6 @@ FREE_CASES = [
 #     return real_callback
 
 
-def print_str(name, d):
-    s = json_stringify(d)
-
-    length = len(s)
-    if length > MAX_PRINT:
-        print(name, s[:MAX_PRINT], 'and %s more' % (length - MAX_PRINT))
-    else:
-        print(name, s)
-
-
 @pytest.mark.asyncio
 async def test_free_apis():
     client = Client()
@@ -119,7 +107,7 @@ async def test_free_apis():
 
             ret = await getattr(client, name)(*args, **kwargs)
 
-            print_str(name + ':', ret)
+            print_json(name + ':', ret)
 
     await go()
 

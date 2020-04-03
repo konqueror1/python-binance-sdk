@@ -13,6 +13,9 @@ __pycache__
 /dist
 /.tox
 /.pytest_cache
+no_track
+no_track.py
+*_no_track.py
 
 # Coverage
 /.nyc_output
@@ -61,10 +64,6 @@ thumbs.db
 .CVS
 .idea
 node_modules
-*-notrack/
-no_track
-no_track.*
-*.no_track.*
 build/
 combo/
 reference/
