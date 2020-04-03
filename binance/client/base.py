@@ -1,4 +1,8 @@
-import aiohttp
+from aiohttp import (
+    ClientSession,
+    ClientResponse
+)
+
 import asyncio
 import hashlib
 import hmac
@@ -55,11 +59,11 @@ class ClientBase:
     def _init_api_session(
         self,
         need_api_key: bool
-    ):
+    ) -> ClientSession:
         loop = asyncio.get_event_loop()
         headers = self._get_headers(need_api_key)
 
-        session = aiohttp.ClientSession(
+        session = ClientSession(
             loop=loop,
             headers=headers
         )
@@ -139,7 +143,10 @@ class ClientBase:
 
         return m.hexdigest()
 
-    async def _handle_response(self, response):
+    async def _handle_response(
+        self,
+        response: ClientResponse
+    ):
         if not str(response.status).startswith('2'):
             raise StatusException(response, await response.text())
         try:
