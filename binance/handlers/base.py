@@ -19,10 +19,10 @@ class Handler:
     COLUMNS_MAP = None
 
     def _receive(self, *args):
-        ...  # pragma: no-cover
+        ...  # pragma: no cover
 
     def receive(self, msg):
-        ...  # pragma: no-cover
+        ...  # pragma: no cover
 
     def __init__(self) -> None:
         self._client = None

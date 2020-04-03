@@ -45,12 +45,7 @@ class Processor:
 
     # -----------------------------------------------
 
-    def subscribe_param(
-        self,
-        subscribe: bool,
-        t: SubType,
-        *args
-    ) -> str:
+    def _get_param_symbol(self, t, args):
         if len(args) == 0:
             raise InvalidSubTypeParamException(
                 t, 'symbol', 'string expected but not specified')
@@ -60,6 +55,16 @@ class Processor:
         if type(symbol) is not str:
             raise InvalidSubTypeParamException(
                 t, 'symbol', 'string expected but got `%s`' % symbol)
+
+        return symbol
+
+    def subscribe_param(
+        self,
+        subscribe: bool,
+        t: SubType,
+        *args
+    ) -> str:
+        symbol = self._get_param_symbol(t, args)
 
         return f'{normalize_symbol(symbol)}@{t}'
 

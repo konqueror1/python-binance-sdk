@@ -97,6 +97,15 @@ async def test_invalid_subtype_symbol(client):
     with pytest.raises(UnsupportedSubTypeException, match='subtype "unknown"'):
         await client.subscribe('unknown')
 
+    with pytest.raises(InvalidSubTypeParamException, match='symbol'):
+        await client.subscribe(SubType.KLINE)
+
+    with pytest.raises(InvalidSubTypeParamException, match='not specified'):
+        await client.subscribe(SubType.KLINE, 'BTCUSDT')
+
+    with pytest.raises(InvalidSubTypeParamException, match='KlineInterval'):
+        await client.subscribe(SubType.KLINE, 'BTCUSDT', 1)
+
 
 @pytest.mark.asyncio
 async def test_client_handler(client):

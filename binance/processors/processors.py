@@ -21,17 +21,15 @@ class KlineProcessor(Processor):
     SUB_TYPE = SubType.KLINE
 
     def subscribe_param(self, subscribe, t, *args):
+        symbol = self._get_param_symbol(t, args)
+
         length = len(args)
 
         if length == 2:
-            symbol, interval = args
+            interval = args[1]
         else:
             raise InvalidSubTypeParamException(
-                t, 'interval', 'string expected but not specified')
-
-        if type(symbol) is not str:
-            raise InvalidSubTypeParamException(
-                t, 'symbol', 'string expected but got `%s`' % symbol)
+                t, 'interval', '`KlineInterval` enum expected but not specified')
 
         if interval not in KlineInterval:
             raise InvalidSubTypeParamException(

@@ -35,6 +35,16 @@ def test_handler_reuse():
         client2.handler(handler)
 
 
+ACCOUNT_INFO = {
+    'e': 'outboundAccountInfo',
+    'E': 1499405658849,
+    'm': 0,
+    't': 0,
+    'b': 0,
+    's': 0,
+}
+
+
 async def run_handler(
     client,
     HandlerBase,
@@ -59,22 +69,15 @@ async def run_handler(
         'stream': stream
     })
 
+    await client._receive([])
+    await client._receive({})
+
     received = await future
 
     if callable(expect_payload):
         expect_payload(received)
     else:
         assert received == expect_payload
-
-
-ACCOUNT_INFO = {
-    'e': 'outboundAccountInfo',
-    'E': 1499405658849,
-    'm': 0,
-    't': 0,
-    'b': 0,
-    's': 0,
-}
 
 
 @pytest.mark.asyncio
@@ -226,10 +229,11 @@ async def test_all_market_ticker(client):
 async def test_handler_exception_handler(client):
     future = asyncio.Future()
 
-    e = ValueError('haha')
+    e = ValueError('this is an exception for testing, not a bug')
 
     class ExceptionHandler(HandlerExceptionHandlerBase):
         def receive(self, e):
+            e = super().receive(e)
             future.set_exception(e)
 
     class AccountInfoHandler(AccountInfoHandlerBase):
