@@ -11,7 +11,11 @@ from binance import (
     AccountPositionHandlerBase,
     BalanceUpdateHandlerBase,
     OrderUpdateHandlerBase,
-    OrderListStatusHandlerBase
+    OrderListStatusHandlerBase,
+    AllMarketMiniTickersHandlerBase,
+    AllMarketTickersHandlerBase,
+
+    HandlerExceptionHandlerBase
 )
 
 
@@ -31,7 +35,13 @@ def test_handler_reuse():
         client2.handler(handler)
 
 
-async def run_handler(client, HandlerBase, payload, expect_payload=None):
+async def run_handler(
+    client,
+    HandlerBase,
+    payload,
+    expect_payload=None,
+    stream='fake'
+):
     future = asyncio.Future()
 
     if expect_payload is None:
@@ -45,7 +55,8 @@ async def run_handler(client, HandlerBase, payload, expect_payload=None):
     client.start()
     client.handler(Handler())
     await client._receive({
-        'data': payload
+        'data': payload,
+        'stream': stream
     })
 
     received = await future
@@ -56,16 +67,19 @@ async def run_handler(client, HandlerBase, payload, expect_payload=None):
         assert received == expect_payload
 
 
+ACCOUNT_INFO = {
+    'e': 'outboundAccountInfo',
+    'E': 1499405658849,
+    'm': 0,
+    't': 0,
+    'b': 0,
+    's': 0,
+}
+
+
 @pytest.mark.asyncio
 async def test_account_info(client):
-    await run_handler(client, AccountInfoHandlerBase, {
-        'e': 'outboundAccountInfo',
-        'E': 1499405658849,
-        'm': 0,
-        't': 0,
-        'b': 0,
-        's': 0,
-    })
+    await run_handler(client, AccountInfoHandlerBase, ACCOUNT_INFO)
 
 
 @pytest.mark.asyncio
@@ -148,3 +162,89 @@ async def test_kline_handler(client):
         assert row['event_time'] == E
 
     await run_handler(client, KlineHandlerBase, payload, expect)
+
+
+def expect_ticker(payload):
+    row = payload.iloc[0]
+    assert row['symbol'] == 'BNBBTC'
+    assert row['event_time'] == 123456789
+
+
+@pytest.mark.asyncio
+async def test_all_market_miniticker(client):
+    ticker = {
+        'e': '24hrMiniTicker',
+        'E': 123456789,
+        's': 'BNBBTC',
+        'c': '0.0025',
+        'o': '0.0010',
+        'h': '0.0025',
+        'l': '0.0010',
+        'v': '10000',
+        'q': '18'
+    }
+
+    await run_handler(client, AllMarketMiniTickersHandlerBase, [
+        ticker
+    ], expect_ticker, '!miniTicker@arr')
+
+
+@pytest.mark.asyncio
+async def test_all_market_ticker(client):
+    ticker = {
+        'e': '24hrTicker',
+        'E': 123456789,
+        's': 'BNBBTC',
+        'p': '0.0015',
+        'P': '250.00',
+        'w': '0.0018',
+        'x': '0.0009',
+        'c': '0.0025',
+        'Q': '10',
+        'b': '0.0024',
+        'B': '10',
+        'a': '0.0026',
+        'A': '100',
+        'o': '0.0010',
+        'h': '0.0025',
+        'l': '0.0010',
+        'v': '10000',
+        'q': '18',
+        'O': 0,
+        'C': 86400000,
+        'F': 0,
+        'L': 18150,
+        'n': 18151
+    }
+
+    await run_handler(client, AllMarketTickersHandlerBase, [
+        ticker
+    ], expect_ticker, '!ticker@arr')
+
+
+@pytest.mark.asyncio
+async def test_handler_exception_handler(client):
+    future = asyncio.Future()
+
+    e = ValueError('haha')
+
+    class ExceptionHandler(HandlerExceptionHandlerBase):
+        def receive(self, e):
+            future.set_exception(e)
+
+    class AccountInfoHandler(AccountInfoHandlerBase):
+        def receive(self, payload):
+            raise e
+
+    client.start()
+    client.handler(ExceptionHandler())
+    client.handler(AccountInfoHandler())
+
+    await client._receive({
+        'data': ACCOUNT_INFO
+    })
+
+    try:
+        await future
+    except Exception as catched:
+        assert catched is e

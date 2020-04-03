@@ -75,6 +75,7 @@ class AllMarketMiniTickersProcessor(Processor):
 
     def is_message_type(self, msg):
         stream_type = msg.get(KEY_STREAM_TYPE)
+
         if stream_type is None or \
                 not stream_type.startswith(self.STREAM_TYPE_PREFIX):
             return False, None

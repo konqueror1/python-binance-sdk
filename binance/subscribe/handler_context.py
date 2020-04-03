@@ -120,7 +120,9 @@ class HandlerContext:
 
     async def _subscribe_param(self, subscribe, *args):
         processor = self._get_processor(args[0])
-        return await wrap_coroutine(processor.subscribe_param(subscribe, *args))
+        return await wrap_coroutine(
+            processor.subscribe_param(subscribe, *args)
+        )
 
     def _get_processor(
         self,
