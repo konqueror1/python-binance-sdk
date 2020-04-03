@@ -1,7 +1,9 @@
 import asyncio
 import inspect
 from typing import (
-    Optional
+    Optional,
+    Set,
+    Awaitable
 )
 
 from binance.common.exceptions import (
@@ -87,13 +89,20 @@ class Processor:
 
             self._handlers.add(handler)
 
-    async def dispatch(
+    def dispatch(
         self,
         payload
-    ) -> None:
+    ) -> Awaitable[None]:
+        return self._dispatch(payload, self._handlers)
+
+    async def _dispatch(
+        self,
+        payload,
+        handlers: Set[Handler]
+    ):
         coro = []
 
-        for handler in self._handlers:
+        for handler in handlers:
             ret = handler.receiveDispatch(payload)
             if inspect.iscoroutine(ret):
                 coro.append(ret)
