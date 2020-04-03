@@ -19,7 +19,7 @@ class Client(
         self,
         api_key=None,
         api_secret=None,
-        requests_params=None,
+        request_params=None,
         # so that you can change api_host for CN network
         api_host=REST_API_HOST,
         # website_host=WEBSITE_HOST,
@@ -44,7 +44,7 @@ class Client(
         self.key(api_key)
         self.secret(api_secret)
 
-        self._requests_params = requests_params
+        self._request_params = request_params
         self._api_host = api_host
         # self._website_host = website_host
         self._stream_host = stream_host

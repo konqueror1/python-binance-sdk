@@ -47,7 +47,7 @@ def sort_params(data: dict) -> List[str]:
     return params
 
 
-KEY_REQUEST_PARAMS = 'requests_params'
+KEY_REQUEST_PARAMS = 'request_params'
 KEY_FORCE_PARAMS = 'force_params'
 
 
@@ -94,8 +94,8 @@ class ClientBase:
         )
 
         # add global requests params for aiohttp
-        if self._requests_params:
-            kwargs.update(self._requests_params)
+        if self._request_params:
+            kwargs.update(self._request_params)
 
         # find any requests params passed and apply them
         if KEY_REQUEST_PARAMS in data:
