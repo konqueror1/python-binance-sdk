@@ -2,6 +2,7 @@ import asyncio
 
 from binance.common.constants import (
     SubType,
+    KEY_PAYLOAD,
     KEY_PAYLOAD_TYPE
 )
 
@@ -75,8 +76,12 @@ class UserProcessor(Processor):
         self._stop_keep_alive()
         await self._client.close_listen_key(self._listen_key)
 
-    def is_message_type(self, payload):
-        if payload.get(KEY_PAYLOAD_TYPE) in self.PAYLOAD_TYPES:
+    def is_message_type(self, msg):
+        payload = msg.get(KEY_PAYLOAD)
+
+        if payload is not None and \
+                type(payload) is dict and \
+                payload.get(KEY_PAYLOAD_TYPE) in self.PAYLOAD_TYPES:
             return True, payload
 
         return False, None
@@ -121,12 +126,4 @@ class UserProcessor(Processor):
         if handlers is None:
             return
 
-        coro = []
-
-        for handler in handlers:
-            ret = handler.receiveDispatch(payload)
-            if inspect.iscoroutine(ret):
-                coro.append(ret)
-
-        if len(coro) > 0:
-            await asyncio.gather(*coro)
+        await self._dispatch(payload, handlers)
