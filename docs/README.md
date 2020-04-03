@@ -199,7 +199,9 @@ All arguments of the constructor Client are keyworded arguments and all optional
 - **stream_retry_policy** `Callable[[int], (bool, int, bool)]` retry policy for websocket stream. For details, see [RetryPolicy](#retrypolicy)
 - **stream_timeout** `int=5` seconds util the stream reach an timeout error
 
-Create a binance client
+Create a binance client.
+
+Then you could call [rest APIs](https://github.com/kaelzhang/python-binance-sdk/blob/master/binance/apis/rest.py) and [WAPIs](https://github.com/kaelzhang/python-binance-sdk/blob/master/binance/apis/wapi.py).
 
 ### client.key(api_key) -> self
 
