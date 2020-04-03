@@ -153,6 +153,40 @@ client.secret(api_secret)
 await client.subscribe(SubType.USER)
 ```
 
+### Subscribe to handler exceptions
+
+`Binance-sdk` receives stream messages in background tasks, so sometimes it is difficult to detect the exceptions raised in `receive` function of user handlers.
+
+Fortunately, we could use `HandlerExceptionHandlerBase`
+
+```py
+from binance import (
+    HandlerExceptionHandlerBase,
+    KlineHandlerBase
+)
+
+class KlineHandler(KlineHandlerBase):
+    def receive(self, res):
+        raise RuntimeError('this will ruin my day')
+
+class HandlerExceptionHandler(HandlerExceptionHandlerBase):
+    async def receive(self, exception):
+        # By calling `super().receive(exception)`,
+        # it will print the error stack.
+        super().receive(exception)
+
+        await send_to_monitor(exception)
+
+client.handler(KlineHandler())
+client.handler(HandlerExceptionHandler())
+```
+
+If you just want to print error stacks, we could:
+
+```py
+client.handler(HandlerExceptionHandlerBase())
+```
+
 # APIs
 
 ## Client(**kwargs)
