@@ -85,8 +85,11 @@ async def test_invalid_subtype_symbol(client):
     with pytest.raises(InvalidSubTypeParamException, match='invalid param'):
         await client.subscribe(SubType.TICKER)
 
-    with pytest.raises(InvalidSubTypeParamException):
+    with pytest.raises(InvalidSubTypeParamException, match='string expected'):
         await client.subscribe(SubType.TICKER, 1)
+
+    with pytest.raises(InvalidSubTypeParamException, match='string expected'):
+        await client.subscribe(SubType.TICKER, None)
 
     with pytest.raises(InvalidSubParamsException, match='invalid subscribe'):
         await client.subscribe(SubType.TICKER, 1, 2)

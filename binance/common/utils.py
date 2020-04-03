@@ -5,9 +5,6 @@ from .constants import ERROR_PREFIX
 
 
 def make_list(subject):
-    if not subject:
-        return []
-
     return subject if isinstance(subject, list) else [subject]
 
 

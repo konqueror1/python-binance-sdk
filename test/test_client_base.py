@@ -67,3 +67,27 @@ async def test_request_params():
                     'allow_redirects': False
                 }
             )
+
+
+@pytest.mark.asyncio
+async def test_force_params():
+    payload = {
+        'foo': 'bar'
+    }
+
+    client = Client()
+
+    with aioresponses() as m:
+        m.post(
+            URL + '?foo=bar',
+            payload=payload,
+            status=200
+        )
+
+        res = await client.post(
+            URL,
+            foo='bar',
+            force_params=True
+        )
+
+        assert res == payload

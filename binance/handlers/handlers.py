@@ -88,6 +88,10 @@ class KlineHandlerBase(Handler):
     COLUMNS = KLINE_COLUMNS
 
     def _receive(self, payload):
+        """The payload of kline has unnecessary hierarchy,
+        so just flatten it.
+        """
+
         k = payload['k']
         k['E'] = payload['E']
 

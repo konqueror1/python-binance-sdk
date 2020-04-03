@@ -6,6 +6,7 @@ from binance import (
     TickerHandlerBase,
     ReuseHandlerException,
 
+    KlineHandlerBase,
     AccountInfoHandlerBase,
     AccountPositionHandlerBase,
     BalanceUpdateHandlerBase,
@@ -30,24 +31,34 @@ def test_handler_reuse():
         client2.handler(handler)
 
 
-async def run_user_handler(client, HandlerBase, payload):
+async def run_handler(client, HandlerBase, payload, expect_payload=None):
     future = asyncio.Future()
+
+    if expect_payload is None:
+        expect_payload = payload
 
     class Handler(HandlerBase):
         def receive(self, res):
+            res = super().receive(res)
             future.set_result(res)
 
     client.start()
     client.handler(Handler())
-    await client._receive(payload)
+    await client._receive({
+        'data': payload
+    })
 
     received = await future
-    assert received == payload
+
+    if callable(expect_payload):
+        expect_payload(received)
+    else:
+        assert received == expect_payload
 
 
 @pytest.mark.asyncio
 async def test_account_info(client):
-    await run_user_handler(client, AccountInfoHandlerBase, {
+    await run_handler(client, AccountInfoHandlerBase, {
         'e': 'outboundAccountInfo',
         'E': 1499405658849,
         'm': 0,
@@ -59,7 +70,7 @@ async def test_account_info(client):
 
 @pytest.mark.asyncio
 async def test_account_pos(client):
-    await run_user_handler(client, AccountPositionHandlerBase, {
+    await run_handler(client, AccountPositionHandlerBase, {
         'e': 'outboundAccountPosition',
         'E': 1564034571105,
         'u': 1564034571073,
@@ -75,7 +86,7 @@ async def test_account_pos(client):
 
 @pytest.mark.asyncio
 async def test_balance_update(client):
-    await run_user_handler(client, BalanceUpdateHandlerBase, {
+    await run_handler(client, BalanceUpdateHandlerBase, {
         'e': 'balanceUpdate',
         'E': 1573200697110,
         'a': 'BTC',
@@ -86,7 +97,7 @@ async def test_balance_update(client):
 
 @pytest.mark.asyncio
 async def test_order_update(client):
-    await run_user_handler(client, OrderUpdateHandlerBase, {
+    await run_handler(client, OrderUpdateHandlerBase, {
         'e': 'executionReport',
         'E': 1499405658658,
         's': 'ETHBTC',
@@ -98,7 +109,7 @@ async def test_order_update(client):
 
 @pytest.mark.asyncio
 async def test_order_list_status(client):
-    await run_user_handler(client, OrderListStatusHandlerBase, {
+    await run_handler(client, OrderListStatusHandlerBase, {
         'e': 'listStatus',
         'E': 1564035303637,
         's': 'ETHBTC',
@@ -107,3 +118,33 @@ async def test_order_list_status(client):
         'l': 'EXEC_STARTED',
         'L': 'EXECUTING'
     })
+
+
+@pytest.mark.asyncio
+async def test_kline_handler(client):
+    E = 123456789
+
+    k = {
+        't': 123400000,
+        'T': 123460000,
+        's': 'BNBBTC',
+        'i': '1m',
+        'f': 100,
+        'L': 200,
+        'o': '0.0010',
+        'c': '0.0020'
+    }
+
+    payload = {
+        'e': 'kline',
+        'E': 123456789,
+        's': 'BNBBTC',
+        'k': k
+    }
+
+    def expect(received):
+        row = received.iloc[0]
+        assert row['symbol'] == 'BNBBTC'
+        assert row['event_time'] == E
+
+    await run_handler(client, KlineHandlerBase, payload, expect)
