@@ -116,14 +116,20 @@ await client.subscribe(
 ```
 
 And since we subscribe to **THREE** new types of messages, we need to set the handlers each of which should `isinstance()` of one of
-- `binance.TradeHandlerBase`
-- `binance.AggTradeHandlerBase`
-- `binance.OrderBookHandlerBase`
-- `binance.KlineHandlerBase`
-- `binance.MiniTickerHandlerBase`
-- `binance.TickerHandlerBase`
-- `binance.AllMarketMiniTickersHandlerBase`
-- `binance.AllMarketTickersHandlerBase`
+- `TradeHandlerBase`
+- `AggTradeHandlerBase`
+- `OrderBookHandlerBase`
+- `KlineHandlerBase`
+- `MiniTickerHandlerBase`
+- `TickerHandlerBase`
+- `AllMarketMiniTickersHandlerBase`
+- `AllMarketTickersHandlerBase`
+- `AccountInfoHandlerBase`
+- `AccountPositionHandlerBase`
+- `BalanceUpdateHandlerBase`
+- `OrderUpdateHandlerBase`
+- `OrderListStatusHandlerBase`
+- `HandlerExceptionHandlerBase` a special handler to handle stream exceptions
 
 ```py
 client.handler(MyTradeHandler(), MyOrderBookHandler(), MyKlineHandler())
