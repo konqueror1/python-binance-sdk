@@ -54,7 +54,7 @@ class Client(
             timeout=stream_timeout
         )
 
-        self._receiving = False
+        self._receiving = True
         self._handler_ctx = None
         self._data_stream = None
 

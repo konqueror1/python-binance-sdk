@@ -56,16 +56,19 @@ from binance import Client, TickerHandlerBase, SubType
 client = Client(api_key)
 
 async def main():
-    # Start receiving websocket data
-    client.start()
-
     # Implement your own TickerHandler.
     class TickerPrinter(TickerHandlerBase):
-        # It could either be a sync or async(recommended) method
         async def receive(self, res):
+            """The function to receive ticker streams.
+            The function could either be sync or async
+
+            Args:
+                res (dict): the raw stream message
+            """
+
             # If binance-sdk is installed with pandas support, then
             #   `ticker` will be a `DataFrame` with columns renamed
-            # Or `ticker` is a raw dict
+            # Otherwise, it is unnecessary to call `super().receive`.
             ticker_df = super().receive(res)
 
             # Just print the ticker
