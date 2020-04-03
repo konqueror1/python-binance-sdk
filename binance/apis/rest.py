@@ -169,7 +169,7 @@ APIS = [
     ),
 
     dict(
-        name='get_my_trade',
+        name='get_trades',
         path='myTrades',
         security_type=SecurityType.USER_DATA
     )
@@ -1206,7 +1206,7 @@ class RestAPIGetters:
         """
         pass  # pragma: no cover
 
-    def get_my_trade(self, **kwargs):
+    def get_trades(self, **kwargs):
         """Gets trades for a specific account and symbol.
 
         Args:
