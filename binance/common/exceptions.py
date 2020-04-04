@@ -133,7 +133,7 @@ class OrderBookFetchAbandonedException(Exception):
 
     def __str__(self):
         return err_msg(
-            'orderbook for `%s` failed to fetch snapshot and fetching is abandoned by retry policy, reason: %s',  # noqa:E501
+            'orderbook for `%s` failed to fetch snapshot and fetching is abandoned by retry policy, reason: %s',
             self.symbol,
             self.reason
         )

@@ -84,6 +84,7 @@ class StreamBase(ABC):
                 self._socket.recv(), timeout=self._timeout)
         except asyncio.TimeoutError:
             await self._socket.ping()
+            return
         except asyncio.CancelledError:
             return
         else:
@@ -97,7 +98,7 @@ class StreamBase(ABC):
                     e
                 )
 
-                pass
+                return
             else:
                 await self._handle_message(parsed)
 

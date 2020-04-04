@@ -44,6 +44,19 @@ ACCOUNT_INFO = {
     's': 0,
 }
 
+ACCOUNT_POSITION = {
+    'e': 'outboundAccountPosition',
+    'E': 1564034571105,
+    'u': 1564034571073,
+    'B': [
+        {
+            'a': 'ETH',
+            'f': '10000.000000',
+            'l': '0.000000'
+        }
+    ]
+}
+
 
 async def run_handler(
     client,
@@ -60,10 +73,19 @@ async def run_handler(
     class Handler(HandlerBase):
         def receive(self, res):
             res = super().receive(res)
+
+            if future.done():
+                return
             future.set_result(res)
 
     client.start()
     client.handler(Handler())
+
+    await client._receive({
+        'data': ACCOUNT_POSITION,
+        'stream': 'fake'
+    })
+
     await client._receive({
         'data': payload,
         'stream': stream
@@ -87,18 +109,7 @@ async def test_account_info(client):
 
 @pytest.mark.asyncio
 async def test_account_pos(client):
-    await run_handler(client, AccountPositionHandlerBase, {
-        'e': 'outboundAccountPosition',
-        'E': 1564034571105,
-        'u': 1564034571073,
-        'B': [
-            {
-                'a': 'ETH',
-                'f': '10000.000000',
-                'l': '0.000000'
-            }
-        ]
-    })
+    await run_handler(client, AccountPositionHandlerBase, ACCOUNT_POSITION)
 
 
 @pytest.mark.asyncio
