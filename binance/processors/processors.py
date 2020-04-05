@@ -31,7 +31,7 @@ class KlineProcessor(Processor):
             raise InvalidSubTypeParamException(
                 t, 'interval', '`KlineInterval` enum expected but not specified')
 
-        if interval not in KlineInterval:
+        if not isinstance(interval, KlineInterval):
             raise InvalidSubTypeParamException(
                 t, 'interval', '`KlineInterval` enum expected but got `%s`' % symbol)
 

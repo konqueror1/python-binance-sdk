@@ -24,17 +24,6 @@ def client():
     return Client('api_key').start()
 
 
-def test_handler_reuse():
-    client = Client('api_key')
-    client2 = Client('api_key')
-
-    handler = TickerHandlerBase()
-
-    with pytest.raises(ReuseHandlerException, match='more than one'):
-        client.handler(handler)
-        client2.handler(handler)
-
-
 ACCOUNT_INFO = {
     'e': 'outboundAccountInfo',
     'E': 1499405658849,
@@ -71,12 +60,12 @@ async def run_handler(
         expect_payload = payload
 
     class Handler(HandlerBase):
-        def receive(self, res):
-            res = super().receive(res)
+        def receive(self, p):
+            p = super().receive(p)
 
             if future.done():
                 return
-            future.set_result(res)
+            future.set_result(p)
 
     client.start()
     client.handler(Handler())
@@ -263,3 +252,14 @@ async def test_handler_exception_handler(client):
         await future
     except Exception as catched:
         assert catched is e
+
+
+def test_handler_reuse():
+    client = Client('api_key')
+    client2 = Client('api_key')
+
+    handler = TickerHandlerBase()
+
+    with pytest.raises(ReuseHandlerException, match='more than one'):
+        client.handler(handler)
+        client2.handler(handler)

@@ -40,9 +40,9 @@ async def test_ticker_handler(client):
         DF = None
 
         # sync receiver
-        def receive(self, res):
-            TickerPrinter.DATA = res
-            TickerPrinter.DF = super().receive(res)
+        def receive(self, payload):
+            TickerPrinter.DATA = payload
+            TickerPrinter.DF = super().receive(payload)
 
     client.handler(TickerPrinter())
 
@@ -60,7 +60,7 @@ async def test_handler_exception_handler(client):
     f = asyncio.Future()
 
     class TickerPrinter(TickerHandlerBase):
-        def receive(self, res):
+        def receive(self, payload):
             raise exc
 
     class ExceptionHandler(HandlerExceptionHandlerBase):
@@ -113,8 +113,8 @@ async def test_client_handler(client):
 
     class TickerHandler(TickerHandlerBase):
         # async receiver
-        async def receive(self, res):
-            f.set_result(res)
+        async def receive(self, payload):
+            f.set_result(payload)
 
     client.handler(TickerHandler())
     await client.subscribe(SubType.TICKER, 'BTCUSDT')
@@ -133,8 +133,8 @@ async def test_client_kline_handler(client):
 
     class KlineHandler(KlineHandlerBase):
         # async receiver
-        async def receive(self, res):
-            f.set_result(res)
+        async def receive(self, payload):
+            f.set_result(payload)
 
     client.handler(KlineHandler())
     await client.subscribe(SubType.KLINE, 'BTCUSDT', KlineInterval.DAY)

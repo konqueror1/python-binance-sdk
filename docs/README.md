@@ -58,18 +58,19 @@ client = Client(api_key)
 async def main():
     # Implement your own TickerHandler.
     class TickerPrinter(TickerHandlerBase):
-        async def receive(self, res):
+        async def receive(self, payload):
             """The function to receive ticker streams.
             The function could either be sync or async
 
             Args:
-                res (dict): the raw stream message
+                payload (dict): the raw stream payload which is
+                message['data'] of the original stream message
             """
 
             # If binance-sdk is installed with pandas support, then
             #   `ticker` will be a `DataFrame` with columns renamed
             # Otherwise, it is unnecessary to call `super().receive`.
-            ticker_df = super().receive(res)
+            ticker_df = super().receive(payload)
 
             # Just print the ticker
             print(ticker_df)
@@ -166,7 +167,7 @@ from binance import (
 )
 
 class KlineHandler(KlineHandlerBase):
-    def receive(self, res):
+    def receive(self, payload):
         raise RuntimeError('this will ruin my day')
 
 class HandlerExceptionHandler(HandlerExceptionHandlerBase):
@@ -290,14 +291,14 @@ Typically, we need to override the `def receive(self, payload)` method.
 
 ```py
 class MyTradeHandler(TradeHandlerBase):
-    async def receive(self, msg):
+    async def receive(self, payload):
         # If pandas is installed, then `payload` is a `pandas.DataFrame`,
         #   otherwise is a dict.
-        payload = super().receive(msg)
+        df = super().receive(payload)
 
-        # If you don't want the `pandas.DataFrame`, use `msg` directly
+        # If you don't want the `pandas.DataFrame`, use `payload` directly
 
-        await saveTrade(payload)
+        await saveTrade(df)
 
 client.handler(MyTradeHandler())
 ```

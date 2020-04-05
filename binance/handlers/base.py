@@ -45,11 +45,11 @@ try:
 
     def _receive(
         self,
-        res: dict,
+        payload: dict,
         index: List[int] = [0]
     ) -> pd.DataFrame:
         return pd.DataFrame(
-            res, columns=self.COLUMNS, index=index
+            payload, columns=self.COLUMNS, index=index
         ).rename(columns=self.COLUMNS_MAP)
 
     Handler._receive = _receive
@@ -74,7 +74,7 @@ try:
 
 except ModuleNotFoundError:  # pragma: no cover
     # If pandas is not installed
-    Handler.receive = lambda self, msg: msg
+    Handler.receive = lambda self, payload: payload
 
     Handler.receive.__doc__ = """Most usually, you do not need to call this method.
     """
