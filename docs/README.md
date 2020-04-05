@@ -202,7 +202,7 @@ All arguments of the constructor Client are keyworded arguments and all optional
 
 Create a binance client.
 
-Then you could call [rest APIs](https://github.com/kaelzhang/python-binance-sdk/blob/master/binance/apis/rest.py) and [WAPIs](https://github.com/kaelzhang/python-binance-sdk/blob/master/binance/apis/wapi.py).
+Then you could call [Rest APIs](https://github.com/kaelzhang/python-binance-sdk/blob/master/binance/apis/rest.py) and [Withdraw APIs](https://github.com/kaelzhang/python-binance-sdk/blob/master/binance/apis/wapi.py).
 
 ### client.key(api_key) -> self
 
@@ -281,7 +281,7 @@ Close stream connection, clear all stream subscriptions and clear all handlers.
 
 ### client.handler(*handlers) -> self
 
-- **handlers** `List[HandlerExceptionHandler|TradeHandlerBase|...]`
+- **handlers** `List[Union[HandlerExceptionHandler,TradeHandlerBase,...]]`
 
 Register message handlers for streams. If we've subscribed to a stream of a certain `subtype` with no corresponding handler provided, the messages of `subtype` will not be handled.
 
