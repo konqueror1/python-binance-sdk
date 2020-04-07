@@ -1,5 +1,5 @@
 # This is a ALPHA VERSION
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 
 from binance.client import Client
 from binance.common.constants import (

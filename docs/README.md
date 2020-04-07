@@ -4,7 +4,7 @@
 [![](https://img.shields.io/pypi/pyversions/binance-sdk.svg)](https://pypi.org/project/binance-sdk/)
 [![](https://img.shields.io/pypi/l/binance-sdk.svg)](https://github.com/kaelzhang/python-binance-sdk)
 
-# binance-sdk
+# [binance-sdk](https://github.com/kaelzhang/python-binance-sdk)
 
 `binance-sdk` is an another unofficial Binance SDK for python 3.7+, which:
 
