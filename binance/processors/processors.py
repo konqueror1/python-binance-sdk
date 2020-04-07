@@ -1,4 +1,16 @@
-from binance.handlers import *
+from binance.handlers.handlers import (
+    HandlerExceptionHandlerBase,
+    KlineHandlerBase,
+    TradeHandlerBase,
+    AggTradeHandlerBase,
+    MiniTickerHandlerBase,
+    TickerHandlerBase,
+    AllMarketMiniTickersHandlerBase,
+    AllMarketTickersHandlerBase
+)
+
+from binance.handlers.orderbook_handler import OrderBookHandlerBase
+
 from binance.common.constants import (
     SubType,
     KlineInterval,

@@ -1,4 +1,8 @@
-from binance.apis import *
+from binance.apis import (
+    RestAPIGetters,
+    WapiAPIGetters
+)
+
 from binance.subscribe.manager import SubscriptionManager
 from binance.common.constants import (
     REST_API_HOST,

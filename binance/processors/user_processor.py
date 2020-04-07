@@ -6,7 +6,14 @@ from binance.common.constants import (
     KEY_PAYLOAD_TYPE
 )
 
-from binance.handlers.user_handlers import *
+from binance.handlers.user_handlers import (
+    AccountInfoHandlerBase,
+    AccountPositionHandlerBase,
+    BalanceUpdateHandlerBase,
+    OrderUpdateHandlerBase,
+    OrderListStatusHandlerBase
+)
+
 from binance.handlers.base import Handler
 
 from .base import Processor

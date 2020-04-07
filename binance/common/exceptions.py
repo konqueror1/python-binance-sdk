@@ -4,20 +4,6 @@ import json
 
 from .utils import err_msg
 
-__all__ = [
-    'StreamDisconnectedException',
-    'APIKeyNotDefinedException',
-    'APISecretNotDefinedException',
-    'StatusException',
-    'InvalidResponseException',
-    'InvalidSubParamsException',
-    'UnsupportedSubTypeException',
-    'InvalidSubTypeParamException',
-    'InvalidHandlerException',
-    'ReuseHandlerException',
-    'OrderBookFetchAbandonedException'
-]
-
 
 class StreamDisconnectedException(Exception):
     def __init__(self, uri):

@@ -1,10 +1,17 @@
-from .processors import *
+from .processors import (
+    KlineProcessor,
+    TradeProcessor,
+    AggTradeProcessor,
+    OrderBookProcessor,
+    MiniTickerProcessor,
+    TickerProcessor,
+    AllMarketMiniTickersProcessor,
+    AllMarketTickersProcessor,
+    ExceptionProcessor
+)
+
 from .user_processor import UserProcessor
 
-__all__ = [
-    'PROCESSORS',
-    'ExceptionProcessor'
-]
 
 PROCESSORS = [
     KlineProcessor,
