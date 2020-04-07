@@ -202,7 +202,9 @@ All arguments of the constructor Client are keyworded arguments and all optional
 
 Create a binance client.
 
-Then you could call [Rest APIs](https://github.com/kaelzhang/python-binance-sdk/blob/master/binance/apis/rest.py) and [Withdraw APIs](https://github.com/kaelzhang/python-binance-sdk/blob/master/binance/apis/wapi.py).
+Then with `client`, you could call
+- [Rest APIs](https://github.com/kaelzhang/python-binance-sdk/blob/master/binance/apis/rest.py#L225)
+- [Withdraw APIs](https://github.com/kaelzhang/python-binance-sdk/blob/master/binance/apis/wapi.py#L144).
 
 ### client.key(api_key) -> self
 
