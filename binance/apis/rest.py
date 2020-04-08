@@ -1,3 +1,7 @@
+from typing import (
+    Awaitable
+)
+
 from binance.common.constants import (
     REST_API_VERSION,
     SecurityType,
@@ -219,18 +223,20 @@ def define_getter(
 
 
 class RestAPIGetters:
-    def _rest_uri(self, path, version=REST_API_VERSION):
+    _api_host: str
+
+    def _rest_uri(self, path, version=REST_API_VERSION) -> str:
         return self._api_host + '/api/' + version + '/' + path
 
-    def ping(self):
+    def ping(self) -> Awaitable:
         """Tests connectivity to the Rest API
 
         Returns:
             dict: An empty dict `{}`
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_server_time(self):
+    def get_server_time(self) -> Awaitable:
         """Tests connectivity to the Rest API and gets the current server time.
 
         Returns:
@@ -238,9 +244,9 @@ class RestAPIGetters:
 
                 {"serverTime": 1499827319559}
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_exchange_info(self):
+    def get_exchange_info(self) -> Awaitable:
         """Gets Current exchange trading rules and symbol information.
 
         Returns:
@@ -291,11 +297,11 @@ class RestAPIGetters:
                     ]
                 }
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
     # Market Data endpoints
 
-    def get_orderbook(self, **kwargs):
+    def get_orderbook(self, **kwargs) -> Awaitable:
         """Gets the orderbook for a certain symbol.
 
         Args:
@@ -321,9 +327,9 @@ class RestAPIGetters:
                     ]
                 }
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_recent_trades(self, **kwargs):
+    def get_recent_trades(self, **kwargs) -> Awaitable:
         """Gets recent trades.
 
         Args:
@@ -347,9 +353,9 @@ class RestAPIGetters:
                     # ...
                 ]
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_historical_trades(self, **kwargs):
+    def get_historical_trades(self, **kwargs) -> Awaitable:
         """Get older trades.
 
         Args:
@@ -374,9 +380,9 @@ class RestAPIGetters:
                     # ...
                 ]
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_aggregate_trades(self, **kwargs):
+    def get_aggregate_trades(self, **kwargs) -> Awaitable:
         """Gets compressed, aggregate trades. Trades that fill at the time, from the same order, with the same price will have the quantity aggregated.
 
         Args:
@@ -405,9 +411,9 @@ class RestAPIGetters:
                     }
                 ]
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_klines(self, **kwargs):
+    def get_klines(self, **kwargs) -> Awaitable:
         """Gets kline/candlestick bars for a symbol. Klines are uniquely identified by their open time.
 
         Args:
@@ -439,9 +445,9 @@ class RestAPIGetters:
                     ]
                 ]
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_average_price(self, **kwargs):
+    def get_average_price(self, **kwargs) -> Awaitable:
         """Gets current average price for a symbol.
 
         Args:
@@ -455,9 +461,9 @@ class RestAPIGetters:
                     'price': '9.35751834'
                 }
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_ticker(self, **kwargs):
+    def get_ticker(self, **kwargs) -> Awaitable:
         """Gets 24 hour rolling window price change statistics. Careful when accessing this with no symbol.
 
         Weight: 1 for a single symbol, 40 when the symbol parameter is omitted.
@@ -517,9 +523,9 @@ class RestAPIGetters:
                 ]
 
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_ticker_price(self):
+    def get_ticker_price(self) -> Awaitable:
         """Gets latest price for a symbol or symbols.
 
         Weight: 1 for a single symbol; 2 when the symbol parameter is omitted.
@@ -548,14 +554,9 @@ class RestAPIGetters:
                     }
                 ]
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    dict(
-        name='get_orderbook_ticker',
-        path='ticker/bookTicker'
-    ),
-
-    def get_orderbook_ticker(self):
+    def get_orderbook_ticker(self) -> Awaitable:
         """Gets the best price/quantity on the order book for a symbol or symbols.
 
         Weight: 1 for a single symbol; 2 when the symbol parameter is omitted.
@@ -594,11 +595,11 @@ class RestAPIGetters:
                     }
                 ]
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
     # Account endpoints
 
-    def create_order(self, **kwargs):
+    def create_order(self, **kwargs) -> Awaitable:
         """Sends in a new order.
 
         Weight: 1
@@ -690,16 +691,16 @@ class RestAPIGetters:
                     ]
                 }
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def create_test_order(self, **kwargs):
+    def create_test_order(self, **kwargs) -> Awaitable:
         """Tests new order creation and signature/recvWindow long. Creates and validates a new order but does not send it into the matching engine.
 
         Which has the same parameters as `client.create_order()`
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_order(self, **kwargs):
+    def get_order(self, **kwargs) -> Awaitable:
         """Checks an order's status.
 
         Args:
@@ -736,9 +737,9 @@ class RestAPIGetters:
                     'origQuoteOrderQty': '0.000000'
                 }
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def cancel_order(self, **kwargs):
+    def cancel_order(self, **kwargs) -> Awaitable:
         """Cancel an active order.
 
         Args:
@@ -771,9 +772,9 @@ class RestAPIGetters:
                 }
 
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_open_orders(self, **kwargs):
+    def get_open_orders(self, **kwargs) -> Awaitable:
         """Gets all open orders on a symbol. Careful when accessing this with no symbol.
 
         Args:
@@ -810,9 +811,9 @@ class RestAPIGetters:
                 ]
 
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_all_orders(self, **kwargs):
+    def get_all_orders(self, **kwargs) -> Awaitable:
         """Gets all account orders, either active, or canceled, or filled.
 
         Args:
@@ -853,9 +854,9 @@ class RestAPIGetters:
                     }
                 ]
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def create_oco(self, **kwargs):
+    def create_oco(self, **kwargs) -> Awaitable:
         """Sends in a new one-cancels-the-other order
 
         Args:
@@ -941,9 +942,9 @@ class RestAPIGetters:
                     ]
                 }
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def cancel_oco(self, **kwargs):
+    def cancel_oco(self, **kwargs) -> Awaitable:
         """Cancels an entire Order List
 
         Weight: 1
@@ -1018,9 +1019,9 @@ class RestAPIGetters:
                     ]
                 }
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_oco(self, **kwargs):
+    def get_oco(self, **kwargs) -> Awaitable:
         """Retrieves a specific OCO based on provided optional parameters.
 
         Weight: 1
@@ -1059,9 +1060,9 @@ class RestAPIGetters:
                 }
 
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_all_oco(self, **kwargs):
+    def get_all_oco(self, **kwargs) -> Awaitable:
         """Retrieves all OCO based on provided optional parameters.
 
         Weight: 10
@@ -1122,15 +1123,9 @@ class RestAPIGetters:
                     }
                 ]
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    dict(
-        name='get_open_oco',
-        path='openOrderList',
-        security_type=SecurityType.USER_DATA
-    ),
-
-    def get_open_oco(self, **kwargs):
+    def get_open_oco(self, **kwargs) -> Awaitable:
         """Retrieves open OCO.
 
         Weight: 2
@@ -1166,9 +1161,9 @@ class RestAPIGetters:
                     }
                 ]
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_account(self, **kwargs):
+    def get_account(self, **kwargs) -> Awaitable:
         """Gets current account information.
 
         Weight: 5
@@ -1204,9 +1199,9 @@ class RestAPIGetters:
                     ]
                 }
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_trades(self, **kwargs):
+    def get_trades(self, **kwargs) -> Awaitable:
         """Gets trades for a specific account and symbol.
 
         Args:
@@ -1242,41 +1237,41 @@ class RestAPIGetters:
                 ]
 
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
     # User data stream endpoints
 
-    async def get_listen_key(self):
+    async def get_listen_key(self) -> str:
         """Starts a new user data stream and returns the listen key. The stream will close after 60 minutes unless a keepalive is sent.
 
         Returns:
             The listen key
         """
-        res = await self.post(
+        res = await self.post(  # type: ignore
             self._rest_uri('userDataStream'),
             security_type=SecurityType.USER_STREAM
         )
         return res['listenKey']
 
-    def keepalive_listen_key(self, listen_key: str):
+    def keepalive_listen_key(self, listen_key: str) -> Awaitable:
         """Keepalives a user data stream to prevent a time out. User data streams will close after 60 minutes. It's recommended to send a ping about every 30 minutes.
 
         Args：
             listen_key: user stream listen key
         """
-        return self.put(
+        return self.put(  # type: ignore
             self._rest_uri('userDataStream'),
             security_type=SecurityType.USER_STREAM,
             listenKey=listen_key
         )
 
-    def close_listen_key(self, listen_key: str):
+    def close_listen_key(self, listen_key: str) -> Awaitable:
         """Closes out a user data stream.
 
         Args:
             listen_key: user stream listen key
         """
-        return self.delete(
+        return self.delete(  # type: ignore
             self._rest_uri('userDataStream'),
             security_type=SecurityType.USER_STREAM,
             listenKey=listen_key

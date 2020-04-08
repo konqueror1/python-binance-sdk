@@ -21,7 +21,7 @@ from binance.handlers.base import Handler
 
 class Processor:
     # The handler class
-    HANDLER: Handler
+    HANDLER: type
 
     # The payload['e'] of message
     PAYLOAD_TYPE = ATOM

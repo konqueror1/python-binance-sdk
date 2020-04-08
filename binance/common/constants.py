@@ -1,11 +1,16 @@
 from enum import Enum as _Enum
+from typing import (
+    Union,
+    Tuple,
+    Callable
+)
 
 KLINE_TYPE_PREFIX = 'kline_'
 
 
 class Enum(_Enum):
-    def __str__(self):
-        return self.value
+    def __str__(self) -> str:
+        return str(self.value)
 
 
 class SubType(Enum):
@@ -57,7 +62,13 @@ MAX_RETRIES_BEFORE_RESET = 10
 #   and reset the retry counter after 10 failures
 
 
-def DEFAULT_RETRY_POLICY(retries: int):
+RetryPolicyStrategy = Tuple[bool, Union[int, float], bool]
+RetryPolicy = Callable[[int], RetryPolicyStrategy]
+
+
+def DEFAULT_RETRY_POLICY(
+    retries: int
+) -> RetryPolicyStrategy:
     delay = retries * ATOM_RETRY_DELAY
     reset = retries >= MAX_RETRIES_BEFORE_RESET
     return False, delay, reset
@@ -144,3 +155,6 @@ HEADER_API_KEY = 'X-MBX-APIKEY'
 
 REST_API_VERSION = 'v3'
 REST_API_HOST = 'https://api.binance.com'
+
+
+APIResponse = Union[dict, list]

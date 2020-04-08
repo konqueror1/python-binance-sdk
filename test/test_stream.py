@@ -1,7 +1,11 @@
 import pytest
 import asyncio
 
-from binance import Stream, StreamDisconnectedException
+from binance import (
+    Stream,
+    StreamDisconnectedException
+)
+
 from binance.common.constants import STREAM_HOST
 
 
@@ -14,7 +18,9 @@ async def run_stream():
     stream = Stream(
         STREAM_HOST + '/stream',
         on_message
-    ).connect()
+    )
+
+    stream.connect()
 
     params = ['btcusdt@ticker']
 

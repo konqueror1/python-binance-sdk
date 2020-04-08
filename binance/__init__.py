@@ -1,5 +1,5 @@
 # This is a ALPHA VERSION
-__version__ = '0.1.7'
+__version__ = '0.2.0'
 
 from binance.client import Client
 from binance.common.constants import (
@@ -14,6 +14,7 @@ from binance.common.constants import (
 )
 
 from binance.common.exceptions import (
+    UserStreamNotSubscribedException,
     StreamDisconnectedException,
     APIKeyNotDefinedException,
     APISecretNotDefinedException,

@@ -1,16 +1,20 @@
-from aiohttp import (
-    ClientSession,
-    ClientResponse
-)
-
 import asyncio
 import hashlib
 import hmac
 import time
 from operator import itemgetter
+
 from typing import (
     List,
-    Dict
+    Dict,
+    Awaitable,
+    Optional,
+    Any
+)
+
+from aiohttp import (
+    ClientSession,
+    ClientResponse
 )
 
 from binance.common.exceptions import (
@@ -23,7 +27,8 @@ from binance.common.exceptions import (
 from binance.common.constants import (
     HEADER_API_KEY,
     SecurityType,
-    RequestMethod
+    RequestMethod,
+    APIResponse
 )
 
 # pylint: disable=no-member
@@ -55,50 +60,53 @@ KEY_REQUEST_PARAMS = 'request_params'
 KEY_FORCE_PARAMS = 'force_params'
 
 
+def get_headers(
+    api_key: Optional[str]
+) -> Dict[str, str]:
+    headers = {
+        'Accept': 'application/json',
+        'User-Agent': 'binance-sdk'
+    }
+
+    if api_key is not None:
+        headers[HEADER_API_KEY] = api_key
+
+    return headers
+
+
 class ClientBase:
+    _api_key: Optional[str]
+    _api_secret: Optional[str]
+    _request_params: Optional[dict]
+
     def _init_api_session(
         self,
-        need_api_key: bool
+        api_key: Optional[str]
     ) -> ClientSession:
         loop = asyncio.get_event_loop()
-        headers = self._get_headers(need_api_key)
 
         session = ClientSession(
             loop=loop,
-            headers=headers
+            headers=get_headers(api_key)
         )
         return session
-
-    def _get_headers(
-        self,
-        need_api_key: bool
-    ) -> Dict[str, str]:
-        headers = {
-            'Accept': 'application/json',
-            'User-Agent': 'binance-sdk'
-        }
-
-        if need_api_key:
-            headers[HEADER_API_KEY] = self._api_key
-
-        return headers
 
     def _get_request_kwargs(
         self,
         method: RequestMethod,
         need_signed: bool,
         **data
-    ) -> dict:
+    ) -> Dict[str, Any]:
         # Usually, `data` is the data param for aiohttp
 
-        kwargs = dict(
+        kwargs: Dict[str, Any] = dict(
             # set default requests timeout
             # TODO: no hard coding
             timeout=10
         )
 
         # add global requests params for aiohttp
-        if self._request_params:
+        if self._request_params is not None:
             kwargs.update(self._request_params)
 
         # find any requests params passed and apply them
@@ -119,9 +127,10 @@ class ClientBase:
 
         sorted_data = sort_params(data)
 
-        kwargs[
-            'params' if force_params or method == RequestMethod.GET else 'data'
-        ] = sorted_data
+        param_key = 'params' \
+            if force_params or method == RequestMethod.GET else 'data'
+
+        kwargs[param_key] = sorted_data
 
         return kwargs
 
@@ -146,7 +155,7 @@ class ClientBase:
     async def _handle_response(
         self,
         response: ClientResponse
-    ):
+    ) -> APIResponse:
         if not str(response.status).startswith('2'):
             raise StatusException(response, await response.text())
         try:
@@ -161,32 +170,37 @@ class ClientBase:
         uri: str,
         security_type: SecurityType = SecurityType.NONE,
         **kwargs
-    ):
+    ) -> APIResponse:
         need_api_key, need_signed = security_type.value
 
-        if need_api_key and not self._api_key:
-            raise APIKeyNotDefinedException(uri)
+        if need_api_key:
+            if self._api_key is None:
+                raise APIKeyNotDefinedException(uri)
 
-        if need_signed and not self._api_secret:
+            api_key = self._api_key
+        else:
+            api_key = None
+
+        if need_signed and self._api_secret is None:
             raise APISecretNotDefinedException(uri)
 
         req_kwargs = self._get_request_kwargs(
             method, need_signed, **kwargs)
 
-        async with self._init_api_session(need_api_key) as session:
+        async with self._init_api_session(api_key) as session:
             async with getattr(
                 session, method.value
             )(uri, **req_kwargs) as response:
                 return await self._handle_response(response)
 
-    def get(self, uri, **kwargs):
+    def get(self, uri, **kwargs) -> Awaitable[APIResponse]:
         """Sends a GET request.
 
         For details, see `client.post(uri, **kwargs)`
         """
         return self._request(RequestMethod.GET, uri, **kwargs)
 
-    def post(self, uri, **kwargs):
+    def post(self, uri, **kwargs) -> Awaitable[APIResponse]:
         """Sends a POST request.
 
         Args:
@@ -207,14 +221,14 @@ class ClientBase:
         """
         return self._request(RequestMethod.POST, uri, **kwargs)
 
-    def put(self, uri, **kwargs):
+    def put(self, uri, **kwargs) -> Awaitable[APIResponse]:
         """Sends a PUT request.
 
         For details, see `client.post(uri, **kwargs)`
         """
         return self._request(RequestMethod.PUT, uri, **kwargs)
 
-    def delete(self, uri, **kwargs):
+    def delete(self, uri, **kwargs) -> Awaitable[APIResponse]:
         """Sends a DELETE request.
 
         For details, see `client.post(uri, **kwargs)`

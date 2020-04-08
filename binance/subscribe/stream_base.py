@@ -1,8 +1,14 @@
-import asyncio
 import json
-import websockets as ws
 from abc import ABC, abstractmethod
 import logging
+from typing import (
+    Optional,
+    Callable,
+    Any
+)
+
+import asyncio
+import websockets as ws
 
 from binance.common.utils import json_stringify
 from binance.common.exceptions import StreamDisconnectedException
@@ -10,7 +16,8 @@ from binance.common.constants import (
     DEFAULT_RETRY_POLICY,
     DEFAULT_STREAM_TIMEOUT,
     DEFAULT_STREAM_CLOSE_CODE,
-    ERROR_PREFIX
+    ERROR_PREFIX,
+    RetryPolicy
 )
 
 
@@ -24,14 +31,15 @@ KEY_RESULT = 'result'
 
 
 class StreamBase(ABC):
-    def __init__(self,
-                 uri,
-                 on_message,
-                 # We redundant the default value here,
-                 #   because `binance.Stream` is also a public class
-                 retry_policy=DEFAULT_RETRY_POLICY,
-                 timeout=DEFAULT_STREAM_TIMEOUT,
-                 ):
+    def __init__(
+        self,
+        uri: str,
+        on_message: Callable,
+        # We redundant the default value here,
+        #   because `binance.Stream` is also a public class
+        retry_policy: RetryPolicy = DEFAULT_RETRY_POLICY,
+        timeout: Optional[float] = DEFAULT_STREAM_TIMEOUT,
+    ) -> None:
         self._on_message = on_message
         self._retry_policy = retry_policy
         self._timeout = timeout
@@ -49,7 +57,7 @@ class StreamBase(ABC):
 
         self._uri = uri
 
-    def _set_socket(self, socket):
+    def _set_socket(self, socket) -> None:
         if self._open_future:
             self._open_future.set_result(socket)
             self._open_future = None
@@ -62,7 +70,7 @@ class StreamBase(ABC):
         self._conn_task = asyncio.create_task(self._connect())
         return self
 
-    async def _handle_message(self, msg):
+    async def _handle_message(self, msg) -> None:
         # > The id used in the JSON payloads is an unsigned INT used as
         # > an identifier to uniquely identify the messages going back and forth
         if KEY_ID in msg and msg[KEY_ID] in self._message_futures:
@@ -75,10 +83,10 @@ class StreamBase(ABC):
 
         await self._on_message(msg)
 
-    def _before_connect(self):
+    def _before_connect(self) -> None:
         self._open_future = asyncio.Future()
 
-    async def _receive(self):
+    async def _receive(self) -> None:
         try:
             msg = await asyncio.wait_for(
                 self._socket.recv(), timeout=self._timeout)
@@ -102,7 +110,7 @@ class StreamBase(ABC):
             else:
                 await self._handle_message(parsed)
 
-    async def _connect(self):
+    async def _connect(self) -> None:
         async with ws.connect(self._uri) as socket:
             self._set_socket(socket)
             self._retries = 0
@@ -127,7 +135,7 @@ class StreamBase(ABC):
             except Exception:
                 await self._reconnect()
 
-    async def _reconnect(self):
+    async def _reconnect(self) -> None:
         self._before_connect()
 
         # If the retries == 0, we will reconnect immediately
@@ -157,7 +165,10 @@ class StreamBase(ABC):
     def _after_close(self):
         pass  # pragma: no-cover
 
-    async def close(self, code=DEFAULT_STREAM_CLOSE_CODE):
+    async def close(
+        self,
+        code: int = DEFAULT_STREAM_CLOSE_CODE
+    ) -> None:
         if not self._conn_task:
             raise StreamDisconnectedException(self._uri)
 
@@ -196,7 +207,7 @@ class StreamBase(ABC):
 
         self._after_close()
 
-    async def send(self, msg):
+    async def send(self, msg) -> Any:
         socket = self._socket
 
         if not socket:

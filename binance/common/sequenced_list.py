@@ -1,36 +1,56 @@
 import bisect
+from typing import (
+    List,
+    Tuple,
+    Iterable
+)
+
+Pair = Tuple[float, float]
 
 
-class SequencedList(list):
+class SequencedList(List[Pair]):
     """
     Sequenced list to maintain asks or bids.
     Each item of the list should be a tuple of `(price, quantity)`
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
         # For performance, just hardcode the logic to get the key
         self._key_list = [x[0] for x in self]
 
-    def append(self, subject):
+    def append(
+        self,
+        subject: Pair
+    ) -> None:
         self._key_list.append(subject[0])
         return super().append(subject)
 
-    def pop(self, index):
+    def pop(
+        self,
+        index: int
+    ) -> Pair:
         self._key_list.pop(index)
         return super().pop(index)
 
-    def insert(self, index, subject):
+    def insert(
+        self,
+        index: int,
+        subject: Pair
+    ) -> None:
         self._key_list.insert(index, subject[0])
         return super().insert(index, subject)
 
-    def clear(self):
+    def clear(self) -> None:
         self._key_list.clear()
         return super().clear()
 
     # Add a new item into the list and maintain order
-    def add(self, subject):
+    def add(
+        self,
+        subject: Pair
+    ) -> Tuple[int, bool]:
         # suppose the list is [[1, 1], [2, 3]]
         key = subject[0]
         quantity = subject[1]
@@ -76,10 +96,17 @@ class SequencedList(list):
         return index, False
 
     # Merge a list into the current one and maintain order
-    def merge(self, l):
+    def merge(
+        self,
+        l: Iterable[Pair]
+    ) -> None:
         for subject in l:
             self.add(subject)
 
-    def __setitem__(self, index, subject):
+    def __setitem__(
+        self,
+        index: int,
+        subject: Pair
+    ) -> None:
         self._key_list[index] = subject[0]
         return super().__setitem__(index, subject)

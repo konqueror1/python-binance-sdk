@@ -3,7 +3,9 @@ from aioresponses import aioresponses
 
 from binance import (
     Client,
+    SubType,
     SecurityType,
+    UserStreamNotSubscribedException,
     InvalidResponseException,
     StatusException,
     APIKeyNotDefinedException,
@@ -65,3 +67,10 @@ async def test_api_exception_invalid_json():
 
             client = Client('api_key')
             await client.get_server_time()
+
+
+@pytest.mark.asyncio
+async def test_user_steam_not_subscribed():
+    with pytest.raises(UserStreamNotSubscribedException):
+        client = Client()
+        await client.unsubscribe(SubType.USER)

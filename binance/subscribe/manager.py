@@ -1,3 +1,9 @@
+from typing import (
+    List,
+    Tuple,
+    Optional
+)
+
 from binance.common.constants import DEFAULT_STREAM_CLOSE_CODE
 from binance.common.exceptions import InvalidHandlerException
 
@@ -8,6 +14,8 @@ from .handler_context import HandlerContext
 
 
 class SubscriptionManager:
+    _data_stream: Optional[Stream]
+
     def start(self):
         """Starts receiving messages.
 
@@ -32,7 +40,10 @@ class SubscriptionManager:
         self._receiving = False
         return self
 
-    async def close(self, code=DEFAULT_STREAM_CLOSE_CODE):
+    async def close(
+        self,
+        code: int = DEFAULT_STREAM_CLOSE_CODE
+    ) -> None:
         """Closes stream connection, clear all stream subscriptions and clear all handlers.
 
         Args:
@@ -47,28 +58,33 @@ class SubscriptionManager:
 
         self._handler_ctx = None
 
-    async def _receive(self, msg):
+    async def _receive(self, msg) -> None:
         if self._receiving:
             await self._handler_ctx.receive(msg)
 
-    def _get_handler_ctx(self):
+    def _get_handler_ctx(self) -> HandlerContext:
         if not self._handler_ctx:
             self._handler_ctx = HandlerContext(self)
 
         return self._handler_ctx
 
-    def _get_data_stream(self):
-        if not self._data_stream:
+    def _get_data_stream(self) -> Stream:
+        if self._data_stream is None:
             self._data_stream = Stream(
-                self._stream_host + '/stream',
+                self._stream_host + '/stream',  # type: ignore
                 self._receive,
-                **self._stream_kwargs
-            ).connect()
+                **self._stream_kwargs  # type: ignore
+            )
+            self._data_stream.connect()
 
         return self._data_stream
 
     # subscribe to the stream for symbols
-    async def _subscribe(self, subscribe, args):
+    async def _subscribe(
+        self,
+        subscribe: bool,
+        args: Tuple[str]
+    ):
         params = await self._get_handler_ctx().subscribe_params(
             subscribe, *args)
 
@@ -85,7 +101,7 @@ class SubscriptionManager:
     async def unsubscribe(self, *args):
         return await self._subscribe(False, args)
 
-    async def list_subscriptions(self):
+    async def list_subscriptions(self) -> List[str]:
         return await self._get_data_stream().list_subscriptions()
 
     def handler(self, *handlers):

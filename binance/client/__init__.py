@@ -10,6 +10,7 @@ from binance.common.constants import (
     DEFAULT_RETRY_POLICY, DEFAULT_STREAM_TIMEOUT
 )
 
+
 from .base import ClientBase
 
 

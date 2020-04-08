@@ -32,7 +32,7 @@ class KlineProcessor(Processor):
     HANDLER = KlineHandlerBase
     SUB_TYPE = SubType.KLINE
 
-    def subscribe_param(self, _, t, *args):
+    def subscribe_param(self, _, t, *args) -> str:
         symbol = self._get_param_symbol(t, args)
 
         length = len(args)
@@ -92,7 +92,7 @@ class AllMarketMiniTickersProcessor(Processor):
 
         return True, msg.get(KEY_PAYLOAD)
 
-    def subscribe_param(self, _, t, *args):
+    def subscribe_param(self, _, t, *args) -> str:
         if len(args) == 0:
             interval = 1000
         else:

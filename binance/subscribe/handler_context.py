@@ -3,7 +3,8 @@ import itertools
 from typing import (
     List,
     Set,
-    Dict
+    Dict,
+    Tuple
 )
 
 from binance.processors import (
@@ -37,9 +38,9 @@ class HandlerContext:
     _processors: Set[Processor]
 
     # The map of payload_type -> processor
-    _processor_cache: Dict[str, Processor]
+    _processor_cache: Dict[SubType, Processor]
 
-    def __init__(self, client):
+    def __init__(self, client) -> None:
         self._handler_table = {}
         self._all_processors = [Factory(client) for Factory in self.PROCESSORS]
         self._processors = set()
@@ -75,7 +76,11 @@ class HandlerContext:
     # -> client.subscribe(
     #       (SubType.TICKER, 'BNBUSDT)
     # )
-    async def subscribe_params(self, subscribe, *args):
+    async def subscribe_params(
+        self,
+        subscribe: bool,
+        *args
+    ) -> Tuple[str]:
         # Subs is a Tuple[tuple]
         subs = args if type(args[0]) is tuple else (args,)
         tasks = []
@@ -118,7 +123,11 @@ class HandlerContext:
 
         return await asyncio.gather(*tasks)
 
-    async def _subscribe_param(self, subscribe, *args):
+    async def _subscribe_param(
+        self,
+        subscribe: bool,
+        *args
+    ) -> str:
         processor = self._get_processor(args[0])
         return await wrap_coroutine(
             processor.subscribe_param(subscribe, *args)
@@ -127,7 +136,7 @@ class HandlerContext:
     def _get_processor(
         self,
         subtype: SubType
-    ):
+    ) -> Processor:
         processor = self._processor_cache.get(subtype)
         if processor:
             return processor
@@ -139,14 +148,14 @@ class HandlerContext:
 
         raise UnsupportedSubTypeException(subtype)
 
-    async def _receive(self, msg):
+    async def _receive(self, msg) -> None:
         for processor in self._processors:
             is_payload, payload = processor.is_message_type(msg)
 
             if is_payload:
                 await processor.dispatch(payload)
 
-    async def receive(self, msg):
+    async def receive(self, msg) -> None:
         try:
             await self._receive(msg)
         except Exception as e:

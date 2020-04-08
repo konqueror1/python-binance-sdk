@@ -198,7 +198,7 @@ All arguments of the constructor Client are keyworded arguments and all optional
 - **api_key?** `str=None` binance api key
 - **api_secret?** `str=None` binance api secret
 - **request_params?** `dict=None` global request params for aiohttp
-- **stream_retry_policy?** `Callable[[int], (bool, int, bool)]` retry policy for websocket stream. For details, see [RetryPolicy](#retrypolicy)
+- **stream_retry_policy?** `Callable[[int], Tuple[bool, int, bool]]` retry policy for websocket stream. For details, see [RetryPolicy](#retrypolicy)
 - **stream_timeout?** `int=5` seconds util the stream reach an timeout error
 - **api_host?** `str='https://api.binance.com'` to specify another API host for rest API requests. 这个参数的存在意义，使用方法，不累述，你懂的。
 - **stream_host?** `str='wss://stream.binance.com'` to specify another stream host for websocket connections.

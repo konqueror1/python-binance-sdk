@@ -1,7 +1,11 @@
 import asyncio
 
 from binance.common.sequenced_list import SequencedList
-from binance.common.constants import DEFAULT_DEPTH_LIMIT, DEFAULT_RETRY_POLICY
+from binance.common.constants import (
+    DEFAULT_DEPTH_LIMIT,
+    DEFAULT_RETRY_POLICY
+)
+
 from binance.common.utils import normalize_symbol
 from binance.common.exceptions import OrderBookFetchAbandonedException
 
@@ -81,16 +85,16 @@ class OrderBook:
         if not self.ready:
             self._start_fetching()
 
-    def _emit_updated(self):
+    def _emit_updated(self) -> None:
         self._updated_future.set_result(None)
         self._updated_future = asyncio.Future()
 
-    def _emit_exception(self, exc):
+    def _emit_exception(self, exc: Exception) -> None:
         self._updated_future.set_exception(exc)
         self._updated_future = asyncio.Future()
 
     # Returns `bool` whether the depth is updated
-    async def _fetch_snapshot(self):
+    async def _fetch_snapshot(self) -> bool:
         snapshot = await self._client.get_orderbook(
             symbol=self._symbol,
             limit=self._limit
@@ -123,7 +127,7 @@ class OrderBook:
         self._unsolved_queue.clear()
         return True
 
-    async def _fetch(self, retries=0):
+    async def _fetch(self, retries: int = 0) -> None:
         updated = False
         exc = None
 
@@ -165,12 +169,12 @@ class OrderBook:
         # We re-fetch until succeeded
         await self._fetch(retries)
 
-    def _start_fetching(self):
+    def _start_fetching(self) -> None:
         if not self._fetching:
             self._fetching = True
             asyncio.create_task(self._fetch())
 
-    async def fetch(self):
+    async def fetch(self) -> None:
         """Manually fetches the new snapshot. Most usually, you should not call this method directly.
 
         However, this method is for testing purpose mainly.
@@ -179,12 +183,17 @@ class OrderBook:
             self._fetching = True
             await self._fetch()
 
-    def _merge(self, last_update_id, asks, bids):
+    def _merge(
+        self,
+        last_update_id,
+        asks,
+        bids
+    ) -> None:
         self._last_update_id = last_update_id
         self.asks.merge(asks)
         self.bids.merge(bids)
 
-    def update(self, payload):
+    def update(self, payload) -> bool:
         """Applies the `depthUpdate` message to the orderbook. Most usually, you should not call this method directly, unless you want to manage the orderbook manually yourself. This method is called by `OrderBookHandlerBase` internally if the orderbook is created by a instance of `OrderBookHandlerBase`.
 
         Args:
@@ -208,7 +217,7 @@ class OrderBook:
         return updated
 
     # Returns whether the payload is updated
-    def _update(self, payload):
+    def _update(self, payload) -> bool:
         first = payload[KEY_FIRST_UPDATE_ID]
         last = payload[KEY_LAST_UPDATE_ID]
         current_last = self._last_update_id

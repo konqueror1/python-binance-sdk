@@ -43,7 +43,7 @@ class Server:
         self.stop()
         await self._runner.cleanup()
 
-    async def _handle(self, ws):
+    async def _handle(self, ws) -> None:
         while True:
             if not self._started:
                 await ws.close()

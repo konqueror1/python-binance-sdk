@@ -1,9 +1,14 @@
 from binance.common.constants import (
-    STREAM_TYPE_MAP, DEFAULT_DEPTH_LIMIT, DEFAULT_RETRY_POLICY
+    STREAM_TYPE_MAP,
+    DEFAULT_DEPTH_LIMIT,
+    DEFAULT_RETRY_POLICY,
+    RetryPolicy
 )
+
 from binance.common.utils import normalize_symbol, wrap_coroutine
 
 from .base import Handler, pd
+
 from .orderbook import (
     OrderBook,
     KEY_FIRST_UPDATE_ID, KEY_LAST_UPDATE_ID, KEY_BIDS, KEY_ASKS
@@ -37,9 +42,9 @@ class OrderBookHandlerBase(Handler):
 
     def __init__(
         self,
-        limit=DEFAULT_DEPTH_LIMIT,
-        retry_policy=DEFAULT_RETRY_POLICY
-    ):
+        limit: int = DEFAULT_DEPTH_LIMIT,
+        retry_policy: RetryPolicy = DEFAULT_RETRY_POLICY
+    ) -> None:
         super().__init__()
 
         self._limit = limit
@@ -53,7 +58,10 @@ class OrderBookHandlerBase(Handler):
         #   the raw payload will not be dispatched to self.receive
         self._has_receive = hasattr(self.__class__, METHOD_NAME_RECEIVE)
 
-    def _receive(self, payload):
+    def _receive(
+        self,
+        payload
+    ):
         info = super()._receive(payload)
 
         bids = create_depth_df(payload[KEY_BIDS])
@@ -61,7 +69,10 @@ class OrderBookHandlerBase(Handler):
 
         return info, [bids, asks]
 
-    def orderbook(self, symbol):
+    def orderbook(
+        self,
+        symbol: str
+    ) -> OrderBook:
         """Gets the orderbook for a certain symbol. If you get a certain orderbook, don't forget to subscribe to the orderbook stream of `symbol`::
 
             await client.subscribe(SubType.ORDER_BOOK, 'BTCUSDT')
@@ -91,7 +102,10 @@ class OrderBookHandlerBase(Handler):
 
         return orderbook
 
-    def set_client(self, client):
+    def set_client(
+        self,
+        client
+    ) -> None:
         """Sets the client for the orderbook. Most usually, you should not call this method directly. This method is invoked by `OrderBookHandlerBase` internally.
 
         Args:
@@ -107,7 +121,7 @@ class OrderBookHandlerBase(Handler):
 
         self._uninit_orderbooks.clear()
 
-    async def receiveDispatch(self, payload):
+    async def receiveDispatch(self, payload) -> None:
         """Receives a `depthUpdate` stream message. Most usually, you should not call this method directly. This method is invoked by `OrderBookHandlerBase` internally.
 
         Args:

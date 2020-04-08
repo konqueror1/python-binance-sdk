@@ -177,10 +177,10 @@ async def run_orderbook_handler(client, init_orderbook_first):
         # should have no change
         assert asks == orderbook.asks
 
-    await orderbook.updated()
+    await orderbook.updated()  # type: ignore
 
-    assert len(orderbook.asks) != 0
-    assert len(orderbook.bids) != 0
+    assert len(orderbook.asks) != 0  # type: ignore
+    assert len(orderbook.bids) != 0  # type: ignore
 
     assert await client.list_subscriptions() == ['btcusdt@depth']
 

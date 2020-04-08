@@ -1,10 +1,15 @@
 import asyncio
+from typing import (
+    Optional
+)
 
 from binance.common.constants import (
     SubType,
     KEY_PAYLOAD,
     KEY_PAYLOAD_TYPE
 )
+
+from binance.common.exceptions import UserStreamNotSubscribedException
 
 from binance.handlers.user_handlers import (
     AccountInfoHandlerBase,
@@ -20,6 +25,8 @@ from .base import Processor
 
 
 class UserProcessor(Processor):
+    _listen_key: Optional[str]
+
     SUB_TYPE = SubType.USER
 
     KEEP_ALIVE_INTERVAL = 60 * 30
@@ -40,7 +47,7 @@ class UserProcessor(Processor):
         OrderListStatusHandlerBase
     )
 
-    def __init__(self, *args):
+    def __init__(self, *args) -> None:
         super().__init__(*args)
 
         self._listen_key = None
@@ -48,9 +55,17 @@ class UserProcessor(Processor):
 
         self._handlers = {}
 
-    async def subscribe_param(self, subscribe, t):
+    async def subscribe_param(
+        self,
+        subscribe: bool,
+        t: SubType
+    ) -> str:
         if not subscribe:
             key = self._listen_key
+
+            if key is None:
+                raise UserStreamNotSubscribedException()
+
             await self._close_stream()
             self._listen_key = None
 
@@ -63,23 +78,23 @@ class UserProcessor(Processor):
 
         return key
 
-    async def _keep_alive(self):
+    async def _keep_alive(self) -> None:
         # Send a keepalive requests every 30 minutes
         while True:
             await asyncio.sleep(self.KEEP_ALIVE_INTERVAL)
-            if self._listen_key:
+            if self._listen_key is not None:
                 await self._client.keepalive_listen_key(self._listen_key)
 
-    def _start_keep_alive(self):
+    def _start_keep_alive(self) -> None:
         self._stop_keep_alive()
         self._keep_alive_task = asyncio.create_task(self._keep_alive())
 
-    def _stop_keep_alive(self):
+    def _stop_keep_alive(self) -> None:
         if self._keep_alive_task:
             self._keep_alive_task.cancel()
             self._keep_alive_task = None
 
-    async def _close_stream(self):
+    async def _close_stream(self) -> None:
         self._stop_keep_alive()
         await self._client.close_listen_key(self._listen_key)
 
@@ -113,7 +128,7 @@ class UserProcessor(Processor):
         self,
         payload_type,
         handler
-    ):
+    ) -> None:
         handlers = self._handlers.get(payload_type)
 
         if handlers is None:

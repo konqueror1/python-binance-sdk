@@ -1,3 +1,4 @@
+from typing import Awaitable
 from binance.common.constants import (
     REST_API_VERSION,
     SecurityType,
@@ -115,8 +116,8 @@ def define_getter(
     version=REST_API_VERSION,
     method=RequestMethod.GET,
     security_type=SecurityType.USER_DATA
-):
-    def getter(self, **kwargs):
+) -> None:
+    def getter(self, **kwargs) -> Awaitable:
         uri = self._wapi_uri(path, version, prefix)
         ka = kwargs if params else {}
 
@@ -138,10 +139,12 @@ def define_getter(
 
 
 class WapiAPIGetters:
-    def _wapi_uri(self, path, version, prefix=PREFIX_WAPI):
+    _api_host: str
+
+    def _wapi_uri(self, path, version, prefix=PREFIX_WAPI) -> str:
         return self._api_host + prefix + version + '/' + path + '.html'
 
-    def withdraw(self, **kwargs):
+    def withdraw(self, **kwargs) -> Awaitable:
         """Submits a withdraw request.
 
         Weight: 1
@@ -166,9 +169,9 @@ class WapiAPIGetters:
                 }
 
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_deposit_history(self, **kwargs):
+    def get_deposit_history(self, **kwargs) -> Awaitable:
         """Fetches deposit history.
 
         Weight: 1
@@ -211,9 +214,9 @@ class WapiAPIGetters:
                     'success': True
                 }
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_withdraw_history(self, **kwargs):
+    def get_withdraw_history(self, **kwargs) -> Awaitable:
         """Fetches withdraw history.
 
         Args:
@@ -254,9 +257,9 @@ class WapiAPIGetters:
                     'success': True
                 }
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_deposit_address(self, **kwargs):
+    def get_deposit_address(self, **kwargs) -> Awaitable:
         """Fetches deposit address.
 
         Weight: 1
@@ -277,9 +280,9 @@ class WapiAPIGetters:
                     'asset': 'BNB'
                 }
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_account_status(self, **kwargs):
+    def get_account_status(self, **kwargs) -> Awaitable:
         """Fetches account status detail.
 
         Args:
@@ -297,9 +300,9 @@ class WapiAPIGetters:
                     ]
                 }
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_system_status(self):
+    def get_system_status(self) -> Awaitable:
         """Fetches system status.
 
         Returns:
@@ -310,9 +313,9 @@ class WapiAPIGetters:
                     'msg': 'normal' # normal or system maintenance
                 }
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_account_api_trading_status(self, **kwargs):
+    def get_account_api_trading_status(self, **kwargs) -> Awaitable:
         """Fetches account api trading status detail.
 
         Args:
@@ -361,9 +364,9 @@ class WapiAPIGetters:
                     }
                 }
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_dust_log(self, **kwargs):
+    def get_dust_log(self, **kwargs) -> Awaitable:
         """Fetches small amounts of assets exchanged BNB records.
 
         Args:
@@ -434,9 +437,9 @@ class WapiAPIGetters:
                     }
                 }
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_trade_fee(self, **kwargs):
+    def get_trade_fee(self, **kwargs) -> Awaitable:
         """Fetches trade fee.
 
         Args:
@@ -460,9 +463,9 @@ class WapiAPIGetters:
                     'success': True
                 }
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_asset_detail(self, **kwargs):
+    def get_asset_detail(self, **kwargs) -> Awaitable:
         """Fetches asset detail.
 
         Args:
@@ -491,9 +494,9 @@ class WapiAPIGetters:
                     }
                 }
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_sub_accounts(self, **kwargs):
+    def get_sub_accounts(self, **kwargs) -> Awaitable:
         """Fetches sub account list.
 
         Args:
@@ -529,9 +532,9 @@ class WapiAPIGetters:
                     ]
                 }
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_sub_account_transfer_history(self, **kwargs):
+    def get_sub_account_transfer_history(self, **kwargs) -> Awaitable:
         """Fetches transfer history list
 
         Args:
@@ -566,9 +569,9 @@ class WapiAPIGetters:
                     ]
                 }
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def sub_account_transfer(self, **kwargs):
+    def sub_account_transfer(self, **kwargs) -> Awaitable:
         """Executes sub-account transfer
 
         Args:
@@ -587,9 +590,9 @@ class WapiAPIGetters:
                     'txnId': '2966662589'
                 }
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_sub_account_assets(self, **kwargs):
+    def get_sub_account_assets(self, **kwargs) -> Awaitable:
         """Fetches sub-account assets
 
         Args:
@@ -617,9 +620,9 @@ class WapiAPIGetters:
                     ]
                 }
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def dust_transfer(self, **kwargs):
+    def dust_transfer(self, **kwargs) -> Awaitable:
         """Converts dust assets to BNB.
 
         Args:
@@ -653,9 +656,9 @@ class WapiAPIGetters:
                     ]
                 }
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
-    def get_assert_dividend_record(self, **kwargs):
+    def get_assert_dividend_record(self, **kwargs) -> Awaitable:
         """Gets asset dividend record.
 
         Args:
@@ -688,7 +691,7 @@ class WapiAPIGetters:
                     'total': 2
                 }
         """
-        pass  # pragma: no cover
+        ...  # pragma: no cover
 
 
 for getter_setting in APIS:
