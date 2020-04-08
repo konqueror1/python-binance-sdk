@@ -13,6 +13,7 @@
 - Has an optional `pandas.DataFrame` support. If `pandas` is installed, columns of all stream data frames are renamed for readability.
 - Based on python `async`/`await`
 - Manages the order book for you (handled by `OrderBookHandlerBase`), so that you need not to worry about websocket reconnection and message losses. For details, see the section [`OrderBookHandlerBase`](#orderbookhandlerbasekwargs)
+- Supports to change API endpoints, so that we could use faster API hosts.
 
 ## Install
 
@@ -194,17 +195,54 @@ client.handler(HandlerExceptionHandlerBase())
 
 All arguments of the constructor Client are keyworded arguments and all optional.
 
-- **api_key** `str=None` binance api key
-- **api_secret** `str=None` binance api secret
-- **request_params** `dict=None` global request params for aiohttp
-- **stream_retry_policy** `Callable[[int], (bool, int, bool)]` retry policy for websocket stream. For details, see [RetryPolicy](#retrypolicy)
-- **stream_timeout** `int=5` seconds util the stream reach an timeout error
+- **api_key?** `str=None` binance api key
+- **api_secret?** `str=None` binance api secret
+- **request_params?** `dict=None` global request params for aiohttp
+- **stream_retry_policy?** `Callable[[int], (bool, int, bool)]` retry policy for websocket stream. For details, see [RetryPolicy](#retrypolicy)
+- **stream_timeout?** `int=5` seconds util the stream reach an timeout error
+- **api_host?** `str='https://api.binance.com'` to specify another API host for rest API requests. 这个参数的存在意义，使用方法，不累述，你懂的。
+- **stream_host?** `str='wss://stream.binance.com'` to specify another stream host for websocket connections.
 
 Create a binance client.
 
 Then with `client`, you could call
 - [Rest APIs](https://github.com/kaelzhang/python-binance-sdk/blob/master/binance/apis/rest.py#L225)
 - [Withdraw APIs](https://github.com/kaelzhang/python-binance-sdk/blob/master/binance/apis/wapi.py#L144).
+
+Each API method accepts only keyworded arguments (kwargs) and has verbosed Python doc strings which you could check out when you are coding.
+
+The following example shows how to create a new order.
+
+```py
+from binance import (
+    OrderSide,
+    OrderType,
+    TimeInForce
+)
+
+# All arguments are keyworded arguments.
+await client.create_order(
+    symbol='BTCUSDT',
+
+    # You could use string `BUY` (NOT recommended) instead of
+    # the built-in enum types of Binance-sdk.
+
+    # But it is a good practise to use enums which could help
+    # us to avoid spelling mistakes, and save your money.
+    side=OrderSide.BUY,
+    type=OrderType.LIMIT,
+    timeInForce=TimeInForce.GTC,
+
+    # Binance-sdk will not handle Decimals for you,
+    # so you'd better to know how to deal with python float precisions.
+    # Or you could use string-type quantity.
+    quantity=10.,
+
+    # It is better to use string type instead of float.
+    # The same as `quantity`
+    price='7000.1'
+)
+```
 
 ### client.key(api_key) -> self
 
