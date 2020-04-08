@@ -209,7 +209,7 @@ Then with `client`, you could call
 - [Rest APIs](https://github.com/kaelzhang/python-binance-sdk/blob/master/binance/apis/rest.py#L225)
 - [Withdraw APIs](https://github.com/kaelzhang/python-binance-sdk/blob/master/binance/apis/wapi.py#L144).
 
-Each API method accepts only keyworded arguments (kwargs) and has verbosed Python doc strings which you could check out when you are coding.
+Each API method accepts only keyworded arguments (kwargs) and has verbosed Python doc strings (Google style) which you could check out when you are coding.
 
 The following example shows how to create a new order.
 
@@ -228,7 +228,7 @@ await client.create_order(
     # the built-in enum types of Binance-sdk.
 
     # But it is a good practise to use enums which could help
-    # us to avoid spelling mistakes, and save your money.
+    # us to avoid spelling mistakes, and save our money.
     side=OrderSide.BUY,
     type=OrderType.LIMIT,
     timeInForce=TimeInForce.GTC,
