@@ -1,9 +1,16 @@
 import asyncio
+from typing import (
+    Iterable
+)
 
-from binance.common.sequenced_list import SequencedList
+from binance.common.sequenced_list import (
+    SequencedList,
+    Pair
+)
 from binance.common.constants import (
     DEFAULT_DEPTH_LIMIT,
-    DEFAULT_RETRY_POLICY
+    DEFAULT_RETRY_POLICY,
+    RetryPolicy
 )
 
 from binance.common.utils import normalize_symbol
@@ -21,14 +28,21 @@ KEY_ASKS = 'a'
 
 
 class OrderBook:
+    asks: SequencedList
+    bids: SequencedList
+    _retry_policy: RetryPolicy
+    _limit: int
+    _last_update_id: int
+
     # We redundant define the default value of limit,
     #   because OrderBook is also a public class
     def __init__(
-        self, symbol,
+        self,
+        symbol: str,
         client=None,
-        limit=DEFAULT_DEPTH_LIMIT,
-        retry_policy=DEFAULT_RETRY_POLICY
-    ):
+        limit: int = DEFAULT_DEPTH_LIMIT,
+        retry_policy: RetryPolicy = DEFAULT_RETRY_POLICY
+    ) -> None:
         self.asks = SequencedList()
         self.bids = SequencedList()
 
@@ -49,14 +63,14 @@ class OrderBook:
         self.set_client(client)
 
     @property
-    def ready(self):
+    def ready(self) -> bool:
         """bool: Whether the orderbook is updated. `False` indicates that the orderbook has not been initialized yet or is still fetching new snapshot.
 
         Most usually, you should not rely on this property or polling the value of this property. `await orderbook.updated()` is recommended for this scenario.
         """
         return not self._fetching and self._last_update_id != 0
 
-    async def updated(self):
+    async def updated(self) -> None:
         """Await for the next time when the orderbook is updated. Awaiting for this method is the recommended way to notify your program to do something when the orderbook changes::
 
             while True:
@@ -65,7 +79,10 @@ class OrderBook:
         """
         await self._updated_future
 
-    def set_retry_policy(self, retry_policy):
+    def set_retry_policy(
+        self,
+        retry_policy: RetryPolicy
+    ) -> None:
         """Sets the retry policy for the orderbook.
 
         Args:
@@ -73,10 +90,13 @@ class OrderBook:
         """
         self._retry_policy = retry_policy
 
-    def set_limit(self, limit):
+    def set_limit(
+        self,
+        limit: int
+    ) -> None:
         self._limit = limit
 
-    def set_client(self, client):
+    def set_client(self, client) -> None:
         if not client:
             return
 
@@ -185,9 +205,9 @@ class OrderBook:
 
     def _merge(
         self,
-        last_update_id,
-        asks,
-        bids
+        last_update_id: int,
+        asks: Iterable[Pair],
+        bids: Iterable[Pair]
     ) -> None:
         self._last_update_id = last_update_id
         self.asks.merge(asks)
