@@ -1,9 +1,10 @@
 from enum import Enum as _Enum
 from typing import (
-    Union,
-    Tuple,
-    Callable
+    Union
 )
+
+from aioretry import RetryPolicyStrategy
+
 
 KLINE_TYPE_PREFIX = 'kline_'
 
@@ -62,16 +63,9 @@ MAX_RETRIES_BEFORE_RESET = 10
 #   and reset the retry counter after 10 failures
 
 
-RetryPolicyStrategy = Tuple[bool, Union[int, float], bool]
-RetryPolicy = Callable[[int], RetryPolicyStrategy]
+def DEFAULT_RETRY_POLICY(fails: int) -> RetryPolicyStrategy:
+    return False, (fails - 1) % MAX_RETRIES_BEFORE_RESET * ATOM_RETRY_DELAY
 
-
-def DEFAULT_RETRY_POLICY(
-    retries: int
-) -> RetryPolicyStrategy:
-    delay = retries * ATOM_RETRY_DELAY
-    reset = retries >= MAX_RETRIES_BEFORE_RESET
-    return False, delay, reset
 
 # Streams
 # ==================================================

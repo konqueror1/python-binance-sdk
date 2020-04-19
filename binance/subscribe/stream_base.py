@@ -9,6 +9,7 @@ from typing import (
 
 import asyncio
 import websockets as ws
+from aioretry import RetryPolicy
 
 from binance.common.utils import json_stringify
 from binance.common.exceptions import StreamDisconnectedException
@@ -16,8 +17,7 @@ from binance.common.constants import (
     DEFAULT_RETRY_POLICY,
     DEFAULT_STREAM_TIMEOUT,
     DEFAULT_STREAM_CLOSE_CODE,
-    ERROR_PREFIX,
-    RetryPolicy
+    ERROR_PREFIX
 )
 
 

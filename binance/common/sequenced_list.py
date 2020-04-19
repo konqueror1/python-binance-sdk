@@ -20,6 +20,9 @@ class SequencedList(List[Pair]):
         # For performance, just hardcode the logic to get the key
         self._key_list = [x[0] for x in self]
 
+    # -------------------------------------------------
+    # Override list methods
+
     def append(
         self,
         subject: Pair
@@ -45,6 +48,9 @@ class SequencedList(List[Pair]):
     def clear(self) -> None:
         self._key_list.clear()
         return super().clear()
+
+    # ----------------------------------------------------
+    # SequencedList specific methods
 
     # Add a new item into the list and maintain order
     def add(
