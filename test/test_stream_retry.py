@@ -70,8 +70,8 @@ async def test_stream_timeout_disconnect_reconnect():
         if not f.done():
             f.set_result(msg)
 
-    def retry_policy(retries):
-        return False, 0.05, False
+    def retry_policy(fails):
+        return False, 0.05
 
     server = Server()
 
@@ -89,7 +89,7 @@ async def test_stream_timeout_disconnect_reconnect():
     ).connect()
 
     # During the 500ms, there might be a lot of disconnection
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(10)
     server.start()
 
     await asyncio.sleep(0.5)

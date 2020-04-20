@@ -4,15 +4,15 @@ from typing import (
     Any
 )
 
-from .constants import ERROR_PREFIX
+from .constants import MSG_PREFIX
 
 
 def make_list(subject: Any) -> list:
     return subject if isinstance(subject, list) else [subject]
 
 
-def err_msg(string, *args) -> str:
-    return ERROR_PREFIX + string % args
+def format_msg(string, *args) -> str:
+    return MSG_PREFIX + string % args
 
 
 def json_stringify(obj) -> str:

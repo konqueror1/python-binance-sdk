@@ -8,13 +8,13 @@ from typing import (
 
 from aiohttp import ClientResponse
 
-from .utils import err_msg
+from .utils import format_msg
 from .constants import SubType
 
 
 class UserStreamNotSubscribedException(Exception):
     def __str__(self) -> str:
-        return err_msg('user stream is not subscribed')
+        return format_msg('user stream is not subscribed')
 
 
 class StreamDisconnectedException(Exception):
@@ -25,7 +25,7 @@ class StreamDisconnectedException(Exception):
         self.uri = uri
 
     def __str__(self) -> str:
-        return err_msg(
+        return format_msg(
             'stream "%s" is never connected or is abandoned after too many retries according to the `retry_policy`, run `stream.connect()`', self.uri)  # noqa:E501
 
 
@@ -37,7 +37,7 @@ class APIKeyNotDefinedException(Exception):
         self.url = url
 
     def __str__(self) -> str:
-        return err_msg(
+        return format_msg(
             'api_key is required for requesting "%s"', self.url)
 
 
@@ -49,7 +49,7 @@ class APISecretNotDefinedException(Exception):
         self.url = url
 
     def __str__(self) -> str:
-        return err_msg(
+        return format_msg(
             'api_secret is required for requesting "%s"', self.url)
 
 
@@ -76,8 +76,13 @@ class StatusException(Exception):
         self.request = getattr(response, 'request', None)
 
     def __str__(self) -> str:  # pragma: no cover
-        return err_msg('response error for "%s", status %s, code %s: %s',
-                       self.response.url, self.status, self.code, self.message)
+        return format_msg(
+            'response error for "%s", status %s, code %s: %s',
+            self.response.url,
+            self.status,
+            self.code,
+            self.message
+        )
 
 
 class InvalidResponseException(Exception):
@@ -90,8 +95,11 @@ class InvalidResponseException(Exception):
         self.response_text = text
 
     def __str__(self) -> str:
-        return err_msg('invalid response for "%s": %s',
-                       self.response.url, self.response_text)
+        return format_msg(
+            'invalid response for "%s": %s',
+            self.response.url,
+            self.response_text
+        )
 
 
 class InvalidSubParamsException(Exception):
@@ -102,7 +110,7 @@ class InvalidSubParamsException(Exception):
         self.message = message
 
     def __str__(self) -> str:
-        return err_msg('invalid subscribe params: %s', self.message)
+        return format_msg('invalid subscribe params: %s', self.message)
 
 
 class UnsupportedSubTypeException(Exception):
@@ -113,7 +121,7 @@ class UnsupportedSubTypeException(Exception):
         self.subtype = subtype
 
     def __str__(self) -> str:
-        return err_msg('subtype "%s" is not supported', self.subtype)
+        return format_msg('subtype "%s" is not supported', self.subtype)
 
 
 class InvalidSubTypeParamException(Exception):
@@ -128,8 +136,12 @@ class InvalidSubTypeParamException(Exception):
         self.reason = reason
 
     def __str__(self) -> str:
-        return err_msg('invalid param `%s` for subtype "%s", %s',
-                       self.param_name, self.subtype, self.reason)
+        return format_msg(
+            'invalid param `%s` for subtype "%s", %s',
+            self.param_name,
+            self.subtype,
+            self.reason
+        )
 
 
 class InvalidHandlerException(Exception):
@@ -140,7 +152,7 @@ class InvalidHandlerException(Exception):
         self.handler = handler
 
     def __str__(self) -> str:
-        return err_msg('invalid handler `%s`', self.handler)
+        return format_msg('invalid handler `%s`', self.handler)
 
 
 class ReuseHandlerException(Exception):
@@ -151,7 +163,7 @@ class ReuseHandlerException(Exception):
         self.handler = handler
 
     def __str__(self) -> str:
-        return err_msg(
+        return format_msg(
             'handler `%s` should not be used in more than one clients',
             self.handler
         )
@@ -169,7 +181,7 @@ class OrderBookFetchAbandonedException(Exception):
         self.exception = exception
 
     def __str__(self) -> str:
-        return err_msg(
+        return format_msg(
             'orderbook for `%s` failed to fetch snapshot and fetching is abandoned by retry policy, reason: %s',
             self.symbol,
             self.reason

@@ -1,8 +1,9 @@
+from aioretry import RetryPolicy
+
 from binance.common.constants import (
     STREAM_TYPE_MAP,
     DEFAULT_DEPTH_LIMIT,
-    DEFAULT_RETRY_POLICY,
-    RetryPolicy
+    DEFAULT_RETRY_POLICY
 )
 
 from binance.common.utils import normalize_symbol, wrap_coroutine

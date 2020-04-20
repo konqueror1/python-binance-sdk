@@ -50,7 +50,7 @@ class KlineInterval(Enum):
     MONTH = '1M'
 
 
-ERROR_PREFIX = '[BinanceSDK] '
+MSG_PREFIX = '[BinanceSDK] '
 
 # RetryPolicy
 # ==================================================
@@ -152,3 +152,7 @@ REST_API_HOST = 'https://api.binance.com'
 
 
 APIResponse = Union[dict, list]
+
+
+STREAM_KEY_ID = 'id'
+STREAM_KEY_RESULT = 'result'
