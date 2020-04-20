@@ -40,7 +40,7 @@ class Stream(StreamBase):
 
         return ret
 
-    async def _before_reconnect(self) -> None:
+    async def _connected(self) -> None:
         if len(self._subscribed) > 0:
             await self.subscribe(list(self._subscribed))
 
