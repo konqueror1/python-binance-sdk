@@ -13,6 +13,11 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 
+def read_requirements(filename):
+    with open(filename) as f:
+        return f.read().splitlines()
+
+
 settings = dict(
     name='binance-sdk',
     packages=[
@@ -28,10 +33,8 @@ settings = dict(
     author='Kael Zhang',
     author_email='i+pypi@kael.me',
     description='Binance Python SDK',
-    install_requires=[
-        'aiohttp',
-        'websockets'
-    ],
+    install_requires=read_requirements('requirements.txt'),
+    tests_require=read_requirements('test-requirements.txt'),
     extras_require={
         'pandas': ['pandas']
     },
@@ -50,5 +53,7 @@ settings = dict(
         'License :: OSI Approved :: MIT License',
     ]
 )
+
+print(settings)
 
 setup(**settings)
