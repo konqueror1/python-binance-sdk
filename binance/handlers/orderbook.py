@@ -3,7 +3,10 @@ from typing import (
     Iterable
 )
 
-from aioretry import RetryPolicy
+from aioretry import (
+    retry,
+    RetryPolicy
+)
 
 from binance.common.sequenced_list import (
     SequencedList,

@@ -15,7 +15,7 @@ class Stream(StreamBase):
     async def subscribe(
         self,
         params: Iterable[str]
-    ):
+    ) -> None:
         ret = await self.send({
             'method': 'SUBSCRIBE',
             'params': params
@@ -29,7 +29,7 @@ class Stream(StreamBase):
     async def unsubscribe(
         self,
         params: Iterable[str]
-    ):
+    ) -> None:
         ret = await self.send({
             'method': 'UNSUBSCRIBE',
             'params': params

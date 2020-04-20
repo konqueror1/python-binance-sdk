@@ -101,7 +101,9 @@ class StreamBase(ABC):
             await self._on_message(msg)
         except Exception as e:
             warnings.warn(
-                format_msg('on_message raises %s', e),
+                format_msg("""`on_message` raises:
+%s
+And you should fix this""", e),
                 RuntimeWarning
             )
 
@@ -151,7 +153,7 @@ class StreamBase(ABC):
             try:
                 await self._connected()
             except Exception as e:
-                logger.info(
+                logger.error(
                     format_msg(
                         'fails to invoke connected handler: %s',
                         e
@@ -193,19 +195,25 @@ class StreamBase(ABC):
         self._before_connect()
 
     @abstractmethod
-    async def _connected(self):
+    async def _connected(self) -> None:
         """Event hanndler which is invoked whenever the socket is connected
         """
         ...  # pragma: no-cover
 
     @abstractmethod
-    def _after_close(self):
+    def _after_close(self) -> None:
         ...  # pragma: no-cover
 
     async def close(
         self,
         code: int = DEFAULT_STREAM_CLOSE_CODE
     ) -> None:
+        """Close the current socket connection
+
+        Args:
+            code (:obj:`int`, optional): socket close code, defaults to 4999
+        """
+
         if not self._conn_task:
             raise StreamDisconnectedException(self._uri)
 
@@ -243,7 +251,10 @@ class StreamBase(ABC):
 
         self._after_close()
 
-    async def send(self, msg) -> Any:
+    async def send(
+        self,
+        msg: dict
+    ) -> Any:
         """Send a request to Binance stream
         and handle the asynchronous socket response
 
