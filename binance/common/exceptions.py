@@ -173,16 +173,14 @@ class OrderBookFetchAbandonedException(Exception):
     def __init__(
         self,
         symbol: str,
-        reason: str,
         exception: Optional[Exception] = None
     ) -> None:
         self.symbol = symbol
-        self.reason = reason
         self.exception = exception
 
     def __str__(self) -> str:
         return format_msg(
             'orderbook for `%s` failed to fetch snapshot and fetching is abandoned by retry policy, reason: %s',
             self.symbol,
-            self.reason
+            self.exception
         )

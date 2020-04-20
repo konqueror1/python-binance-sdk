@@ -1,6 +1,7 @@
 import asyncio
 from typing import (
-    Iterable
+    Iterable,
+    Optional
 )
 
 from aioretry import (
@@ -14,7 +15,8 @@ from binance.common.sequenced_list import (
 )
 from binance.common.constants import (
     DEFAULT_DEPTH_LIMIT,
-    DEFAULT_RETRY_POLICY
+    DEFAULT_RETRY_POLICY,
+    NO_RETRY_POLICY
 )
 
 from binance.common.utils import normalize_symbol
@@ -45,7 +47,7 @@ class OrderBook:
         symbol: str,
         client=None,
         limit: int = DEFAULT_DEPTH_LIMIT,
-        retry_policy: RetryPolicy = DEFAULT_RETRY_POLICY
+        retry_policy: Optional[RetryPolicy] = DEFAULT_RETRY_POLICY
     ) -> None:
         self.asks = SequencedList()
         self.bids = SequencedList()
@@ -85,13 +87,17 @@ class OrderBook:
 
     def set_retry_policy(
         self,
-        retry_policy: RetryPolicy
+        retry_policy: Optional[RetryPolicy]
     ) -> None:
         """Sets the retry policy for the orderbook.
 
         Args:
             retry_policy (Callable): the function retry policy
         """
+
+        if retry_policy is None:
+            retry_policy = NO_RETRY_POLICY
+
         self._retry_policy = retry_policy
 
     def set_limit(
@@ -117,8 +123,8 @@ class OrderBook:
         self._updated_future.set_exception(exc)
         self._updated_future = asyncio.Future()
 
-    # Returns `bool` whether the depth is updated
-    async def _fetch_snapshot(self) -> bool:
+    @retry('_retry_policy')
+    async def _fetch_snapshot(self):
         snapshot = await self._client.get_orderbook(
             symbol=self._symbol,
             limit=self._limit
@@ -146,52 +152,24 @@ class OrderBook:
                 # If the current item is invalid,
                 #   then remove the current item and all previous items
                 del self._unsolved_queue[:counter]
-                return False
+                raise RuntimeError('fails to merge')
 
         self._unsolved_queue.clear()
-        return True
 
-    async def _fetch(self, retries: int = 0) -> None:
-        updated = False
-        exc = None
-
+    async def _fetch(self) -> None:
         try:
-            updated = await self._fetch_snapshot()
+            await self._fetch_snapshot()
         except Exception as e:
-            exc = e
-
-        if updated:
-            # success
-            self._fetching = False
-            self._emit_updated()
-            return
-        # else: fails to update
-
-        abandon, delay, reset = self._retry_policy(retries) \
-            if callable(self._retry_policy) else (True, 0, True)
-
-        if abandon:
-            self._fetching = False
-
             exception = OrderBookFetchAbandonedException(
                 self._symbol,
-                'encountered an exceptionn',
-                exc
-            ) if exc else OrderBookFetchAbandonedException(
-                self._symbol,
-                'fails to merge'
+                e
             )
 
             self._emit_exception(exception)
-            return
-
-        retries = 0 if reset else retries + 1
-
-        if delay:
-            await asyncio.sleep(delay)
-
-        # We re-fetch until succeeded
-        await self._fetch(retries)
+        else:
+            self._emit_updated()
+        finally:
+            self._fetching = False
 
     def _start_fetching(self) -> None:
         if not self._fetching:

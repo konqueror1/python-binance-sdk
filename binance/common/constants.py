@@ -67,6 +67,10 @@ def DEFAULT_RETRY_POLICY(fails: int) -> RetryPolicyStrategy:
     return False, (fails - 1) % MAX_RETRIES_BEFORE_RESET * ATOM_RETRY_DELAY
 
 
+def NO_RETRY_POLICY(fails: int):
+    return True, 0
+
+
 # Streams
 # ==================================================
 
