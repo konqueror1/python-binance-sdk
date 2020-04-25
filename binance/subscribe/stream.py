@@ -36,7 +36,10 @@ from binance.common.constants import (
     STREAM_KEY_RESULT
 )
 
-from binance.common.types import EventCallback
+from binance.common.types import (
+    EventCallback,
+    Timeout
+)
 
 
 logger = logging.getLogger(__name__)
@@ -47,21 +50,29 @@ ON_CONNECTED = 'on_closed'
 
 
 class Stream:
+    """Class to handle Binance streams
+
+    Args:
+        uri (str): stream uri
+        on_message (Callback): either sync or async callable to receive stream message
+        on_connected (:obj:`Callable`, optional): invoked when the socket is connected
+        retry_policy (RetryPolicy): see document
+        timeout (float): timeout in seconds to receive the next websocket message
+    """
+
     _socket: Optional[WebSocketClientProtocol]
 
     def __init__(
         self,
         uri: str,
         on_message: EventCallback,
-        on_closed: Optional[EventCallback],
         on_connected: Optional[EventCallback],
         # We redundant the default value here,
         #   because `binance.Stream` is also a public class
         retry_policy: RetryPolicy = DEFAULT_RETRY_POLICY,
-        timeout: Optional[float] = DEFAULT_STREAM_TIMEOUT,
+        timeout: Timeout = DEFAULT_STREAM_TIMEOUT,
     ) -> None:
         self._on_message = wrap_event_callback(on_message, ON_MESSAGE, True)
-        self._on_closed = wrap_event_callback(on_closed, ON_CLOSED, False)
         self._on_connected = wrap_event_callback(
             on_connected,
             ON_CONNECTED,
@@ -252,8 +263,6 @@ class Stream:
 
         self._socket = None
         self._closing = False
-
-        await self._emit(ON_CLOSED)
 
     async def send(
         self,
