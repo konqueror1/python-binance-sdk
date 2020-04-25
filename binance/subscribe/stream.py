@@ -66,7 +66,7 @@ class Stream:
         self,
         uri: str,
         on_message: EventCallback,
-        on_connected: Optional[EventCallback],
+        on_connected: Optional[EventCallback] = None,
         # We redundant the default value here,
         #   because `binance.Stream` is also a public class
         retry_policy: RetryPolicy = DEFAULT_RETRY_POLICY,
@@ -188,7 +188,9 @@ class Stream:
                 ConnectionClosed,
                 # Binance stream never close unless errored
                 ConnectionClosedOK,
-                ConnectionClosedError
+                ConnectionClosedError,
+                # task cancel
+                asyncio.CancelledError
             ) as e:
                 if self._closing:
                     # The socket is closed by `await self.close()`
