@@ -240,6 +240,8 @@ class Stream:
             except Exception:
                 pass
 
+            self._connected_task = None
+
         self._before_connect()
 
     async def close(
@@ -279,9 +281,6 @@ class Stream:
             # - conn_task is cancelled
             # - socket is closed
             await asyncio.wait(tasks)
-        # except asyncio.CancelledError:
-        #     # It is ok for it is us that cancel the task
-        #     pass
         except Exception as e:
             logger.error(
                 format_msg('close tasks error: %s', e)
