@@ -37,6 +37,16 @@ async def wrap_coroutine(ret):
         return ret
 
 
+def repr_exception(e: Exception) -> str:
+    """Better stringify an exception
+    """
+
+    s = str(e)
+    class_name = type(e).__name__
+
+    return class_name if not s else f'{class_name}: {s}'
+
+
 def wrap_event_callback(
     fn: Optional[EventCallback],
     event_name: str,
@@ -59,8 +69,8 @@ def wrap_event_callback(
             # So use warnings.
             warnings.warn(
                 format_msg("""`%s` raises:
-%s
-And you should fix this""", event_name, e),
+    %s
+And you should fix this""", event_name, repr_exception(e)),
                 RuntimeWarning
             )
 

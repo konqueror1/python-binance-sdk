@@ -8,6 +8,11 @@ from binance import (
 
 from binance.common.constants import STREAM_HOST
 
+from .common import (
+    PORT,
+    SocketServer
+)
+
 
 async def run_stream():
     f = asyncio.Future()
@@ -66,3 +71,30 @@ async def test_stream_close_before_connect():
             STREAM_HOST + '/stream',
             on_message
         ).close()
+
+
+def test_stream_invalid_on_message():
+    with pytest.raises(
+        ValueError,
+        match='event callback `on_message` is required'
+    ):
+        Stream('fake url', None)  # type: ignore
+
+
+@pytest.mark.asyncio
+async def test_json_error():
+    server = SocketServer()
+    await server.invalid_json().start().run()
+
+    uri = 'ws://localhost:%s/stream' % PORT
+
+    print('connecting', uri)
+    stream = Stream(
+        uri,
+        on_message
+    ).connect()
+
+    await asyncio.sleep(1)
+
+    await stream.close()
+    await server.shutdown()

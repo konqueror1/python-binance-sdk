@@ -24,6 +24,7 @@ from aioretry import (
 from binance.common.utils import (
     json_stringify,
     format_msg,
+    repr_exception,
     wrap_event_callback
 )
 
@@ -45,8 +46,7 @@ from binance.common.types import (
 logger = logging.getLogger(__name__)
 
 ON_MESSAGE = 'on_message'
-ON_CLOSED = 'on_closed'
-ON_CONNECTED = 'on_closed'
+ON_CONNECTED = 'on_connected'
 
 
 class Stream:
@@ -202,8 +202,8 @@ class Stream:
     async def _reconnect(self, exception: Exception, fails: int) -> None:
         logger.error(
             format_msg(
-                'socket error %s: %s, reconnecting...',
-                exception,
+                'socket error %s, reconnecting %s...',
+                repr_exception(exception),
                 fails
             )
         )
@@ -255,9 +255,9 @@ class Stream:
             # - conn_task is cancelled
             # - socket is closed
             await asyncio.wait(tasks)
-        except asyncio.CancelledError:
-            # It is ok for it is us that cancel the task
-            pass
+        # except asyncio.CancelledError:
+        #     # It is ok for it is us that cancel the task
+        #     pass
         except Exception as e:
             logger.error(
                 format_msg('close tasks error: %s', e)
@@ -291,7 +291,7 @@ class Stream:
                 "id": 1
             }
 
-        Then the result of `self.sennd()` is `None` (null)
+        Then the result of `self.send()` is `None` (null)
         """
 
         socket = self._socket

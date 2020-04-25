@@ -1,66 +1,12 @@
 import pytest
 import asyncio
 
-from aiohttp import web
-
 from binance import Stream
 
-PORT = 9081
-
-
-class Server:
-    def __init__(self):
-        self._started = False
-        app = web.Application()
-        app.add_routes([
-            web.get('/stream', self._handler)
-        ])
-
-        self._app = app
-
-        self._runner = web.AppRunner(app)
-
-        self._delay = 0.2
-
-    def start(self):
-        self._started = True
-        return self
-
-    def no_timeout(self):
-        self._delay = 0.05
-        return self
-
-    def stop(self):
-        self._started = False
-        return self
-
-    async def run(self):
-        await self._runner.setup()
-        site = web.TCPSite(self._runner, 'localhost', PORT)
-        await site.start()
-
-    async def shutdown(self):
-        self.stop()
-        await self._runner.cleanup()
-
-    async def _handle(self, ws) -> None:
-        if not self._started:
-            await ws.close(code=1006)
-            return
-
-        while self._started:
-            if self._delay:
-                await asyncio.sleep(self._delay)
-
-            await ws.send_str('{"ok":true}')
-
-    async def _handler(self, request):
-        ws = web.WebSocketResponse()
-        await ws.prepare(request)
-
-        await self._handle(ws)
-
-        return ws
+from .common import (
+    PORT,
+    SocketServer
+)
 
 
 @pytest.mark.asyncio
@@ -85,10 +31,17 @@ async def test_stream_timeout_disconnect_reconnect():
         print('receive msg', msg)
         handler.receive(msg)
 
+    should_raise = True
+
+    def error_on_connected():
+        print('the following warning is for testing, not a bug')
+        if should_raise:
+            raise RuntimeError('on_connected error')
+
     def retry_policy(fails):
         return False, 0.05
 
-    server = Server()
+    server = SocketServer()
 
     await server.run()
     print('\nserver started')
@@ -98,7 +51,8 @@ async def test_stream_timeout_disconnect_reconnect():
     print('connecting', uri)
     stream = Stream(
         uri,
-        on_message,
+        on_message=on_message,
+        on_connected=error_on_connected,
         retry_policy=retry_policy,
         timeout=0.1
     ).connect()
