@@ -1,7 +1,4 @@
 from enum import Enum as _Enum
-from typing import (
-    Union
-)
 
 from aioretry import RetryPolicyStrategy
 
@@ -67,7 +64,7 @@ def DEFAULT_RETRY_POLICY(fails: int) -> RetryPolicyStrategy:
     return False, (fails - 1) % MAX_RETRIES_BEFORE_RESET * ATOM_RETRY_DELAY
 
 
-def NO_RETRY_POLICY(fails: int):
+def NO_RETRY_POLICY(fails: int) -> RetryPolicyStrategy:
     return True, 0
 
 
@@ -153,10 +150,6 @@ HEADER_API_KEY = 'X-MBX-APIKEY'
 
 REST_API_VERSION = 'v3'
 REST_API_HOST = 'https://api.binance.com'
-
-
-APIResponse = Union[dict, list]
-
 
 STREAM_KEY_ID = 'id'
 STREAM_KEY_RESULT = 'result'

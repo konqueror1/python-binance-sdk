@@ -1,8 +1,7 @@
-from typing import (
-    List
-)
+from typing import List
 
 from binance.common.exceptions import ReuseHandlerException
+from binance.common.types import Payload
 
 
 class Handler:
@@ -45,7 +44,7 @@ try:
 
     def _receive(
         self,
-        payload: dict,
+        payload: Payload,
         index: List[int] = [0]
     ) -> pd.DataFrame:
         return pd.DataFrame(

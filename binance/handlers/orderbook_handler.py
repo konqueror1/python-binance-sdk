@@ -6,13 +6,24 @@ from binance.common.constants import (
     DEFAULT_RETRY_POLICY
 )
 
-from binance.common.utils import normalize_symbol, wrap_coroutine
+from binance.common.utils import (
+    normalize_symbol,
+    wrap_coroutine
+)
 
-from .base import Handler, pd
+from binance.common.types import DictPayload
+
+from .base import (
+    Handler,
+    pd
+)
 
 from .orderbook import (
     OrderBook,
-    KEY_FIRST_UPDATE_ID, KEY_LAST_UPDATE_ID, KEY_BIDS, KEY_ASKS
+    KEY_FIRST_UPDATE_ID,
+    KEY_LAST_UPDATE_ID,
+    KEY_BIDS,
+    KEY_ASKS
 )
 
 KEY_SYMBOL = 's'
@@ -61,7 +72,7 @@ class OrderBookHandlerBase(Handler):
 
     def _receive(
         self,
-        payload
+        payload: DictPayload
     ):
         info = super()._receive(payload)
 

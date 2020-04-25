@@ -3,13 +3,15 @@ from binance.apis import (
     WapiAPIGetters
 )
 
+from aioretry import RetryPolicy
+
 from binance.subscribe.manager import SubscriptionManager
 from binance.common.constants import (
     REST_API_HOST,
     STREAM_HOST,
     DEFAULT_RETRY_POLICY, DEFAULT_STREAM_TIMEOUT
 )
-
+from binance.common.types import Timeout
 
 from .base import ClientBase
 
@@ -26,11 +28,11 @@ class Client(
         api_secret=None,
         request_params=None,
         # so that you can change api_host for CN network
-        api_host=REST_API_HOST,
+        api_host: str = REST_API_HOST,
         # website_host=WEBSITE_HOST,
-        stream_host=STREAM_HOST,
-        stream_retry_policy=DEFAULT_RETRY_POLICY,
-        stream_timeout=DEFAULT_STREAM_TIMEOUT
+        stream_host: str = STREAM_HOST,
+        stream_retry_policy: RetryPolicy = DEFAULT_RETRY_POLICY,
+        stream_timeout: Timeout = DEFAULT_STREAM_TIMEOUT
     ):
         """Binance API Client constructor
 
@@ -51,17 +53,15 @@ class Client(
 
         self._request_params = request_params
         self._api_host = api_host
-        # self._website_host = website_host
-        self._stream_host = stream_host
 
-        self._stream_kwargs = dict(
-            retry_policy=stream_retry_policy,
-            timeout=stream_timeout
-        )
+        self._stream_host = stream_host
+        self._stream_retry_policy = stream_retry_policy
+        self._stream_timeout = stream_timeout
 
         self._receiving = True
         self._handler_ctx = None
         self._data_stream = None
+        self._subscribed = set()
 
     def key(self, key):
         """Defines or changes api key. This method is unnecessary if we only request APIs of `SecurityType.NONE`

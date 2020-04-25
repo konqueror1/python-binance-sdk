@@ -27,9 +27,10 @@ from binance.common.exceptions import (
 from binance.common.constants import (
     HEADER_API_KEY,
     SecurityType,
-    RequestMethod,
-    APIResponse
+    RequestMethod
 )
+
+from binance.common.types import APIResponse
 
 # pylint: disable=no-member
 

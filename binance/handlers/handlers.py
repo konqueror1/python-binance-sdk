@@ -1,6 +1,14 @@
 import traceback
 
-from binance.common.constants import STREAM_TYPE_MAP, STREAM_OHLC_MAP
+from binance.common.constants import (
+    STREAM_TYPE_MAP,
+    STREAM_OHLC_MAP
+)
+
+from binance.common.types import (
+    DictPayload,
+    ListPayload
+)
 
 from .base import Handler
 
@@ -76,7 +84,7 @@ class KlineHandlerBase(Handler):
     COLUMNS_MAP = KLINE_COLUMNS_MAP
     COLUMNS = KLINE_COLUMNS
 
-    def _receive(self, payload):
+    def _receive(self, payload: DictPayload):
         """The payload of kline has unnecessary hierarchy,
         so just flatten it.
         """
@@ -132,7 +140,7 @@ class AllMarketMiniTickersHandlerBase(Handler):
     COLUMNS_MAP = MINI_TICKER_COLUMNS_MAP
     COLUMNS = MINI_TICKER_COLUMNS
 
-    def _receive(self, payload):
+    def _receive(self, payload: ListPayload):
         return super()._receive(
             payload, None)
 
@@ -141,6 +149,6 @@ class AllMarketTickersHandlerBase(Handler):
     COLUMNS_MAP = TICKER_COLUMNS_MAP
     COLUMNS = TICKER_COLUMNS
 
-    def _receive(self, payload):
+    def _receive(self, payload: ListPayload):
         return super()._receive(
             payload, None)
