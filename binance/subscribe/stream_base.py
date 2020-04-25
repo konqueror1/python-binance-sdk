@@ -186,7 +186,7 @@ And you should fix this""", e),
     async def _reconnect(self, exception: Exception, fails: int) -> None:
         logger.error(
             format_msg(
-                'socket error %s: %s, reconnecting',
+                'socket error %s: %s, reconnecting...',
                 exception,
                 fails
             )

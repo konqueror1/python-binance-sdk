@@ -45,7 +45,7 @@ class Server:
 
     async def _handle(self, ws) -> None:
         if not self._started:
-            await ws.close()
+            await ws.close(code=1006)
             return
 
         while self._started:
