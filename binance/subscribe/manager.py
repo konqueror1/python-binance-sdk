@@ -123,7 +123,8 @@ class SubscriptionManager:
                 self._subscribed.discard(param)
 
     async def _resubscribe(self) -> None:
-        await self._subscribe_only(True, self._subscribed)
+        if len(self._subscribed) > 0:
+            await self._subscribe_only(True, self._subscribed)
 
     async def subscribe(self, *args):
         return await self._subscribe(True, args)
