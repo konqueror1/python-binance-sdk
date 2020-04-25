@@ -26,7 +26,24 @@ class StreamDisconnectedException(Exception):
 
     def __str__(self) -> str:
         return format_msg(
-            'stream "%s" is never connected or is abandoned after too many retries according to the `retry_policy`, run `stream.connect()`', self.uri)  # noqa:E501
+            'stream "%s" is never connected or is abandoned after too many retries according to the `retry_policy`, run `stream.connect()`', self.uri)
+
+
+class StreamSubscribeException(Exception):
+    def __init__(
+        self,
+        code: int,
+        message: str
+    ):
+        self.code = code
+        self.message = message
+
+    def __str__(self) -> str:
+        return format_msg(
+            'fails to subscribe, code: %s, reason: %s',
+            self.code,
+            self.message
+        )
 
 
 class APIKeyNotDefinedException(Exception):

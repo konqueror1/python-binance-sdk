@@ -153,3 +153,6 @@ REST_API_HOST = 'https://api.binance.com'
 
 STREAM_KEY_ID = 'id'
 STREAM_KEY_RESULT = 'result'
+STREAM_KEY_ERROR = 'error'
+ERROR_KEY_CODE = 'code'
+ERROR_KEY_MESSAGE = 'msg'

@@ -3,7 +3,8 @@ import asyncio
 
 from binance import (
     Stream,
-    StreamDisconnectedException
+    StreamDisconnectedException,
+    StreamSubscribeException
 )
 
 from binance.common.constants import STREAM_HOST
@@ -41,6 +42,15 @@ async def run_stream():
     msg = await f
 
     assert msg['stream'] == 'btcusdt@ticker'
+
+    with pytest.raises(
+        StreamSubscribeException,
+        match='fails to subscribe'
+    ):
+        await stream.send({
+            'method': 'SUBSCRIBE',
+            'params': []
+        })
 
     print('before close')
     await stream.close()

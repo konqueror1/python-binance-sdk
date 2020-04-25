@@ -204,8 +204,3 @@ async def test_orderbook_handler_init_orderbook_ahead(client):
 @pytest.mark.asyncio
 async def test_orderbook_handler_init_orderbook_after(client):
     await run_orderbook_handler(client, False)
-
-
-# TODO
-# stop()
-# subscribe overloading

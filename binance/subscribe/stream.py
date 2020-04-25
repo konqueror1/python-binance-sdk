@@ -3,6 +3,7 @@ import logging
 import asyncio
 from typing import (
     Optional,
+    Dict,
     Any
 )
 
@@ -28,13 +29,20 @@ from binance.common.utils import (
     wrap_event_callback
 )
 
-from binance.common.exceptions import StreamDisconnectedException
+from binance.common.exceptions import (
+    StreamDisconnectedException,
+    StreamSubscribeException
+)
+
 from binance.common.constants import (
     DEFAULT_RETRY_POLICY,
     DEFAULT_STREAM_TIMEOUT,
     DEFAULT_STREAM_CLOSE_CODE,
     STREAM_KEY_ID,
-    STREAM_KEY_RESULT
+    STREAM_KEY_RESULT,
+    STREAM_KEY_ERROR,
+    ERROR_KEY_CODE,
+    ERROR_KEY_MESSAGE
 )
 
 from binance.common.types import (
@@ -61,6 +69,7 @@ class Stream:
     """
 
     _socket: Optional[WebSocketClientProtocol]
+    _message_futures: Dict[int, asyncio.Future]
 
     def __init__(
         self,
@@ -123,16 +132,31 @@ class Stream:
     async def _handle_message(self, msg) -> None:
         # > The id used in the JSON payloads is an unsigned INT used as
         # > an identifier to uniquely identify the messages going back and forth
-        if STREAM_KEY_ID in msg \
-                and msg[STREAM_KEY_ID] in self._message_futures:
-            message_id = msg[STREAM_KEY_ID]
-            future = self._message_futures[message_id]
-            future.set_result(msg[STREAM_KEY_RESULT])
-
-            del self._message_futures[message_id]
+        if (
+            STREAM_KEY_ID not in msg
+        ) or (
+            msg[STREAM_KEY_ID] not in self._message_futures
+        ):
+            await self._emit(ON_MESSAGE, msg)
             return
 
-        await self._emit(ON_MESSAGE, msg)
+        message_id = msg[STREAM_KEY_ID]
+        future = self._message_futures[message_id]
+
+        if STREAM_KEY_RESULT in msg:
+            future.set_result(msg[STREAM_KEY_RESULT])
+
+        elif STREAM_KEY_ERROR in msg:
+            error = msg[STREAM_KEY_ERROR]
+
+            future.set_exception(
+                StreamSubscribeException(
+                    error[ERROR_KEY_CODE],
+                    error[ERROR_KEY_MESSAGE]
+                )
+            )
+
+        del self._message_futures[message_id]
 
     def _before_connect(self) -> None:
         self._open_future = asyncio.Future()
