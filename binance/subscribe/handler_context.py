@@ -2,6 +2,7 @@ import asyncio
 import itertools
 from typing import (
     List,
+    Iterable,
     Set,
     Dict,
     Tuple
@@ -76,14 +77,10 @@ class HandlerContext:
     # -> client.subscribe(
     #       (SubType.TICKER, 'BNBUSDT)
     # )
-    async def subscribe_params(
-        self,
-        subscribe: bool,
-        *args
-    ) -> Tuple[str]:
+    def overload_subscriptions(self, *args) -> List[tuple]:
         # Subs is a Tuple[tuple]
         subs = args if type(args[0]) is tuple else (args,)
-        tasks = []
+        params = []
 
         for subtype_param in subs:
             length = len(subtype_param)
@@ -92,7 +89,9 @@ class HandlerContext:
             # subtype without params
             # ('allMarketMiniTickers',)
             if length == 1:
-                args_iter = itertools.product(make_list(subtype_param[0]))
+                args_iter = itertools.product(
+                    make_list(subtype_param[0])
+                )
             # ('trade', 'BNBUSDT')
             # (['trade'], ['BNBUSDT'])
             elif length == 2:
@@ -113,13 +112,24 @@ class HandlerContext:
                 raise InvalidSubParamsException('please check the document')
 
             for partial_args in args_iter:
-                tasks.append(
-                    self._subscribe_param(
-                        subscribe, *partial_args
-                    ) if prefix is None else self._subscribe_param(
-                        subscribe, prefix, *partial_args
+                if prefix is None:
+                    params.append(partial_args)
+                else:
+                    params.append(
+                        (prefix, *partial_args)
                     )
-                )
+
+        return params
+
+    async def subscribe_params(
+        self,
+        subscribe: bool,
+        subscriptions: Iterable[tuple]
+    ) -> Tuple[str]:
+        tasks = [
+            self._subscribe_param(subscribe, *params)
+            for params in subscriptions
+        ]
 
         return await asyncio.gather(*tasks)
 

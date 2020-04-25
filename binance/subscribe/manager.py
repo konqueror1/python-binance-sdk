@@ -1,11 +1,16 @@
 from typing import (
     List,
+    Iterable,
+    Set,
     Tuple,
     Optional
 )
 
+from aioretry import RetryPolicy
+
 from binance.common.constants import DEFAULT_STREAM_CLOSE_CODE
 from binance.common.exceptions import InvalidHandlerException
+from binance.common.types import Timeout
 
 from .stream import Stream
 from .handler_context import HandlerContext
@@ -15,6 +20,10 @@ from .handler_context import HandlerContext
 
 class SubscriptionManager:
     _data_stream: Optional[Stream]
+    _subscribed: Set[tuple]
+    _stream_host: str
+    _stream_retry_policy: RetryPolicy
+    _stream_timeout: Timeout
 
     def start(self):
         """Starts receiving messages.
@@ -71,29 +80,50 @@ class SubscriptionManager:
     def _get_data_stream(self) -> Stream:
         if self._data_stream is None:
             self._data_stream = Stream(
-                self._stream_host + '/stream',  # type: ignore
-                self._receive,
-                **self._stream_kwargs  # type: ignore
-            )
-            self._data_stream.connect()
+                self._stream_host + '/stream',
+                on_message=self._receive,
+                on_connected=self._resubscribe,
+                retry_policy=self._stream_retry_policy,
+                timeout=self._stream_timeout
+            ).connect()
 
         return self._data_stream
+
+    async def _subscribe_only(
+        self,
+        subscribe: bool,
+        subscriptions: Iterable[tuple]
+    ) -> None:
+        params = await self._get_handler_ctx().subscribe_params(
+            subscribe,
+            subscriptions
+        )
+
+        stream = self._get_data_stream()
+
+        await stream.send({
+            'method': 'SUBSCRIBE' if subscribe else 'UNSUBSCRIBE',
+            'params': params
+        })
 
     # subscribe to the stream for symbols
     async def _subscribe(
         self,
         subscribe: bool,
-        args: Tuple[str]
+        args: Tuple
     ):
-        params = await self._get_handler_ctx().subscribe_params(
-            subscribe, *args)
+        subscriptions = self._get_handler_ctx().overload_subscriptions(*args)
 
-        stream = self._get_data_stream()
+        await self._subscribe_only(subscribe, subscriptions)
 
-        if subscribe:
-            return await stream.subscribe(params)
-        else:
-            return await stream.unsubscribe(params)
+        for param in subscriptions:
+            if subscribe:
+                self._subscribed.add(param)
+            else:
+                self._subscribed.discard(param)
+
+    async def _resubscribe(self) -> None:
+        await self._subscribe_only(True, self._subscribed)
 
     async def subscribe(self, *args):
         return await self._subscribe(True, args)
@@ -102,7 +132,9 @@ class SubscriptionManager:
         return await self._subscribe(False, args)
 
     async def list_subscriptions(self) -> List[str]:
-        return await self._get_data_stream().list_subscriptions()
+        return await self._get_data_stream().send({
+            'method': 'LIST_SUBSCRIPTIONS'
+        })
 
     def handler(self, *handlers):
         """Sets the callback processing object to be used to handle websocket messages.
