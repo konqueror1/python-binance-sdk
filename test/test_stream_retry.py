@@ -34,9 +34,8 @@ async def test_stream_timeout_disconnect_reconnect():
     should_raise = True
 
     def error_on_connected():
-        print('the following warning is for testing, not a bug')
         if should_raise:
-            raise RuntimeError('on_connected error')
+            raise RuntimeError('this is a warning for testing, not a bug')
 
     def retry_policy(fails):
         return False, 0.05
